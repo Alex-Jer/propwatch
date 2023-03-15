@@ -1,5 +1,7 @@
 import { Burger, Button, Container, Group, Header, createStyles, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 const HEADER_HEIGHT = rem(60);
 
@@ -50,6 +52,8 @@ interface HeaderActionProps {
 export function NavHeader({ links }: HeaderActionProps) {
   const { classes } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
+  const router = useRouter();
+
   const items = links.map((link) => {
     // const menuItems = link.links?.map((item) => <Menu.Item key={item.link}>{item.label}</Menu.Item>);
 
@@ -76,19 +80,27 @@ export function NavHeader({ links }: HeaderActionProps) {
     );
   });
 
+  const redirectToLogin = () => {
+    router.push("/login");
+  };
+
   return (
     <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }} mb={120}>
       <Container className={classes.inner} fluid>
         <Group>
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
           {/* <MantineLogo size={28} /> */}
-          <span className="w-44">Lorem Ipsum</span>
+          <Link href="/">
+            <span className="w-44">Lorem Ipsum</span>
+          </Link>
         </Group>
         <Group spacing={5} className={classes.links}>
           {items}
         </Group>
         <Group spacing={5} className={classes.links}>
-          <Button variant="default">Log in</Button>
+          <Button variant="default" onClick={redirectToLogin}>
+            Log in
+          </Button>
           <Button>Sign up</Button>
         </Group>
       </Container>

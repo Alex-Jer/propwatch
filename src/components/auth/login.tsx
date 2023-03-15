@@ -12,7 +12,8 @@ import {
 } from "@mantine/core";
 
 import { useForm } from "@mantine/form";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { useState } from "react";
 
 type Inputs = {
   email: string;
@@ -20,20 +21,33 @@ type Inputs = {
 };
 
 export function LoginForm() {
+  const { data: session, status } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<Inputs>({
-    initialValues: { email: "test@test.com", password: "123456" },
+    initialValues: { email: "test123@test.com", password: "123456" },
     validate: {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
       password: (value) => (value.length > 5 ? null : "Password must be at least 6 characters long"),
     },
   });
 
-  const handleSubmit = (values: Inputs) => {
-    console.log(values);
-    void signIn("credentials", { redirect: false, ...values });
+  const handleSubmit = async (values: Inputs) => {
+    setIsLoading(true);
+    const res = await signIn("credentials", { redirect: false, ...values });
+    if (res?.status === 401) {
+      console.log("Wrong email or password");
+      return;
+    }
+    console.log(`Welcome back ${values.email}`);
+    setIsLoading(false);
   };
 
-  const { data: session, status } = useSession();
+  const logout = () => {
+    void signOut({ redirect: false }).then(() => {
+      console.log("Logged out");
+    });
+  };
 
   return (
     <Container size={420} my={40}>
@@ -64,8 +78,11 @@ export function LoginForm() {
               Forgot password?
             </Anchor>
           </Group>
-          <Button fullWidth mt="xl" type="submit">
+          <Button fullWidth mt="xl" type="submit" disabled={status === "authenticated"}>
             Sign in
+          </Button>
+          <Button fullWidth mt="sm" onClick={logout} variant="default">
+            Log out
           </Button>
         </Paper>
       </form>

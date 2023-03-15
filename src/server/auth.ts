@@ -1,5 +1,6 @@
+import axios from "axios";
 import { type GetServerSidePropsContext } from "next";
-import { getServerSession, type DefaultSession, type NextAuthOptions } from "next-auth";
+import { type LoginResponse, getServerSession, type DefaultSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import DiscordProvider from "next-auth/providers/discord";
 
@@ -18,15 +19,21 @@ declare module "next-auth" {
       name: string;
       email: string;
       photo_url: string;
-      // ...other properties
-      // role: UserRole;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    id: string;
+    name: string;
+    email: string;
+    photo_url: string;
+  }
+
+  type LoginResponse = {
+    message: string;
+    user: User;
+    access_token: string;
+  };
 }
 
 /**
@@ -35,9 +42,6 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  session: {
-    strategy: "jwt",
-  },
   // callbacks: {
   //   session({ session, user }) {
   //     console.log("session", session);
@@ -61,20 +65,12 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const res = await fetch("http://localhost/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({ ...credentials, device_name: "Desktop" }),
+        const res = await axios.post<LoginResponse>("http://localhost/login", {
+          ...credentials,
+          device_name: "Desktop",
         });
 
-        const { user } = (await res.json()) as { user: { id: string; name: string; email: string; photo_url: string } };
-
-        if (res.ok && user) return user;
-
-        return null;
+        return res.data.user;
       },
     }),
     /**
@@ -87,6 +83,9 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
+  session: {
+    strategy: "jwt",
+  },
 };
 
 /**
