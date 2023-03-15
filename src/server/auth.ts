@@ -1,8 +1,8 @@
-import axios from "axios";
 import { type GetServerSidePropsContext } from "next";
-import { type LoginResponse, getServerSession, type DefaultSession, type NextAuthOptions } from "next-auth";
+import { getServerSession, type DefaultSession, type LoginResponse, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import DiscordProvider from "next-auth/providers/discord";
+import axios from "~/lib/axios";
 
 import { env } from "~/env.mjs";
 
@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const res = await axios.post<LoginResponse>("http://localhost/login", {
+        const res = await axios.post<LoginResponse>("/login", {
           ...credentials,
           device_name: "Desktop",
         });
