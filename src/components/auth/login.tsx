@@ -27,18 +27,21 @@ export function LoginForm() {
   const form = useForm<Inputs>({
     initialValues: { email: "test123@test.com", password: "123456" },
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      password: (value) => (value.length > 5 ? null : "Password must be at least 6 characters long"),
+      email: (value: string) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+      password: (value: string) => (value.length > 5 ? null : "Password must be at least 6 characters long"),
     },
   });
 
   const handleSubmit = async (values: Inputs) => {
     setIsLoading(true);
     const res = await signIn("credentials", { redirect: false, ...values });
+
     if (res?.status === 401) {
       console.log("Wrong email or password");
+      setIsLoading(false);
       return;
     }
+
     console.log(`Welcome back ${values.email}`);
     setIsLoading(false);
   };
@@ -61,8 +64,7 @@ export function LoginForm() {
           Create account
         </Anchor>
       </Text>
-
-      <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+      <form onSubmit={form.onSubmit((values) => void (async () => await handleSubmit(values))())}>
         <Paper withBorder shadow="md" p={30} mt={30} radius="md">
           <TextInput label="Email" placeholder="you@mantine.dev" required {...form.getInputProps("email")} />
           <PasswordInput
@@ -78,7 +80,7 @@ export function LoginForm() {
               Forgot password?
             </Anchor>
           </Group>
-          <Button fullWidth mt="xl" type="submit" disabled={status === "authenticated"}>
+          <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
             Sign in
           </Button>
           <Button fullWidth mt="sm" onClick={logout} variant="default">
@@ -86,7 +88,6 @@ export function LoginForm() {
           </Button>
         </Paper>
       </form>
-
       <Text color="dimmed" size="sm" align="left" mt={5}>
         <div>
           <p>Session status: {status}</p>
