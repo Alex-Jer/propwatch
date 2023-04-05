@@ -13,20 +13,17 @@ import { env } from "~/env.mjs";
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
 declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      name: string;
-      email: string;
-      photo_url: string;
-    } & DefaultSession["user"];
-  }
-
   interface User {
     id: string;
     name: string;
     email: string;
     photo_url: string;
+    access_token: string;
+  }
+
+  interface Session extends DefaultSession {
+    user: User & DefaultSession["user"];
+    // access_token: string;
   }
 
   type LoginResponse = {
@@ -53,6 +50,21 @@ export const authOptions: NextAuthOptions = {
   //     return session;
   //   },
   // },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.access_token;
+        token.photo_url = user.photo_url;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      session.user.access_token = token.id as string;
+      session.user.photo_url = token.photo_url as string;
+      return session;
+    },
+  },
   providers: [
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
@@ -64,24 +76,21 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
+
       async authorize(credentials) {
         const res = await axios.post<LoginResponse>("/login", {
           ...credentials,
           device_name: "Desktop",
         });
 
-        return res.data.user;
+        return (
+          res.data && {
+            ...res.data.user,
+            access_token: res.data.access_token,
+          }
+        );
       },
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
   session: {
     strategy: "jwt",

@@ -25,7 +25,7 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<Inputs>({
-    initialValues: { email: "test123@test.com", password: "123456" },
+    initialValues: { email: "test123@example.com", password: "123456" },
     validate: {
       email: (value: string) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
       password: (value: string) => (value.length > 5 ? null : "Password must be at least 6 characters long"),
@@ -94,6 +94,7 @@ export function LoginForm() {
           <p>name: {session?.user?.name}</p>
           <p>email: {session?.user?.email}</p>
           <p>photo_url: {session?.user?.photo_url || "none"}</p>
+          <p>access_token: {session?.user.access_token}</p>
         </div>
       </Text>
     </Container>
