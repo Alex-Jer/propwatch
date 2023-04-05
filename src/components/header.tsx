@@ -74,9 +74,9 @@ export function NavHeader({ links }: HeaderActionProps) {
     // }
 
     return (
-      <a key={link.label} href={link.link} className={classes.link} onClick={(event) => event.preventDefault()}>
-        {link.label}
-      </a>
+      <Link key={link.label} href={link.link}>
+        <span className={classes.link}>{link.label}</span>
+      </Link>
     );
   });
 
@@ -85,7 +85,7 @@ export function NavHeader({ links }: HeaderActionProps) {
   };
 
   return (
-    <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }} mb={120}>
+    <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }} mb={20}>
       <Container className={classes.inner} fluid>
         <Group>
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />

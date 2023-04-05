@@ -8,8 +8,12 @@ import "~/styles/globals.css";
 
 import { NavHeader } from "~/components/header";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+
 const links = [
-  { link: "/features", label: "Features", links: [] },
+  { link: "/lists", label: "My Lists", links: [] },
   { link: "/learn", label: "Learn", links: [] },
   { link: "/about", label: "About", links: [] },
   { link: "/pricing", label: "Pricing", links: [] },
@@ -21,8 +25,10 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
   return (
     <SessionProvider session={session}>
       <MantineProvider emotionCache={cache} withGlobalStyles withNormalizeCSS theme={{ colorScheme: "light" }}>
-        <NavHeader links={links} />
-        <Component {...pageProps} />
+        <QueryClientProvider client={queryClient}>
+          <NavHeader links={links} />
+          <Component {...pageProps} />
+        </QueryClientProvider>
       </MantineProvider>
     </SessionProvider>
   );
