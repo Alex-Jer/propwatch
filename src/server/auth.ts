@@ -92,9 +92,9 @@ export const authOptions: NextAuthOptions = {
         const res = await axiosReq("login", "POST", null, loginData, false, true);
 
         return (
-          res.data && {
-            ...res.data.user,
-            access_token: res.data.access_token,
+          res && {
+            ...res.user,
+            access_token: res.access_token,
           }
         );
       },

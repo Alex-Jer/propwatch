@@ -2,13 +2,23 @@ import { useQuery } from "@tanstack/react-query";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useEffect } from "react";
 import { axiosReq } from "~/lib/requestHelper";
+
+interface List {
+  id: number;
+  name: string;
+  description: string;
+}
 
 const Lists: NextPage = () => {
   const { data: session, status } = useSession();
 
-  const { isLoading, error, data, isFetching } = useQuery({
+  const {
+    isLoading,
+    error,
+    data: res,
+    isFetching,
+  } = useQuery({
     queryKey: ["lists"],
     queryFn: () => axiosReq("me/lists", "GET", session?.user.access_token),
     enabled: status === "authenticated",
@@ -26,29 +36,22 @@ const Lists: NextPage = () => {
     console.log("Error!");
   }
 
-  // TODO:  temp
-  useEffect(() => {
-    if (data) {
-      console.log("Data: ", data);
-    }
-  }, [data]);
-
   return (
     <>
       <Head>
         <title>My Lists</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {/*
+
       <div>
-        {data?.data?.map((list) => (
+        <h1>My Lists</h1>
+        {res?.data?.map((list: List) => (
           <div key={list.id}>
-            <h3>{list.name}</h3>
+            <h3 className="text-2xl">{list.name}</h3>
             <p>{list.description}</p>
           </div>
         ))}
       </div>
-      */}
     </>
   );
 };

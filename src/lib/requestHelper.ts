@@ -21,7 +21,7 @@ export const axiosReq = async (
   formData = new FormData(),
   hasFiles = false,
   isAuth = false
-): Promise<AxiosResponse> => {
+) => {
   const headers = {
     Accept: "application/json",
     "Content-Type": hasFiles ? "multipart/form-data" : "application/x-www-form-urlencoded",
@@ -33,11 +33,10 @@ export const axiosReq = async (
   }
 
   const url = isAuth ? `${API_URL}/${route}` : `${API_URL}/api/${route}`;
-  let res: AxiosResponse | null = null;
+  let res;
 
   switch (method) {
     case "POST":
-      console.log("url", url);
       res = await axios.post(url, formData, { headers });
       break;
     case "PUT":
@@ -71,9 +70,7 @@ export const axiosReq = async (
       break;
   }
 
-  // checkForAuthError(res, storedToken);
-
-  return res as AxiosResponse;
+  return res?.data;
 };
 
 export const axiosReqPage = async (pageUrl: string) => {
