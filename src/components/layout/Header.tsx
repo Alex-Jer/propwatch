@@ -86,7 +86,7 @@ export function NavHeader({ links }: HeaderActionProps) {
   });
 
   const redirectToLogin = () => {
-    router.push("/login");
+    router.push("/auth/login");
   };
 
   return (
