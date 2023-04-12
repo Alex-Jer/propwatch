@@ -6,6 +6,11 @@ import Link from "next/link";
 const HEADER_HEIGHT = rem(60);
 
 const useStyles = createStyles((theme) => ({
+  header: {
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
+    borderBottom: 0,
+  },
+
   inner: {
     height: HEADER_HEIGHT,
     display: "flex",
@@ -85,7 +90,7 @@ export function NavHeader({ links }: HeaderActionProps) {
   };
 
   return (
-    <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }} mb={20}>
+    <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }} mb={20} className={classes.header}>
       <Container className={classes.inner} fluid>
         <Group>
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />

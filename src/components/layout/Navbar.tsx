@@ -11,6 +11,9 @@ import {
   Tooltip,
   rem,
   useMantineColorScheme,
+  MediaQuery,
+  Burger,
+  useMantineTheme,
 } from "@mantine/core";
 import { IconBulb, IconUser, IconCheckbox, IconSearch, IconPlus, IconSelector } from "@tabler/icons-react";
 import { UserButton } from "./UserButton";
@@ -124,7 +127,12 @@ const collections = [
   { emoji: "💁‍♀️", label: "Customers" },
 ];
 
-export function NavbarSearch() {
+type Props = {
+  opened: boolean;
+  setOpened: (opened: boolean) => void;
+};
+
+export function NavbarSearch({ opened, setOpened }: Props) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const light = colorScheme === "light";
 
@@ -150,16 +158,22 @@ export function NavbarSearch() {
     </a>
   ));
 
+  const theme = useMantineTheme();
+
   return (
-    <Navbar height={700} width={{ sm: 300 }} p="md" className={classes.navbar}>
+    <Navbar width={{ sm: 300 }} p="md" pt={0} className={classes.navbar} hiddenBreakpoint="sm" hidden={!opened}>
+      <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+        <Burger opened={opened} onClick={() => setOpened(!opened)} size="sm" color={theme.colors.gray[6]} mr="xl" />
+      </MediaQuery>
+
       <Navbar.Section className={classes.section}>
         <UserButton
           image="https://i.imgur.com/fGxgcDF.png"
           name="Bob Rulebreaker"
-          email="Product owner"
           icon={<IconSelector size="0.9rem" stroke={1.5} />}
         />
       </Navbar.Section>
+
       <TextInput
         placeholder="Search"
         size="xs"
@@ -169,9 +183,11 @@ export function NavbarSearch() {
         styles={{ rightSection: { pointerEvents: "none" } }}
         mb="sm"
       />
+
       <Navbar.Section className={classes.section}>
         <div className={classes.mainLinks}>{mainLinks}</div>
       </Navbar.Section>
+
       <Navbar.Section className={classes.section}>
         <Group className={classes.collectionsHeader} position="apart">
           <Text size="xs" weight={500} color="dimmed">
