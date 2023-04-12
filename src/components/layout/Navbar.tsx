@@ -10,6 +10,7 @@ import {
   ActionIcon,
   Tooltip,
   rem,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { IconBulb, IconUser, IconCheckbox, IconSearch, IconPlus, IconSelector } from "@tabler/icons-react";
 import { UserButton } from "./UserButton";
@@ -124,6 +125,9 @@ const collections = [
 ];
 
 export function NavbarSearch() {
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const light = colorScheme === "light";
+
   const { classes } = useStyles();
 
   const mainLinks = links.map((link) => (
