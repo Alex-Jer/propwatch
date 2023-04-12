@@ -90,8 +90,6 @@ export function LoginForm() {
       </form>
       <Text color="dimmed" size="sm" align="left" mt={5}>
         <div>
-          <p>Session status: {status}</p>
-          <p>name: {session?.user?.name}</p>
           <p>email: {session?.user?.email}</p>
           <p>photo_url: {session?.user?.photo_url || "none"}</p>
           <p>access_token: {session?.user.access_token}</p>
