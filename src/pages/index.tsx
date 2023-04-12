@@ -4,7 +4,7 @@ import { HeroTitle } from "~/components/hero/HeroTitle";
 import { NavHeader } from "~/components/layout/Header";
 
 const links = [
-  { link: "/lists", label: "My Lists", links: [] },
+  { link: "/collections", label: "My Collections", links: [] },
   { link: "/learn", label: "Learn", links: [] },
   { link: "/about", label: "About", links: [] },
   { link: "/pricing", label: "Pricing", links: [] },

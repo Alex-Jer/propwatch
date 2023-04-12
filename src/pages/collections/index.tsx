@@ -3,14 +3,14 @@ import Head from "next/head";
 import { useAppData } from "~/components/context/AppDataContext";
 import { Collection } from "~/types";
 
-const Lists: NextPage = () => {
+const Collections: NextPage = () => {
   /* const { */
   /*   isLoading, */
   /*   error, */
   /*   data: res, */
   /*   isFetching, */
   /* } = useQuery({ */
-  /*   queryKey: ["lists"], */
+  /*   queryKey: ["collections"], */
   /*   queryFn: () => axiosReq("me/lists", "GET", session?.user.access_token), */
   /*   enabled: status === "authenticated", */
   /* }); */
@@ -49,4 +49,4 @@ const Lists: NextPage = () => {
   );
 };
 
-export default Lists;
+export default Collections;
