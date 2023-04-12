@@ -9,7 +9,6 @@ interface ShellProps {
 
 const links = [
   { link: "/lists", label: "My Lists", links: [] },
-  { link: "/learn", label: "Learn", links: [] },
   { link: "/about", label: "About", links: [] },
   { link: "/pricing", label: "Pricing", links: [] },
   { link: "/support", label: "Support", links: [] },
