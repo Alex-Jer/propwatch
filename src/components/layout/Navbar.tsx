@@ -16,6 +16,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconBulb, IconUser, IconCheckbox, IconSearch, IconPlus, IconSelector } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
 import { UserButton } from "./UserButton";
 
 const useStyles = createStyles((theme) => ({
@@ -134,9 +135,11 @@ type Props = {
 
 export function NavbarSearch({ opened, setOpened }: Props) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const light = colorScheme === "light";
-
   const { classes } = useStyles();
+  const theme = useMantineTheme();
+  const { data: session, status } = useSession();
+
+  const light = colorScheme === "light";
 
   const mainLinks = links.map((link) => (
     <UnstyledButton key={link.label} className={classes.mainLink}>
@@ -158,8 +161,6 @@ export function NavbarSearch({ opened, setOpened }: Props) {
     </a>
   ));
 
-  const theme = useMantineTheme();
-
   return (
     <Navbar width={{ sm: 300 }} p="md" pt={0} className={classes.navbar} hiddenBreakpoint="sm" hidden={!opened}>
       <MediaQuery largerThan="sm" styles={{ display: "none" }}>
@@ -169,7 +170,7 @@ export function NavbarSearch({ opened, setOpened }: Props) {
       <Navbar.Section className={classes.section}>
         <UserButton
           image="https://i.imgur.com/fGxgcDF.png"
-          name="Bob Rulebreaker"
+          name={session?.user?.name || "User"}
           icon={<IconSelector size="0.9rem" stroke={1.5} />}
         />
       </Navbar.Section>
