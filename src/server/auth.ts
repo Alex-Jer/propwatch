@@ -1,8 +1,7 @@
 import { type GetServerSidePropsContext } from "next";
-import { getServerSession, type DefaultSession, type LoginResponse, type NextAuthOptions } from "next-auth";
+import { getServerSession, type DefaultSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import DiscordProvider from "next-auth/providers/discord";
-import axios from "~/lib/axios";
 
 import { env } from "~/env.mjs";
 import { axiosReq } from "~/lib/requestHelper";

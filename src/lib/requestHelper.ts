@@ -18,7 +18,7 @@ export const axiosReq = async (
   route: string,
   method: Method = "GET",
   accessToken: string | null = null,
-  formData = new FormData(),
+  formData: FormData | null = null,
   hasFiles = false,
   isAuth = false
 ) => {
@@ -40,7 +40,7 @@ export const axiosReq = async (
       res = await axios.post(url, formData, { headers });
       break;
     case "PUT":
-      if (Array.from(formData).length === 0) {
+      if (!formData) {
         res = await axios.put(url, formData, { headers });
         break;
       }
@@ -50,7 +50,7 @@ export const axiosReq = async (
       res = await axios.post(url, formData, { headers });
       break;
     case "PATCH":
-      if (Array.from(formData).length === 0) {
+      if (!formData) {
         res = await axios.patch(url, formData, { headers });
         break;
       }
