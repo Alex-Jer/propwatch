@@ -1,5 +1,6 @@
-import { UnstyledButton, UnstyledButtonProps, Group, Avatar, Text, createStyles } from "@mantine/core";
+import { UnstyledButton, Group, Avatar, Text, createStyles } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
+import { UserButtonProps } from "~/types";
 
 const useStyles = createStyles((theme) => ({
   user: {
@@ -13,12 +14,6 @@ const useStyles = createStyles((theme) => ({
     },
   },
 }));
-
-interface UserButtonProps extends UnstyledButtonProps {
-  image: string;
-  name: string;
-  icon?: React.ReactNode;
-}
 
 export function UserButton({ image, name, icon, ...others }: UserButtonProps) {
   const { classes } = useStyles();

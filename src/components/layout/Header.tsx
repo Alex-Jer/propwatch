@@ -2,6 +2,7 @@ import { Burger, Button, Container, Group, Header, createStyles, rem } from "@ma
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { HeaderActionProps } from "~/types";
 
 const HEADER_HEIGHT = rem(60);
 
@@ -49,10 +50,6 @@ const useStyles = createStyles((theme) => ({
     marginRight: rem(5),
   },
 }));
-
-interface HeaderActionProps {
-  links: { link: string; label: string /* links: { link: string; label: string }[] */ }[];
-}
 
 export function NavHeader({ links }: HeaderActionProps) {
   const { classes } = useStyles();

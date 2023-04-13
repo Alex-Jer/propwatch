@@ -1,11 +1,8 @@
 import { AppShell, useMantineTheme } from "@mantine/core";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
+import { ShellProps } from "~/types";
 import { NavHeader } from "./Header";
 import { NavbarSearch } from "./Navbar";
-
-interface ShellProps {
-  children: ReactNode;
-}
 
 const links = [
   { link: "/collections", label: "My Collections", links: [] },
