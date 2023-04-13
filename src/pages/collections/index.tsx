@@ -6,7 +6,7 @@ import { useCollections } from "~/useQueries";
 
 const Collections: NextPage = () => {
   const { data: session, status } = useSession();
-  const { data: collections, isLoading, isFetching, error } = useCollections({ session: session!, status }!);
+  const { data: collections, isLoading, isFetching, error } = useCollections({ session: session!, status });
 
   if (isLoading) {
     console.log("Loading...");
