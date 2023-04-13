@@ -10,7 +10,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Shell from "~/components/layout/Shell";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import AppDataProvider from "~/components/context/AppDataContext";
 
 const queryClient = new QueryClient();
 
@@ -29,15 +28,13 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <MantineProvider theme={{ colorScheme }} emotionCache={cache} withGlobalStyles withNormalizeCSS>
           <QueryClientProvider client={queryClient}>
-            <AppDataProvider>
-              {isAppRoute ? (
-                <Shell>
-                  <Component {...pageProps} />
-                </Shell>
-              ) : (
+            {isAppRoute ? (
+              <Shell>
                 <Component {...pageProps} />
-              )}
-            </AppDataProvider>
+              </Shell>
+            ) : (
+              <Component {...pageProps} />
+            )}
           </QueryClientProvider>
         </MantineProvider>
       </ColorSchemeProvider>

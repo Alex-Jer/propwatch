@@ -1,31 +1,22 @@
 import { type NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useAppData } from "~/components/context/AppDataContext";
 import { Collection } from "~/types";
+import { useCollections } from "~/useQueries";
 
 const Collections: NextPage = () => {
-  /* const { */
-  /*   isLoading, */
-  /*   error, */
-  /*   data: res, */
-  /*   isFetching, */
-  /* } = useQuery({ */
-  /*   queryKey: ["collections"], */
-  /*   queryFn: () => axiosReq("me/lists", "GET", session?.user.access_token), */
-  /*   enabled: status === "authenticated", */
-  /* }); */
+  const { data: session, status } = useSession();
+  const { data: collections, isLoading, isFetching, error } = useCollections({ session: session!, status }!);
 
-  const { collections, isLoadingCollections, isFetchingCollections, collectionsError } = useAppData();
-
-  if (isLoadingCollections) {
+  if (isLoading) {
     console.log("Loading...");
   }
 
-  if (isFetchingCollections) {
+  if (isFetching) {
     console.log("Fetching...");
   }
 
-  if (collectionsError) {
+  if (error) {
     console.log("Error!");
   }
 
