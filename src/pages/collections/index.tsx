@@ -1,8 +1,8 @@
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
+import { useCollections } from "~/hooks/useQueries";
 import { Collection } from "~/types";
-import { useCollections } from "~/useQueries";
 
 const Collections: NextPage = () => {
   const { data: session, status } = useSession();
