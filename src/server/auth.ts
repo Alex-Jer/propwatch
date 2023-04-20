@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.access_token;
-        token.photo_url = user.photo_url;
+        token.photo_url = `${env.NEXT_PUBLIC_API_URL}${user.photo_url}`;
       }
       return token;
     },

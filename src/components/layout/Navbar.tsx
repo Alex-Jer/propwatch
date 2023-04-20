@@ -89,7 +89,7 @@ export function NavbarSearch({ opened, setOpened }: Props) {
 
       <Navbar.Section className={classes.section}>
         <UserButton
-          image="https://i.imgur.com/fGxgcDF.png"
+          image={session?.user?.photo_url || ""}
           name={session?.user?.name || "User"}
           icon={<IconSelector size="0.9rem" stroke={1.5} />}
         />
