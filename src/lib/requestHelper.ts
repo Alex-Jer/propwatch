@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { env } from "~/env.mjs";
 
 const API_URL = env.NEXT_PUBLIC_API_URL;
@@ -20,7 +20,7 @@ export const axiosReq = async (
   accessToken: string | null = null,
   formData: FormData | null = null,
   hasFiles = false,
-  isAuth = false
+  isAuthRoute = false
 ) => {
   const headers = {
     Accept: "application/json",
@@ -32,7 +32,7 @@ export const axiosReq = async (
     headers.Authorization = `Bearer ${accessToken}`;
   }
 
-  const url = isAuth ? `${API_URL}/${route}` : `${API_URL}/api/${route}`;
+  const url = isAuthRoute ? `${API_URL}/${route}` : `${API_URL}/api/${route}`;
   let res;
 
   switch (method) {
