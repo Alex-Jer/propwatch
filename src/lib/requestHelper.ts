@@ -55,7 +55,7 @@ export const makeRequest = async (
         break;
       }
       /* eslint-disable-next-line no-param-reassign */
-      // formData._method = method.toUpperCase()iiuu;
+      // formData._method = method.toUpperCase();
       formData.append("_method", method.toUpperCase());
       res = await axios.post(url, formData, { headers });
       break;

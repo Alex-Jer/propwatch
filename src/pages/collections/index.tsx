@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
+import { CollectionCard } from "~/components/CollectionCard";
 import { useCollections } from "~/hooks/useQueries";
 import { Collection } from "~/types";
 
@@ -20,6 +21,24 @@ const Collections: NextPage = () => {
     console.log("Error!");
   }
 
+  function renderCollections(collections: Collection[]) {
+    return (
+      <span className="grid grid-cols-1 gap-4">
+        {collections.map((collection: Collection) => (
+          <div className="cursor-pointer">
+            <CollectionCard
+              key={collection.id}
+              date={collection.id}
+              image={""}
+              title={collection.name}
+              category={collection.description}
+            />
+          </div>
+        ))}
+      </span>
+    );
+  }
+
   return (
     <>
       <Head>
@@ -27,15 +46,7 @@ const Collections: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>
-        <h1>My Collections</h1>
-        {collections?.map((collection: Collection) => (
-          <div key={collection.id}>
-            <h3 className="text-2xl">{collection.name}</h3>
-            <p>{collection.description}</p>
-          </div>
-        ))}
-      </div>
+      {renderCollections(collections)}
     </>
   );
 };
