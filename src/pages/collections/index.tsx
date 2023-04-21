@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
+import Link from "next/link";
 import { CollectionCard } from "~/components/CollectionCard";
 import { useCollections } from "~/hooks/useQueries";
 import { Collection } from "~/types";
@@ -24,8 +25,8 @@ const Collections: NextPage = () => {
   function renderCollections(collections: Collection[]) {
     return (
       <span className="grid grid-cols-1 gap-4">
-        {collections.map((collection: Collection) => (
-          <div className="cursor-pointer">
+        {collections?.map((collection: Collection) => (
+          <Link href={`/collections/${collection.id}`}>
             <CollectionCard
               key={collection.id}
               date={collection.id}
@@ -33,7 +34,7 @@ const Collections: NextPage = () => {
               title={collection.name}
               category={collection.description}
             />
-          </div>
+          </Link>
         ))}
       </span>
     );
