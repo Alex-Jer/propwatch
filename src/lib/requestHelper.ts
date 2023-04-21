@@ -14,13 +14,12 @@ const API_URL = env.NEXT_PUBLIC_API_URL;
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-export const axiosReq = async (
+export const makeRequest = async (
   route: string,
   method: Method = "GET",
   accessToken: string | null = null,
   formData: FormData | null = null,
-  hasFiles = false,
-  isAuthRoute = false
+  hasFiles = false
 ) => {
   const headers = {
     Accept: "application/json",
@@ -32,7 +31,8 @@ export const axiosReq = async (
     headers.Authorization = `Bearer ${accessToken}`;
   }
 
-  const url = isAuthRoute ? `${API_URL}/${route}` : `${API_URL}/api/${route}`;
+  const url = `${API_URL}/api/${route}`;
+
   let res;
 
   switch (method) {
@@ -70,13 +70,42 @@ export const axiosReq = async (
       break;
   }
 
-  return res?.data;
+  return res.data;
 };
 
-export const axiosReqPage = async (pageUrl: string) => {
+export const login = async (email: string, password: string, deviceName: string) => {
+  const url = `${API_URL}/login`;
+  const formData = new FormData();
+
+  formData.append("email", email);
+  formData.append("password", password);
+  formData.append("device_name", deviceName);
+
   const headers = {
     Accept: "application/json",
-    Authorization: "",
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
+
+  const res = await axios.post(url, formData, { headers });
+
+  return res.data;
+};
+
+export const logout = async (accessToken: string) => {
+  const url = `${API_URL}/logout`;
+  const headers = {
+    Accept: "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  const res = await axios.delete(url, { headers });
+
+  return res.data;
+};
+
+export const pageRequest = async (pageUrl: string) => {
+  const headers = {
+    Accept: "application/json",
   };
 
   const res = await axios.get(pageUrl, { headers });

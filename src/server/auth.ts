@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import DiscordProvider from "next-auth/providers/discord";
 
 import { env } from "~/env.mjs";
-import { axiosReq } from "~/lib/requestHelper";
+import { login } from "~/lib/requestHelper";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -82,20 +82,14 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const loginData = new FormData();
+        const res = await login(credentials.email, credentials.password, "web");
 
-        loginData.append("email", credentials.email);
-        loginData.append("password", credentials.password);
-        loginData.append("device_name", "web");
+        const user = res && {
+          ...res.user,
+          access_token: res.access_token,
+        };
 
-        const res = await axiosReq("login", "POST", null, loginData, false, true);
-
-        return (
-          res && {
-            ...res.user,
-            access_token: res.access_token,
-          }
-        );
+        return user;
       },
     }),
   ],

@@ -14,7 +14,7 @@ import {
 import { useForm } from "@mantine/form";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
-import { axiosReq } from "~/lib/requestHelper";
+import { logout } from "~/lib/requestHelper";
 
 type Inputs = {
   email: string;
@@ -47,9 +47,12 @@ export function LoginForm() {
     setIsLoading(false);
   };
 
-  const logout = async () => {
+  const handleLogout = async () => {
+    if (!session) return;
+
     await signOut({ redirect: false });
-    await axiosReq("logout", "DELETE", session?.user.access_token, null, false, true);
+    await logout(session.user.access_token);
+
     console.log("Logged out");
   };
 
@@ -84,7 +87,7 @@ export function LoginForm() {
           <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
             Sign in
           </Button>
-          <Button fullWidth mt="sm" onClick={logout} variant="default">
+          <Button fullWidth mt="sm" variant="default" onClick={handleLogout} disabled={status !== "authenticated"}>
             Log out
           </Button>
         </Paper>

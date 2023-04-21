@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Session } from "next-auth";
-import { axiosReq } from "~/lib/requestHelper";
+import { makeRequest } from "~/lib/requestHelper";
 import { UseCollectionsProps } from "~/types";
 
 const fetchCollections = async (session: Session) => {
-  const response = await axiosReq("me/lists", "GET", session?.user.access_token);
+  const response = await makeRequest("me/lists", "GET", session?.user.access_token);
   return response.data;
 };
 
