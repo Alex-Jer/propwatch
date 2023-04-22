@@ -13,6 +13,12 @@ export type UseCollectionsProps = {
   status: string;
 };
 
+export type UseCollectionProps = {
+  session: Session;
+  status: string;
+  collectionId: string;
+};
+
 export type ShellProps = {
   children: ReactNode;
 };
