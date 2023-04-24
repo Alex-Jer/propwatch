@@ -3,6 +3,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { HeaderActionProps } from "~/types";
+import { useSession } from "next-auth/react";
 
 const HEADER_HEIGHT = rem(60);
 
@@ -10,6 +11,7 @@ export function NavHeader({ links }: HeaderActionProps) {
   const { classes } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   const items = links.map((link) => {
     // const menuItems = link.links?.map((item) => <Menu.Item key={item.link}>{item.label}</Menu.Item>);
@@ -41,6 +43,27 @@ export function NavHeader({ links }: HeaderActionProps) {
     router.push("/auth/login");
   };
 
+  const renderAuthButtons = () => {
+    if (session) {
+      return (
+        <>
+          <Button variant="default" onClick={redirectToLogin}>
+            Log out
+          </Button>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Button variant="default" onClick={redirectToLogin}>
+          Log in
+        </Button>
+        <Button>Sign up</Button>
+      </>
+    );
+  };
+
   return (
     <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }} mb={20} className={classes.header}>
       <Container className={classes.inner} fluid>
@@ -55,10 +78,7 @@ export function NavHeader({ links }: HeaderActionProps) {
           {items}
         </Group>
         <Group spacing={5} className={classes.links}>
-          <Button variant="default" onClick={redirectToLogin}>
-            Log in
-          </Button>
-          <Button>Sign up</Button>
+          {renderAuthButtons()}
         </Group>
       </Container>
     </Header>
