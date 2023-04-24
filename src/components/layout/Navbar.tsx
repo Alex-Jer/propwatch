@@ -26,24 +26,14 @@ import {
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useCollections } from "~/hooks/useQueries";
+import { Collection } from "~/types";
 import { UserButton } from "./UserButton";
 
 const links = [
   { icon: IconListNumbers, label: "All collections", url: "/collections", notifications: 3 },
   { icon: IconInbox, label: "Unsorted", url: "", notifications: 4 },
   { icon: IconTrash, url: "", label: "Trash" },
-];
-
-const collections = [
-  { label: "Sales" },
-  { label: "Deliveries" },
-  { label: "Discounts" },
-  { label: "Profits" },
-  { label: "Reports" },
-  { label: "Orders" },
-  { label: "Events" },
-  { label: "Debts" },
-  { label: "Customers" },
 ];
 
 type Props = {
@@ -55,7 +45,17 @@ export function NavbarSearch({ opened, setOpened }: Props) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const { classes } = useStyles();
   const theme = useMantineTheme();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  const { data: collections, isLoading, isError } = useCollections({ session: session!, status });
+
+  if (isLoading) {
+    console.log("Loading...");
+  }
+
+  if (isError) {
+    console.log("Error!");
+  }
 
   const light = colorScheme === "light";
 
@@ -75,13 +75,15 @@ export function NavbarSearch({ opened, setOpened }: Props) {
     </Link>
   ));
 
-  const collectionLinks = collections.map((collection) => (
-    <UnstyledButton key={collection.label} className={classes.mainLink}>
-      <div className={classes.mainLinkInner}>
-        <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
-        <span>{collection.label}</span>
-      </div>
-    </UnstyledButton>
+  const collectionLinks = collections.map((collection: Collection) => (
+    <Link href={`/collections/${collection.id}`}>
+      <UnstyledButton key={collection.name} className={classes.mainLink}>
+        <div className={classes.mainLinkInner}>
+          <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
+          <span>{collection.name}</span>
+        </div>
+      </UnstyledButton>
+    </Link>
   ));
 
   return (
