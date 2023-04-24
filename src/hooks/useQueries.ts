@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Session } from "next-auth";
 import { makeRequest } from "~/lib/requestHelper";
-import { UseCollectionProps, UseCollectionsProps, UsePropertyProps } from "~/types";
+import { Property, UseCollectionProps, UseCollectionsProps, UsePropertyProps } from "~/types";
 
 const fetchCollections = async (session: Session) => {
   const response = await makeRequest("me/lists", "GET", session?.user.access_token);
@@ -35,7 +35,7 @@ export const useCollection = ({ session, status, collectionId }: UseCollectionPr
 };
 
 export const useProperty = ({ session, status, propertyId }: UsePropertyProps) => {
-  return useQuery({
+  return useQuery<Property>({
     queryKey: ["property", propertyId],
     queryFn: () => fetchProperty(session, propertyId),
     enabled: status === "authenticated",

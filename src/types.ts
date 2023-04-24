@@ -8,21 +8,6 @@ export type Collection = {
   description: string;
 };
 
-export type CollectionProperty = {
-  id: string;
-  quantity: number;
-  listing_type: string;
-  title: string;
-  cover_url: string;
-  type: string;
-  typology: string;
-  wc: number;
-  rating: number;
-  current_price_sale: number;
-  current_price_rent: number;
-  status: string;
-};
-
 export type Property = {
   id: string;
   quantity: number;
@@ -39,6 +24,26 @@ export type Property = {
   current_price_sale: number;
   current_price_rent: number;
   status: string;
+};
+
+export type CollectionProperty = {
+  id: string;
+  quantity: number;
+  listing_type: string;
+  title: string;
+  cover_url: string;
+  type: string;
+  typology: string;
+  wc: number;
+  rating: number;
+  current_price_sale: number;
+  current_price_rent: number;
+  status: string;
+};
+
+export type CollectionData = {
+  collection: Collection;
+  properties: CollectionProperty[];
 };
 
 export type UseCollectionsProps = {
