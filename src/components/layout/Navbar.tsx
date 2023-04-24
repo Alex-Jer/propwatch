@@ -25,12 +25,13 @@ import {
   IconFolder,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { UserButton } from "./UserButton";
 
 const links = [
-  { icon: IconListNumbers, label: "All collections", notifications: 3 },
-  { icon: IconInbox, label: "Unsorted", notifications: 4 },
-  { icon: IconTrash, label: "Trash" },
+  { icon: IconListNumbers, label: "All collections", url: "/collections", notifications: 3 },
+  { icon: IconInbox, label: "Unsorted", url: "", notifications: 4 },
+  { icon: IconTrash, url: "", label: "Trash" },
 ];
 
 const collections = [
@@ -59,17 +60,19 @@ export function NavbarSearch({ opened, setOpened }: Props) {
   const light = colorScheme === "light";
 
   const mainLinks = links.map((link) => (
-    <UnstyledButton key={link.label} className={classes.mainLink}>
-      <div className={classes.mainLinkInner}>
-        <link.icon size={20} className={classes.mainLinkIcon} stroke={1.5} />
-        <span>{link.label}</span>
-      </div>
-      {link.notifications && (
-        <Badge size="sm" variant="filled" className={classes.mainLinkBadge}>
-          {link.notifications}
-        </Badge>
-      )}
-    </UnstyledButton>
+    <Link href={link.url}>
+      <UnstyledButton key={link.label} className={classes.mainLink}>
+        <div className={classes.mainLinkInner}>
+          <link.icon size={20} className={classes.mainLinkIcon} stroke={1.5} />
+          <span>{link.label}</span>
+        </div>
+        {link.notifications && (
+          <Badge size="sm" variant="filled" className={classes.mainLinkBadge}>
+            {link.notifications}
+          </Badge>
+        )}
+      </UnstyledButton>
+    </Link>
   ));
 
   const collectionLinks = collections.map((collection) => (
