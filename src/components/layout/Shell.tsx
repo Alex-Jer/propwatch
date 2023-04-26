@@ -7,8 +7,6 @@ import { NavbarSearch } from "./Navbar";
 const links = [
   { link: "/collections", label: "My Collections", links: [] },
   { link: "/about", label: "About", links: [] },
-  { link: "/pricing", label: "Pricing", links: [] },
-  { link: "/support", label: "Support", links: [] },
 ];
 
 const Shell = ({ children }: ShellProps) => {

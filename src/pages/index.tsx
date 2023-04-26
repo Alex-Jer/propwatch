@@ -5,10 +5,7 @@ import { NavHeader } from "~/components/layout/Header";
 
 const links = [
   { link: "/collections", label: "My Collections", links: [] },
-  { link: "/learn", label: "Learn", links: [] },
   { link: "/about", label: "About", links: [] },
-  { link: "/pricing", label: "Pricing", links: [] },
-  { link: "/support", label: "Support", links: [] },
 ];
 
 const Home: NextPage = () => {
