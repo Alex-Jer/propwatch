@@ -27,7 +27,7 @@ import {
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useCollections } from "~/hooks/useQueries";
-import { Collection } from "~/types";
+import { type Collection } from "~/types";
 import { UserButton } from "./UserButton";
 
 const links = [
@@ -47,7 +47,7 @@ export function NavbarSearch({ opened, setOpened }: Props) {
   const theme = useMantineTheme();
   const { data: session, status } = useSession();
 
-  const { data: collections, isLoading, isError } = useCollections({ session: session!, status });
+  const { data: collections, isLoading, isError } = useCollections({ session, status });
 
   if (isLoading) {
     console.log("Loading...");
@@ -60,7 +60,7 @@ export function NavbarSearch({ opened, setOpened }: Props) {
   const light = colorScheme === "light";
 
   const mainLinks = links.map((link) => (
-    <Link href={link.url}>
+    <Link href={link.url} key={link.label}>
       <UnstyledButton key={link.label} className={classes.mainLink}>
         <div className={classes.mainLinkInner}>
           <link.icon size={20} className={classes.mainLinkIcon} stroke={1.5} />
@@ -76,7 +76,7 @@ export function NavbarSearch({ opened, setOpened }: Props) {
   ));
 
   const collectionLinks = collections?.map((collection: Collection) => (
-    <Link href={`/collections/${collection.id}`}>
+    <Link href={`/collections/${collection.id}`} key={collection.id}>
       <UnstyledButton key={collection.name} className={classes.mainLink}>
         <div className={classes.mainLinkInner}>
           <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
