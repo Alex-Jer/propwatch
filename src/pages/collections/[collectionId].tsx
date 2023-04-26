@@ -13,7 +13,7 @@ const Collection: NextPage = () => {
 
   const { data: session, status } = useSession();
   const { data, isLoading, isError } = useCollection({
-    session: session!,
+    session,
     status,
     collectionId: String(collectionId ?? ""),
   });

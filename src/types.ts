@@ -1,6 +1,13 @@
-import { UnstyledButtonProps } from "@mantine/core";
-import { Session } from "next-auth";
-import { ReactNode } from "react";
+import { type UnstyledButtonProps } from "@mantine/core";
+import { type ReactNode } from "react";
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  photo_url: string;
+  blocked: boolean;
+};
 
 export type Collection = {
   id: string;
@@ -26,6 +33,30 @@ export type Property = {
   status: string;
 };
 
+export type Links = {
+  first: string;
+  last: string;
+  prev: string;
+  next: string;
+};
+
+export type Link = {
+  active: boolean;
+  label: string;
+  url: string;
+};
+
+export type Meta = {
+  current_page: number;
+  from: number;
+  last_page: number;
+  links: Link[];
+  path: string;
+  per_page: number;
+  to: number;
+  total: number;
+};
+
 export type CollectionProperty = {
   id: string;
   quantity: number;
@@ -44,23 +75,6 @@ export type CollectionProperty = {
 export type CollectionData = {
   collection: Collection;
   properties: CollectionProperty[];
-};
-
-export type UseCollectionsProps = {
-  session: Session;
-  status: string;
-};
-
-export type UseCollectionProps = {
-  session: Session;
-  status: string;
-  collectionId: string;
-};
-
-export type UsePropertyProps = {
-  session: Session;
-  status: string;
-  propertyId: string;
 };
 
 export type ShellProps = {

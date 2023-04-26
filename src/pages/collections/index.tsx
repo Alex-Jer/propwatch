@@ -4,11 +4,11 @@ import Head from "next/head";
 import Link from "next/link";
 import { CollectionCard } from "~/components/CollectionCard";
 import { useCollections } from "~/hooks/useQueries";
-import { Collection } from "~/types";
+import { type Collection } from "~/types";
 
 const Collections: NextPage = () => {
   const { data: session, status } = useSession();
-  const { data: collections, isLoading, isFetching, error } = useCollections({ session: session!, status });
+  const { data: collections, isLoading, isFetching, error } = useCollections({ session, status });
 
   if (isLoading) {
     console.log("Loading...");
@@ -22,11 +22,11 @@ const Collections: NextPage = () => {
     console.log("Error!");
   }
 
-  function renderCollections(collections: Collection[]) {
+  function renderCollections(collections: Collection[] | undefined) {
     return (
       <span className="grid grid-cols-1 gap-4">
         {collections?.map((collection: Collection) => (
-          <Link href={`/collections/${collection.id}`}>
+          <Link href={`/collections/${collection.id}`} key={collection.id}>
             <CollectionCard
               key={collection.id}
               date={collection.id}

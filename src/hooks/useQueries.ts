@@ -1,15 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Session } from "next-auth";
 import { makeRequest } from "~/lib/requestHelper";
-import {
-  type Property,
-  type UseCollectionProps,
-  type UseCollectionsProps,
-  type UsePropertyProps,
-  type Links,
-  type Meta,
-  type Collection,
-} from "~/types";
+import { type Property, type Links, type Meta, type Collection } from "~/types";
 
 type CollectionsResponse = {
   data: Collection[];
@@ -26,18 +18,35 @@ type PropertyResponse = {
   data: Property;
 };
 
-const fetchCollections = async (session: Session) => {
+type UseCollectionsProps = {
+  session: Session | null;
+  status: string;
+};
+
+type UseCollectionProps = {
+  session: Session | null;
+  status: string;
+  collectionId: string;
+};
+
+type UsePropertyProps = {
+  session: Session | null;
+  status: string;
+  propertyId: string;
+};
+
+const fetchCollections = async (session: Session | null) => {
   const response = (await makeRequest("me/lists", "GET", session?.user.access_token)) as CollectionsResponse;
   return response.data;
 };
 
-const fetchCollection = async (session: Session, id: string) => {
+const fetchCollection = async (session: Session | null, id: string) => {
   // TODO: fix API response
   const response = (await makeRequest(`me/lists/${id}`, "GET", session?.user.access_token)) as CollectionResponse;
   return response;
 };
 
-const fetchProperty = async (session: Session, id: string) => {
+const fetchProperty = async (session: Session | null, id: string) => {
   const response = (await makeRequest(`me/properties/${id}`, "GET", session?.user.access_token)) as PropertyResponse;
   return response.data;
 };
