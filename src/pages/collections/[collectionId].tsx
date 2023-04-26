@@ -1,11 +1,11 @@
-import { NextPage } from "next";
+import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { PropertyCard } from "~/components/PropertyCard";
 import { useCollection } from "~/hooks/useQueries";
-import { CollectionProperty } from "~/types";
+import { type CollectionProperty } from "~/types";
 
 const Collection: NextPage = () => {
   const router = useRouter();
@@ -40,7 +40,7 @@ const Collection: NextPage = () => {
         {properties.map((property: CollectionProperty) => {
           const url = `/properties/${property.id}`;
           return (
-            <Link href={url}>
+            <Link href={url} key={property.id}>
               <PropertyCard image="" title={property.title} author={property.type} key={property.id} />
             </Link>
           );

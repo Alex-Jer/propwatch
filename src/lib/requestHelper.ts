@@ -1,5 +1,6 @@
-import axios from "axios";
+import axios, { type AxiosError } from "axios";
 import { env } from "~/env.mjs";
+import { type User } from "~/types";
 
 const API_URL = env.NEXT_PUBLIC_API_URL;
 
@@ -13,6 +14,15 @@ const API_URL = env.NEXT_PUBLIC_API_URL;
 // };
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+type LoginResponseData = {
+  user: User;
+  access_token: string;
+};
+
+type LogoutResponseData = {
+  message: string;
+};
 
 export const makeRequest = async (
   route: string,
@@ -60,7 +70,7 @@ export const makeRequest = async (
       res = await axios.post(url, formData, { headers });
       break;
     case "DELETE":
-      res = await axios.delete(url, { headers }).catch((error) => {
+      res = await axios.delete(url, { headers }).catch((error: AxiosError) => {
         return error.response;
       });
       break;
@@ -70,7 +80,11 @@ export const makeRequest = async (
       break;
   }
 
-  return res.data;
+  if (res) {
+    return res.data;
+  }
+
+  return null;
 };
 
 export const login = async (email: string, password: string, deviceName: string) => {
@@ -88,7 +102,7 @@ export const login = async (email: string, password: string, deviceName: string)
 
   const res = await axios.post(url, formData, { headers });
 
-  return res.data;
+  return res.data as LoginResponseData;
 };
 
 export const logout = async (accessToken: string) => {
@@ -100,7 +114,9 @@ export const logout = async (accessToken: string) => {
 
   const res = await axios.delete(url, { headers });
 
-  return res.data;
+  console.log("res.data", res.data);
+
+  return res.data as LogoutResponseData;
 };
 
 export const pageRequest = async (pageUrl: string) => {

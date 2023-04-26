@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { type GetServerSidePropsContext } from "next";
 import { getServerSession, type DefaultSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -55,7 +51,7 @@ export const authOptions: NextAuthOptions = {
   //   },
   // },
   callbacks: {
-    async jwt({ token, user }) {
+    jwt({ token, user }) {
       if (user) {
         token.id = user.access_token;
         token.photo_url = `${env.NEXT_PUBLIC_API_URL}${user.photo_url}`;
@@ -63,7 +59,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    async session({ session, token }) {
+    session({ session, token }) {
       session.user.access_token = token.id as string;
       session.user.photo_url = token.photo_url as string;
       return session;
