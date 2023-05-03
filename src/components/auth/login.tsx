@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { logout } from "~/lib/requestHelper";
 
@@ -23,6 +24,7 @@ type Inputs = {
 export function LoginForm() {
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<Inputs>({
     initialValues: { email: "test123@example.com", password: "123456" },
@@ -42,17 +44,15 @@ export function LoginForm() {
       return;
     }
 
-    console.log(`Welcome back ${values.email}`);
+    void router.push("/collections");
+
     setIsLoading(false);
   };
 
   const handleLogout = async () => {
     if (!session) return;
-
     await signOut({ redirect: false });
     await logout(session.user.access_token);
-
-    console.log("Logged out");
   };
 
   return (
