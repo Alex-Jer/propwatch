@@ -2,7 +2,7 @@ import { Burger, Button, Container, Group, Header, createStyles, rem } from "@ma
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { HeaderActionProps } from "~/types";
+import { type HeaderActionProps } from "~/types";
 import { useSession } from "next-auth/react";
 
 const HEADER_HEIGHT = rem(60);
@@ -11,7 +11,7 @@ export function NavHeader({ links }: HeaderActionProps) {
   const { classes } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const items = links.map((link) => {
     // const menuItems = link.links?.map((item) => <Menu.Item key={item.link}>{item.label}</Menu.Item>);
@@ -40,7 +40,7 @@ export function NavHeader({ links }: HeaderActionProps) {
   });
 
   const redirectToLogin = () => {
-    router.push("/auth/login");
+    void router.push("/auth/login");
   };
 
   const renderAuthButtons = () => {
