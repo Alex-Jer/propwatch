@@ -10,15 +10,7 @@ const Property: NextPage = () => {
   const { propertyId } = router.query;
 
   const { data: session, status } = useSession();
-  const {
-    data: property,
-    isLoading,
-    isError,
-  } = useProperty({
-    session: session!,
-    status,
-    propertyId: String(propertyId ?? ""),
-  });
+  const { data: property, isLoading, isError } = useProperty({ session, status, propertyId: String(propertyId ?? "") });
 
   if (isLoading) {
     return <div>Loading...</div>;

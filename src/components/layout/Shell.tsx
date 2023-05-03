@@ -1,6 +1,6 @@
 import { AppShell, useMantineTheme } from "@mantine/core";
 import { useState } from "react";
-import { ShellProps } from "~/types";
+import { type ShellProps } from "~/types";
 import { NavHeader } from "./Header";
 import { NavbarSearch } from "./Navbar";
 

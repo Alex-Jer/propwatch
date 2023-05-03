@@ -1,6 +1,6 @@
 import { UnstyledButton, Group, Avatar, Text, createStyles } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
-import { UserButtonProps } from "~/types";
+import { type UserButtonProps } from "~/types";
 
 const useStyles = createStyles((theme) => ({
   user: {

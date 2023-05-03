@@ -10,7 +10,6 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-
 import { useForm } from "@mantine/form";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
@@ -87,7 +86,13 @@ export function LoginForm() {
           <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
             Sign in
           </Button>
-          <Button fullWidth mt="sm" variant="default" onClick={handleLogout} disabled={status !== "authenticated"}>
+          <Button
+            fullWidth
+            mt="sm"
+            variant="default"
+            onClick={() => void handleLogout()}
+            disabled={status !== "authenticated"}
+          >
             Log out
           </Button>
         </Paper>
