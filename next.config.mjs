@@ -20,5 +20,10 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+
+  images: {
+    // TODO: Temporary placeholder domain
+    domains: ["placehold.it"],
+  },
 };
 export default config;

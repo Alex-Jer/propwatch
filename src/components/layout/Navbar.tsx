@@ -45,8 +45,8 @@ export function NavbarSearch({ opened, setOpened }: Props) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const { classes } = useStyles();
   const theme = useMantineTheme();
-  const { data: session, status } = useSession();
 
+  const { data: session, status } = useSession();
   const { data: collections, isLoading, isError } = useCollections({ session, status });
 
   if (isLoading) {

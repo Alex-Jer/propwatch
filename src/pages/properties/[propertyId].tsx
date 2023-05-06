@@ -1,9 +1,11 @@
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useProperty } from "~/hooks/useQueries";
 import { Property } from "~/types";
+import { CardsCarousel } from "~/components/CardsCarousel";
 
 const Property: NextPage = () => {
   const router = useRouter();
@@ -20,19 +22,36 @@ const Property: NextPage = () => {
     return <div>Error loading property.</div>;
   }
 
-  const images: string[] = [
-    "https://placehold.it/300x300?text=Image+1",
-    "https://placehold.it/300x300?text=Image+2",
-    "https://placehold.it/300x300?text=Image+3",
-    "https://placehold.it/300x300?text=Image+4",
-    "https://placehold.it/300x300?text=Image+5",
+  const images = [
+    {
+      image:
+        "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1559494007-9f5847c49d94?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1608481337062-4093bf3ed404?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
+    },
   ];
 
   const renderHeader = (property: Property) => {
     return (
       <>
-        {/* <div>{property.title}</div> */}
-        {/* render the title on the left, and the price on the right */}
         <div className="flex justify-between">
           <h1>{property.title}</h1>
           {property.current_price_sale ? (
@@ -49,17 +68,20 @@ const Property: NextPage = () => {
     return (
       <>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="col-span-1  md:col-span-2">
-            <img src="https://placehold.it/500x300" alt="Main Image" width={840} height={560} className="rounded-lg" />
+          <div className="col-span-1 md:col-span-2">
+            <Image
+              src="https://placehold.it/500x300"
+              alt="Main Image"
+              width={1000}
+              height={600}
+              className="rounded-lg"
+            />
           </div>
-          <div className="col-span-1 md:col-span-1">
-            <div className="grid grid-cols-4 gap-2">
-              {images.map((image, index) => (
-                <div key={index} className="relative h-24">
-                  <img src={image} alt="" className="rounded-lg" />
-                </div>
-              ))}
-            </div>
+        </div>
+
+        <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="col-span-1 md:col-span-2">
+            <CardsCarousel data={images} />
           </div>
         </div>
       </>
@@ -74,7 +96,6 @@ const Property: NextPage = () => {
       </Head>
 
       {renderHeader(property)}
-
       {renderGallery()}
 
       <div className="mt-4">
