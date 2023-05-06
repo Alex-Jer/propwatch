@@ -20,6 +20,14 @@ const Property: NextPage = () => {
     return <div>Error loading property.</div>;
   }
 
+  const images: string[] = [
+    "https://placehold.it/300x300?text=Image+1",
+    "https://placehold.it/300x300?text=Image+2",
+    "https://placehold.it/300x300?text=Image+3",
+    "https://placehold.it/300x300?text=Image+4",
+    "https://placehold.it/300x300?text=Image+5",
+  ];
+
   const renderHeader = (property: Property) => {
     return (
       <>
@@ -37,6 +45,27 @@ const Property: NextPage = () => {
     );
   };
 
+  const renderGallery = () => {
+    return (
+      <>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="col-span-1  md:col-span-2">
+            <img src="https://placehold.it/500x300" alt="Main Image" width={840} height={560} className="rounded-lg" />
+          </div>
+          <div className="col-span-1 md:col-span-1">
+            <div className="grid grid-cols-4 gap-2">
+              {images.map((image, index) => (
+                <div key={index} className="relative h-24">
+                  <img src={image} alt="" className="rounded-lg" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
   return (
     <>
       <Head>
@@ -45,6 +74,13 @@ const Property: NextPage = () => {
       </Head>
 
       {renderHeader(property)}
+
+      {renderGallery()}
+
+      <div className="mt-4">
+        <h2 className="text-xl">Description</h2>
+        <div>{property.description}</div>
+      </div>
     </>
   );
 };
