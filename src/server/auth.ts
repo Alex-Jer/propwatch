@@ -1,7 +1,6 @@
 import { type GetServerSidePropsContext } from "next";
 import { getServerSession, type DefaultSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import DiscordProvider from "next-auth/providers/discord";
 
 import { env } from "~/env.mjs";
 import { login } from "~/lib/requestHelper";
@@ -23,7 +22,6 @@ declare module "next-auth" {
 
   interface Session extends DefaultSession {
     user: User & DefaultSession["user"];
-    // access_token: string;
   }
 
   type LoginResponse = {
@@ -39,17 +37,6 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  // callbacks: {
-  //   session({ session, user }) {
-  //     console.log("session", session);
-  //     console.log("user", user);
-  //     if (session.user) {
-  //       session.user.id = user.id;
-  //       // session.user.role = user.role; <-- put other properties on the session here
-  //     }
-  //     return session;
-  //   },
-  // },
   callbacks: {
     jwt({ token, user }) {
       if (user) {
@@ -66,10 +53,6 @@ export const authOptions: NextAuthOptions = {
     },
   },
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
