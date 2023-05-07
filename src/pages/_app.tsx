@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Shell from "~/components/layout/Shell";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import NextNProgress from "nextjs-progressbar";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <MantineProvider theme={{ colorScheme }} emotionCache={cache} withGlobalStyles withNormalizeCSS>
           <QueryClientProvider client={queryClient}>
+            <NextNProgress />
             {isAppRoute ? (
               <Shell>
                 <Component {...pageProps} />
