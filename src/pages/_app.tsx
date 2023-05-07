@@ -29,7 +29,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <MantineProvider theme={{ colorScheme }} emotionCache={cache} withGlobalStyles withNormalizeCSS>
           <QueryClientProvider client={queryClient}>
-            <NextNProgress />
+            <NextNProgress options={{ showSpinner: false }} />
             {isAppRoute ? (
               <Shell>
                 <Component {...pageProps} />
