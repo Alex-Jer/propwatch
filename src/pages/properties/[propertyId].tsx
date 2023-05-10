@@ -45,7 +45,7 @@ const Property: NextPage = () => {
   };
 
   const renderGallery = () => {
-    const coverUrl = `${env.NEXT_PUBLIC_API_URL}/${photos[0].url}`;
+    const coverUrl = `${property.cover_url}`;
 
     return (
       <>
