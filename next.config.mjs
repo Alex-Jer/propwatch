@@ -1,5 +1,7 @@
 // @ts-check
 
+import { env } from "./src/env.mjs";
+
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
  * This is especially useful for Docker builds.
@@ -23,7 +25,7 @@ const config = {
 
   images: {
     // TODO: Temporary placeholder domain
-    domains: ["placehold.it"],
+    domains: ["placehold.it", "localhost", env.NEXT_PUBLIC_API_URL],
   },
 };
 export default config;

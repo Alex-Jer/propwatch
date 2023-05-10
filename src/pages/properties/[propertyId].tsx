@@ -8,6 +8,7 @@ import { Property } from "~/types";
 import { CardsCarousel } from "~/components/CardsCarousel";
 import Map, { Marker } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { env } from "~/env.mjs";
 
 const Property: NextPage = () => {
   const router = useRouter();
@@ -24,32 +25,9 @@ const Property: NextPage = () => {
     return <div>Error loading property.</div>;
   }
 
-  const images = [
-    {
-      image:
-        "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1559494007-9f5847c49d94?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1608481337062-4093bf3ed404?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
-    },
-  ];
+  const {
+    media: { photos },
+  } = property;
 
   const renderHeader = (property: Property) => {
     return (
@@ -67,23 +45,19 @@ const Property: NextPage = () => {
   };
 
   const renderGallery = () => {
+    const coverUrl = `${env.NEXT_PUBLIC_API_URL}/${photos[0].url}`;
+
     return (
       <>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="col-span-1 md:col-span-2">
-            <Image
-              src="https://placehold.it/500x300"
-              alt="Main Image"
-              width={1000}
-              height={600}
-              className="rounded-lg"
-            />
+            <Image src={coverUrl} alt="Main Image" width={1000} height={600} className="rounded-lg" />
           </div>
         </div>
 
         <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="col-span-1 md:col-span-2">
-            <CardsCarousel data={images} />
+            <CardsCarousel data={photos} />
           </div>
         </div>
       </>
@@ -104,6 +78,7 @@ const Property: NextPage = () => {
       <>
         <h2 className="mt-4 text-3xl">Location</h2>
         <div className="h-3/6 w-auto">
+          {/* TODO: token */}
           <Map
             mapboxAccessToken="pk.eyJ1IjoiYWxleGplciIsImEiOiJjbGhkbHlqZ2UwbnJ1M2ZudmtuMnZuZnJwIn0.H-iqt45XSgHUA3wU35eQ7Q"
             initialViewState={{

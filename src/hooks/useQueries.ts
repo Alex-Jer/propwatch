@@ -48,6 +48,7 @@ const fetchCollection = async (session: Session | null, id: string) => {
 
 const fetchProperty = async (session: Session | null, id: string) => {
   const response = (await makeRequest(`me/properties/${id}`, "GET", session?.user.access_token)) as PropertyResponse;
+  console.log("response", response);
   return response.data;
 };
 

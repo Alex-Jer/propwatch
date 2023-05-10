@@ -1,6 +1,7 @@
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
 import { createStyles, Paper, useMantineTheme, rem } from "@mantine/core";
+import { env } from "~/env.mjs";
 
 const useStyles = createStyles(() => ({
   card: {
@@ -19,13 +20,21 @@ type CarouselProps = {
 };
 
 type CardProps = {
-  image: string;
+  url: string;
 };
 
-function Card({ image }: CardProps) {
+function Card({ url }: CardProps) {
   const { classes } = useStyles();
 
-  return <Paper shadow="md" p="xl" radius="md" sx={{ backgroundImage: `url(${image})` }} className={classes.card} />;
+  return (
+    <Paper
+      shadow="md"
+      p="xl"
+      radius="md"
+      sx={{ backgroundImage: `url(${env.NEXT_PUBLIC_API_URL}/${url})` }}
+      className={classes.card}
+    />
+  );
 }
 
 export function CardsCarousel({ data }: CarouselProps) {
@@ -33,7 +42,7 @@ export function CardsCarousel({ data }: CarouselProps) {
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   const slides = data.map((item) => (
-    <Carousel.Slide key={item.image}>
+    <Carousel.Slide key={item.url}>
       <Card {...item} />
     </Carousel.Slide>
   ));
