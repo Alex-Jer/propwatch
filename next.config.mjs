@@ -25,7 +25,7 @@ const config = {
 
   images: {
     // TODO: Temporary placeholder domain
-    domains: ["placehold.it", "localhost", env.NEXT_PUBLIC_API_URL],
+    domains: ["placehold.it", "127.0.0.1", env.NEXT_PUBLIC_API_URL],
   },
 };
 export default config;
