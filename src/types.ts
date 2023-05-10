@@ -13,6 +13,7 @@ export type Collection = {
   id: string;
   name: string;
   description: string;
+  num_properties: number;
 };
 
 export type Property = {

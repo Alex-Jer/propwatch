@@ -29,7 +29,7 @@ const Collections: NextPage = () => {
           <Link href={`/collections/${collection.id}`} key={collection.id}>
             <CollectionCard
               key={collection.id}
-              date={collection.id}
+              date={collection.num_properties.toString() + " properties"}
               image={""}
               title={collection.name}
               category={collection.description}
