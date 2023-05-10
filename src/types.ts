@@ -16,6 +16,14 @@ export type Collection = {
   num_properties: number;
 };
 
+export type CollectionWithProperties = {
+  id: string;
+  name: string;
+  description: string;
+  num_properties: number;
+  properties: CollectionProperties;
+};
+
 export type Property = {
   id: string;
   quantity: number;
@@ -73,9 +81,10 @@ export type CollectionProperty = {
   status: string;
 };
 
-export type CollectionData = {
-  collection: Collection;
-  properties: CollectionProperty[];
+export type CollectionProperties = {
+  data: CollectionProperty[];
+  meta: Meta;
+  links: Links;
 };
 
 export type ShellProps = {

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Session } from "next-auth";
 import { makeRequest } from "~/lib/requestHelper";
-import { type Property, type Links, type Meta, type Collection } from "~/types";
+import { type Property, type Links, type Meta, type Collection, type CollectionWithProperties } from "~/types";
 
 type CollectionsResponse = {
   data: Collection[];
@@ -10,8 +10,7 @@ type CollectionsResponse = {
 };
 
 type CollectionResponse = {
-  list: Collection;
-  properties: Property[];
+  data: CollectionWithProperties;
 };
 
 type PropertyResponse = {

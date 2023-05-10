@@ -26,7 +26,7 @@ const Collection: NextPage = () => {
     return <div>Error loading collection.</div>;
   }
 
-  const { list: collection, properties } = data;
+  const { data: collection } = data;
 
   console.log("properties", data);
 
@@ -64,7 +64,7 @@ const Collection: NextPage = () => {
       <h1>{collection?.name}</h1>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-        {renderProperties(properties.data)}
+        {renderProperties(collection.properties.data)}
       </div>
     </>
   );
