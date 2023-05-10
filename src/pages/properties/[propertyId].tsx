@@ -8,7 +8,7 @@ import { Property } from "~/types";
 import { CardsCarousel } from "~/components/CardsCarousel";
 import Map, { Marker } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { env } from "~/env.mjs";
+import { useEffect, useState } from "react";
 
 const Property: NextPage = () => {
   const router = useRouter();
@@ -16,6 +16,14 @@ const Property: NextPage = () => {
 
   const { data: session, status } = useSession();
   const { data: property, isLoading, isError } = useProperty({ session, status, propertyId: String(propertyId ?? "") });
+
+  const [coverUrl, setCoverUrl] = useState(null);
+
+  useEffect(() => {
+    if (!isLoading && !isError && property) {
+      setCoverUrl(property.cover_url);
+    }
+  }, [isLoading, isError, property]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -34,11 +42,11 @@ const Property: NextPage = () => {
     return (
       <>
         <div className="mb-2 flex justify-between">
-          <h1 className="text-4xl">{property.title}</h1>
+          <h1 className="text-3xl">{property.title}</h1>
           {property.current_price_sale ? (
-            <div className="text-4xl">{property.current_price_sale}€</div>
+            <div className="text-3xl">{property.current_price_sale}€</div>
           ) : (
-            <div className="text-4xl">{property.current_price_rent}€</div>
+            <div className="text-3xl">{property.current_price_rent}€</div>
           )}
         </div>
       </>
@@ -46,19 +54,25 @@ const Property: NextPage = () => {
   };
 
   const renderGallery = () => {
-    const coverUrl = `${property.cover_url}`;
-
+    if (coverUrl == null) return <div>Loading...</div>;
     return (
       <>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="col-span-1 md:col-span-2">
-            <Image src={coverUrl} alt="Main Image" width={1000} height={600} className="rounded-lg" />
+            <Image
+              src={coverUrl}
+              alt="Main Image"
+              width={1000}
+              height={600}
+              /*style={{ maxHeight: 400, objectFit: "contain", backgroundColor: "darkgray" }}*/
+              className="rounded-lg"
+            />
           </div>
         </div>
 
         <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="col-span-1 md:col-span-2">
-            <CardsCarousel data={photos} />
+            <CardsCarousel data={photos} currentUrl={coverUrl} setCover={setCoverUrl} />
           </div>
         </div>
       </>
