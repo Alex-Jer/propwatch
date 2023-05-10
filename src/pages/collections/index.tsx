@@ -30,7 +30,7 @@ const Collections: NextPage = () => {
             <CollectionCard
               key={collection.id}
               date={collection.num_properties.toString() + " properties"}
-              image={""}
+              image={"https://cdn.discordapp.com/attachments/701787191298490448/1105434110849204344/image.png"}
               title={collection.name}
               category={collection.description}
             />

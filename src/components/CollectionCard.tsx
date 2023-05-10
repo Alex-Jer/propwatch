@@ -33,7 +33,7 @@ export function CollectionCard({ image, category, title, date }: CollectionCardP
           <Text className={classes.title} mt="xs" mb="md">
             {title}
           </Text>
-          <Text transform="uppercase" color="dimmed" weight={700} size="xs">
+          <Text transform="uppercase" color="dimmed" weight={500} size="xs">
             {category}
           </Text>
           <Group noWrap spacing="xs">
