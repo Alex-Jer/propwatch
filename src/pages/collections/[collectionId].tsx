@@ -41,7 +41,12 @@ const Collection: NextPage = () => {
           const url = `/properties/${property.id}`;
           return (
             <Link href={url} key={property.id}>
-              <PropertyCard image="" title={property.title} author={property.type} key={property.id} />
+              <PropertyCard
+                image={property.cover_url}
+                title={property.title}
+                author={property.type}
+                key={property.id}
+              />
             </Link>
           );
         })}
