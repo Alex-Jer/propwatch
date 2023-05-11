@@ -17,7 +17,7 @@ const Property: NextPage = () => {
   const { data: session, status } = useSession();
   const { data: property, isLoading, isError } = useProperty({ session, status, propertyId: String(propertyId ?? "") });
 
-  const [coverUrl, setCoverUrl] = useState(null);
+  const [coverUrl, setCoverUrl] = useState("");
 
   useEffect(() => {
     if (!isLoading && !isError && property) {

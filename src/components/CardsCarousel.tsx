@@ -15,7 +15,7 @@ const useStyles = createStyles(() => ({
 }));
 
 type CarouselProps = {
-  data: CardProps[];
+  data: { url: string }[];
   currentUrl: string;
   setCover: (url: string) => void;
 };

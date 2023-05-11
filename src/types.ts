@@ -24,6 +24,37 @@ export type CollectionWithProperties = {
   properties: CollectionProperties;
 };
 
+type Address = {
+  adm1_id: number;
+  adm1: string;
+  adm2_id: number;
+  adm2: string;
+  adm3_id: number;
+  adm3: string;
+  full_address: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+};
+
+type Characteristic = {
+  name: string;
+  type: string;
+  value: string;
+};
+
+type Tag = {
+  id: number;
+  name: string;
+};
+
+type Media = {
+  photos: { url: string }[];
+  videos: { url: string }[];
+  blueprints: { url: string }[];
+};
+
 export type Property = {
   id: string;
   quantity: number;
@@ -40,6 +71,10 @@ export type Property = {
   current_price_sale: number;
   current_price_rent: number;
   status: string;
+  address: Address;
+  characteristics: Characteristic[];
+  tags: Tag[];
+  media: Media;
 };
 
 export type Links = {
