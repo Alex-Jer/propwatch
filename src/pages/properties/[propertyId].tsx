@@ -1,8 +1,6 @@
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import Image from "next/image";
-import { SVGProps, ReactElement, ReactNode } from "react";
 import { useRouter } from "next/router";
 import { useProperty } from "~/hooks/useQueries";
 import { Property } from "~/types";
@@ -11,6 +9,7 @@ import Map, { Marker } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useState } from "react";
 import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "public/icons";
+import { MainCarousel } from "~/components/MainCarousel";
 
 const Property: NextPage = () => {
   const router = useRouter();
@@ -60,16 +59,7 @@ const Property: NextPage = () => {
     return (
       <>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="col-span-1 md:col-span-2">
-            <Image
-              src={coverUrl}
-              alt="Main Image"
-              width={1000}
-              height={600}
-              /*style={{ maxHeight: 400, objectFit: "contain", backgroundColor: "darkgray" }}*/
-              className="rounded-lg"
-            />
-          </div>
+          <MainCarousel images={photos} />
         </div>
 
         <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-3">
