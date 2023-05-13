@@ -43,6 +43,7 @@ type UsePropertyProps = {
 type UsePropertiesProps = {
   session: Session | null;
   status: string;
+  page: number;
 };
 
 const fetchCollections = async (session: Session | null) => {
@@ -56,8 +57,12 @@ const fetchCollection = async (session: Session | null, id: string) => {
   return response;
 };
 
-const fetchProperties = async (session: Session | null) => {
-  const response = (await makeRequest(`me/properties`, "GET", session?.user.access_token)) as PropertiesResponse;
+const fetchProperties = async (session: Session | null, page = 1) => {
+  const response = (await makeRequest(
+    `me/properties?page=${page}`,
+    "GET",
+    session?.user.access_token
+  )) as PropertiesResponse;
   return response;
 };
 
@@ -91,10 +96,10 @@ export const useProperty = ({ session, status, propertyId }: UsePropertyProps) =
   });
 };
 
-export const useProperties = ({ session, status }: UsePropertiesProps) => {
+export const useProperties = ({ session, status, page }: UsePropertiesProps) => {
   return useQuery({
-    queryKey: ["properties"],
-    queryFn: () => fetchProperties(session),
+    queryKey: ["properties", page],
+    queryFn: () => fetchProperties(session, page),
     enabled: status === "authenticated",
   });
 };

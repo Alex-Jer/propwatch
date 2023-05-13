@@ -1,13 +1,17 @@
+import { Group, Pagination } from "@mantine/core";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
 import { PropertyCard } from "~/components/PropertyCard";
 import { useProperties } from "~/hooks/useQueries";
 import { type CollectionProperty } from "~/types";
 
 const Properties: NextPage = () => {
   const { data: session, status } = useSession();
+
+  const [activePage, setPage] = useState(1);
   const {
     data: propData,
     isLoading,
@@ -15,6 +19,7 @@ const Properties: NextPage = () => {
   } = useProperties({
     session,
     status,
+    page: activePage,
   });
 
   const properties = propData?.data;
@@ -57,10 +62,18 @@ const Properties: NextPage = () => {
         <title>My Properties</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
         {renderProperties(properties)}
       </div>
+      <Pagination.Root value={activePage} onChange={setPage} total={propData.meta.last_page}>
+        <Group spacing={5} position="center">
+          <Pagination.First />
+          <Pagination.Previous />
+          <Pagination.Items />
+          <Pagination.Next />
+          <Pagination.Last />
+        </Group>
+      </Pagination.Root>
     </>
   );
 };
