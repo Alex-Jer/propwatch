@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Session } from "next-auth";
 import { makeRequest } from "~/lib/requestHelper";
-import { type Property, type Links, type Meta, type Collection, type CollectionWithProperties } from "~/types";
+import type { Property, Links, Meta, Collection, CollectionWithProperties, CollectionProperty } from "~/types";
 
 type CollectionsResponse = {
   data: Collection[];
@@ -15,6 +15,12 @@ type CollectionResponse = {
 
 type PropertyResponse = {
   data: Property;
+};
+
+type PropertiesResponse = {
+  data: CollectionProperty[];
+  links: Links;
+  meta: Meta;
 };
 
 type UseCollectionsProps = {
@@ -34,14 +40,24 @@ type UsePropertyProps = {
   propertyId: string;
 };
 
+type UsePropertiesProps = {
+  session: Session | null;
+  status: string;
+};
+
 const fetchCollections = async (session: Session | null) => {
   const response = (await makeRequest("me/lists", "GET", session?.user.access_token)) as CollectionsResponse;
-  return response.data;
+  return response;
 };
 
 const fetchCollection = async (session: Session | null, id: string) => {
   // TODO: fix API response
   const response = (await makeRequest(`me/lists/${id}`, "GET", session?.user.access_token)) as CollectionResponse;
+  return response;
+};
+
+const fetchProperties = async (session: Session | null) => {
+  const response = (await makeRequest(`me/properties`, "GET", session?.user.access_token)) as PropertiesResponse;
   return response;
 };
 
@@ -71,6 +87,14 @@ export const useProperty = ({ session, status, propertyId }: UsePropertyProps) =
   return useQuery<Property>({
     queryKey: ["property", propertyId],
     queryFn: () => fetchProperty(session, propertyId),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useProperties = ({ session, status }: UsePropertiesProps) => {
+  return useQuery({
+    queryKey: ["properties"],
+    queryFn: () => fetchProperties(session),
     enabled: status === "authenticated",
   });
 };

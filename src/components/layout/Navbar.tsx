@@ -23,18 +23,13 @@ import {
   IconTrash,
   IconInbox,
   IconFolder,
+  IconBuildingEstate,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 import { UserButton } from "./UserButton";
-
-const links = [
-  { icon: IconListNumbers, label: "All collections", url: "/collections", notifications: 3 },
-  { icon: IconInbox, label: "Unsorted", url: "", notifications: 4 },
-  { icon: IconTrash, url: "", label: "Trash" },
-];
 
 type Props = {
   opened: boolean;
@@ -47,7 +42,8 @@ export function NavbarSearch({ opened, setOpened }: Props) {
   const theme = useMantineTheme();
 
   const { data: session, status } = useSession();
-  const { data: collections, isLoading, isError } = useCollections({ session, status });
+  const { data: colData, isLoading, isError } = useCollections({ session, status });
+  const collections = colData?.data;
 
   if (isLoading) {
     console.log("Loading...");
@@ -56,6 +52,17 @@ export function NavbarSearch({ opened, setOpened }: Props) {
   if (isError) {
     console.log("Error!");
   }
+
+  const links = [
+    { icon: IconBuildingEstate, label: "My Properties", url: "/properties" },
+    {
+      icon: IconListNumbers,
+      label: "My collections",
+      url: "/collections",
+      notifications: colData?.meta.total ?? 0,
+    },
+    { icon: IconTrash, url: "", label: "Trash" },
+  ];
 
   const light = colorScheme === "light";
 

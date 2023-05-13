@@ -8,8 +8,8 @@ import { type Collection } from "~/types";
 
 const Collections: NextPage = () => {
   const { data: session, status } = useSession();
-  const { data: collections, isLoading, isFetching, error } = useCollections({ session, status });
-
+  const { data: colData, isLoading, isFetching, error } = useCollections({ session, status });
+  const collections = colData?.data;
   if (isLoading) {
     console.log("Loading...");
   }
