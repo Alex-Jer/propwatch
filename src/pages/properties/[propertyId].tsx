@@ -10,6 +10,8 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect, useState } from "react";
 import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "public/icons";
 import { MainCarousel } from "~/components/MainCarousel";
+import { useDisclosure } from "@mantine/hooks";
+import { Button, Drawer, Group } from "@mantine/core";
 
 const Property: NextPage = () => {
   const router = useRouter();
@@ -19,6 +21,8 @@ const Property: NextPage = () => {
   const { data: property, isLoading, isError } = useProperty({ session, status, propertyId: String(propertyId ?? "") });
 
   const [coverUrl, setCoverUrl] = useState("");
+
+  const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
     if (!isLoading && !isError && property) {
@@ -62,11 +66,11 @@ const Property: NextPage = () => {
           <MainCarousel images={photos} />
         </div>
 
-        <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-3">
+        {/* <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="col-span-1 md:col-span-2">
             <CardsCarousel data={photos} currentUrl={coverUrl} setCover={setCoverUrl} />
           </div>
-        </div>
+        </div> */}
       </>
     );
   };
@@ -126,6 +130,17 @@ const Property: NextPage = () => {
 
       {renderHeader(property)}
       {renderGallery()}
+
+      <Drawer opened={opened} onClose={close} position="bottom" size="100%">
+        <div className="h-full bg-red-400">
+          <CardsCarousel data={photos} currentUrl={coverUrl} setCover={setCoverUrl} />
+        </div>
+      </Drawer>
+
+      <Group position="left" className="mt-4">
+        <Button onClick={open}>Open Drawer</Button>
+      </Group>
+
       {renderDescription(property)}
       {renderMap()}
     </>
