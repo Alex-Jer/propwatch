@@ -18,8 +18,9 @@ type CollectionsResponse = {
   meta: Meta;
 };
 
-type AllCollectionsResponse = {
+type SidebarCollectionsResponse = {
   data: Collection[];
+  total: string;
 };
 
 type CollectionResponse = {
@@ -70,8 +71,17 @@ const fetchCollections = async (session: Session | null) => {
   return response;
 };
 
+const fetchSidebarCollections = async (session: Session | null) => {
+  const response = (await makeRequest(
+    "me/lists/sidebar",
+    "GET",
+    session?.user.access_token
+  )) as SidebarCollectionsResponse;
+  return response;
+};
+
 const fetchAllCollections = async (session: Session | null) => {
-  const response = (await makeRequest("me/lists/all", "GET", session?.user.access_token)) as AllCollectionsResponse;
+  const response = (await makeRequest("me/lists/all", "GET", session?.user.access_token)) as SidebarCollectionsResponse;
   return response;
 };
 
@@ -103,8 +113,8 @@ const fetchProperty = async (session: Session | null, id: string) => {
   return response.data;
 };
 
-const fetchTags = async (session: Session | null) => {
-  const response = (await makeRequest("me/tags", "GET", session?.user.access_token)) as TagsResponse;
+const fetchTagsSidebar = async (session: Session | null) => {
+  const response = (await makeRequest("me/tags/sidebar", "GET", session?.user.access_token)) as TagsResponse;
   return response.data;
 };
 
@@ -112,6 +122,14 @@ export const useCollections = ({ session, status }: UseElement) => {
   return useQuery({
     queryKey: ["collections"],
     queryFn: () => fetchCollections(session),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useSidebarCollections = ({ session, status }: UseElement) => {
+  return useQuery({
+    queryKey: ["collections"],
+    queryFn: () => fetchSidebarCollections(session),
     enabled: status === "authenticated",
   });
 };
@@ -148,10 +166,10 @@ export const useProperties = ({ session, status, search, page }: UseProperties) 
   });
 };
 
-export const useTags = ({ session, status }: UseElement) => {
+export const useTagsSidebar = ({ session, status }: UseElement) => {
   return useQuery({
     queryKey: ["tags"],
-    queryFn: () => fetchTags(session),
+    queryFn: () => fetchTagsSidebar(session),
     enabled: status === "authenticated",
   });
 };

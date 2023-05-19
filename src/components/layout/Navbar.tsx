@@ -27,7 +27,7 @@ import {
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useAllCollections, useTags } from "~/hooks/useQueries";
+import { useAllCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 import { UserButton } from "./UserButton";
 
@@ -61,7 +61,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
       icon: IconListNumbers,
       label: "My collections",
       url: "/collections",
-      notifications: colData?.data.length ?? 0,
+      notifications: colData?.total ?? 0,
     },
     { icon: IconTrash, url: "", label: "Trash" },
   ];
@@ -91,6 +91,9 @@ export function NavbarDefault({ opened, setOpened }: Props) {
           <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
           <span>{collection.name}</span>
         </div>
+        <Badge size="sm" variant="filled" className={classes.mainLinkBadge}>
+          {collection.num_properties}
+        </Badge>
       </UnstyledButton>
     </Link>
   ));

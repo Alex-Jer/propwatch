@@ -26,7 +26,7 @@ import {
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useAllCollections, useTags } from "~/hooks/useQueries";
+import { useSidebarCollections, useTagsSidebar } from "~/hooks/useQueries";
 import type { SearchOptions, Collection, Tag } from "~/types";
 import { UserButton } from "./UserButton";
 
@@ -46,10 +46,10 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
     data: colData,
     isLoading: isLoadingCollections,
     isError: isErrorCollection,
-  } = useAllCollections({ session, status });
+  } = useSidebarCollections({ session, status });
   const collections = colData?.data;
 
-  const { data: tags, isLoading: isLoadingTags, isError: isErrorTags } = useTags({ session, status });
+  const { data: tags, isLoading: isLoadingTags, isError: isErrorTags } = useTagsSidebar({ session, status });
 
   const isLoading = isLoadingCollections || isLoadingTags;
   const isError = isErrorCollection || isErrorTags;
@@ -69,7 +69,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
       icon: IconListNumbers,
       label: "My collections",
       url: "/collections",
-      notifications: colData?.data.length ?? 0,
+      notifications: colData?.total ?? 0,
     },
     { icon: IconTrash, url: "", label: "Trash" },
   ];
