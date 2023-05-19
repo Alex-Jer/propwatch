@@ -10,7 +10,6 @@ import {
   ActionIcon,
   Tooltip,
   rem,
-  useMantineColorScheme,
   MediaQuery,
   Burger,
   useMantineTheme,
@@ -21,7 +20,6 @@ import {
   IconSelector,
   IconListNumbers,
   IconTrash,
-  IconInbox,
   IconFolder,
   IconBuildingEstate,
 } from "@tabler/icons-react";
@@ -37,7 +35,6 @@ type Props = {
 };
 
 export function NavbarSearch({ opened, setOpened }: Props) {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const { classes } = useStyles();
   const theme = useMantineTheme();
 
@@ -65,7 +62,7 @@ export function NavbarSearch({ opened, setOpened }: Props) {
   }
 
   const links = [
-    { icon: IconBuildingEstate, label: "My Properties", url: "/properties" },
+    { icon: IconBuildingEstate, label: "My Properties", url: "#" },
     {
       icon: IconListNumbers,
       label: "My collections",
@@ -74,8 +71,6 @@ export function NavbarSearch({ opened, setOpened }: Props) {
     },
     { icon: IconTrash, url: "", label: "Trash" },
   ];
-
-  const light = colorScheme === "light";
 
   const mainLinks = links.map((link) => (
     <Link href={link.url} key={link.label}>
