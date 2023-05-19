@@ -91,14 +91,12 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   ));
 
   const collectionLinks = collections?.map((collection: Collection) => (
-    <Link href={`/collections/${collection.id}`} key={collection.id}>
-      <UnstyledButton key={collection.name} className={classes.mainLink}>
-        <div className={classes.mainLinkInner}>
-          <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
-          <span>{collection.name}</span>
-        </div>
-      </UnstyledButton>
-    </Link>
+    <UnstyledButton key={collection.name} className={classes.mainLink}>
+      <div className={classes.mainLinkInner}>
+        <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
+        <span>{collection.name}</span>
+      </div>
+    </UnstyledButton>
   ));
 
   return (
