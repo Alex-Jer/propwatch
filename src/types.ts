@@ -125,6 +125,8 @@ export type CollectionProperties = {
 export type ShellProps = {
   children: ReactNode;
   useNavbarSearch?: boolean;
+  search: SearchOptions;
+  setSearch: (search: SearchOptions) => void;
 };
 
 export type HeaderActionProps = {

@@ -10,10 +10,9 @@ const links = [
   { link: "/about", label: "About", links: [] },
 ];
 
-const Shell = ({ children, useNavbarSearch }: ShellProps) => {
+const Shell = ({ children, useNavbarSearch, search, setSearch }: ShellProps) => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
-  const [search, setSearch] = useState({});
 
   return (
     <AppShell

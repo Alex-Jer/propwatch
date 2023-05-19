@@ -6,9 +6,14 @@ import Link from "next/link";
 import { useState } from "react";
 import { PropertyCard } from "~/components/PropertyCard";
 import { useProperties } from "~/hooks/useQueries";
-import { type CollectionProperty } from "~/types";
+import type { SearchOptions, CollectionProperty } from "~/types";
 
-const Properties: NextPage = () => {
+type PropertiesPageProps = {
+  search: SearchOptions;
+  setSearch: (search: SearchOptions) => void;
+};
+
+const Properties: NextPage<PropertiesPageProps> = () => {
   const { data: session, status } = useSession();
 
   const [activePage, setPage] = useState(1);

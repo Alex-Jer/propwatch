@@ -25,6 +25,8 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
   const router = useRouter();
 
   const isAppRoute = router.pathname !== "/" && !router.pathname.startsWith("/auth");
+
+  const [search, setSearch] = useState({});
   const isPropertySearch: boolean | undefined = Component === Properties;
 
   return (
@@ -34,8 +36,8 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
           <QueryClientProvider client={queryClient}>
             <NextNProgress options={{ showSpinner: false }} />
             {isAppRoute ? (
-              <Shell useNavbarSearch={isPropertySearch}>
-                <Component {...pageProps} />
+              <Shell useNavbarSearch={isPropertySearch} search={search} setSearch={setSearch}>
+                <Properties {...pageProps} search={search} setSearch={setSearch} />
               </Shell>
             ) : (
               <Component {...pageProps} />
