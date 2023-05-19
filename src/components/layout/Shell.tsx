@@ -13,6 +13,7 @@ const links = [
 const Shell = ({ children, useNavbarSearch }: ShellProps) => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
+  const [search, setSearch] = useState({});
 
   return (
     <AppShell
@@ -27,7 +28,7 @@ const Shell = ({ children, useNavbarSearch }: ShellProps) => {
       fixed
       navbar={
         useNavbarSearch ? (
-          <NavbarSearch opened={opened} setOpened={setOpened} />
+          <NavbarSearch opened={opened} setOpened={setOpened} search={search} setSearch={setSearch} />
         ) : (
           <NavbarDefault opened={opened} setOpened={setOpened} />
         )

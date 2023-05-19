@@ -26,15 +26,17 @@ import {
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
-import { type Collection } from "~/types";
+import { SearchOptions, type Collection } from "~/types";
 import { UserButton } from "./UserButton";
 
 type Props = {
   opened: boolean;
   setOpened: (opened: boolean) => void;
+  search: SearchOptions;
+  setSearch: (search: SearchOptions) => void;
 };
 
-export function NavbarSearch({ opened, setOpened }: Props) {
+export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   const { classes } = useStyles();
   const theme = useMantineTheme();
 

@@ -136,3 +136,11 @@ export type UserButtonProps = UnstyledButtonProps & {
   name: string;
   icon?: React.ReactNode;
 };
+
+export type SearchOptions = {
+  query?: string;
+  include_tags?: number[];
+  exclude_tags?: number[];
+  list?: number;
+  adm?: number;
+};
