@@ -11,7 +11,6 @@ import Shell from "~/components/layout/Shell";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import NextNProgress from "nextjs-progressbar";
-import { NavbarSearch } from "~/components/layout/NavbarSearch";
 import Properties from "./properties";
 
 const queryClient = new QueryClient();

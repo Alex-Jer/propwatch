@@ -92,6 +92,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
 
   const collectionLinks = collections?.map((collection: Collection) => {
     const active = search.list == collection.id;
+    const color = active ? classes.active : "";
     return (
       <UnstyledButton
         onClick={() => {
@@ -104,8 +105,8 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
         key={collection.id}
         className={classes.mainLink}
       >
-        <div className={`${classes.mainLinkInner} ${active ? classes.active : ""}`}>
-          <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
+        <div className={`${classes.mainLinkInner} ${color}`}>
+          <IconFolder size={20} className={`${classes.mainLinkIcon} ${color}`} stroke={1.5} />
           <span>{collection.name}</span>
         </div>
       </UnstyledButton>
@@ -127,6 +128,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   const tagLinks = tags?.map((tag: Tag) => {
     const enabled = search.include_tags?.includes(tag.id.toString());
     const disabled = search.exclude_tags?.includes(tag.id.toString());
+    const color = enabled ? classes.enabled : disabled ? classes.disabled : "";
     return (
       <UnstyledButton
         onClick={() => {
@@ -145,8 +147,8 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
         key={tag.id}
         className={classes.mainLink}
       >
-        <div className={`${classes.mainLinkInner} ${enabled ? classes.enabled : disabled ? classes.disabled : ""}`}>
-          <IconTag size={20} className={classes.mainLinkIcon} stroke={1.5} />
+        <div className={`${classes.mainLinkInner} ${color}`}>
+          <IconTag size={20} className={`${classes.mainLinkIcon} ${color}`} stroke={1.5} />
           <span>{tag.name}</span>
         </div>
       </UnstyledButton>
