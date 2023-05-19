@@ -1,12 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Session } from "next-auth";
 import { makeRequest } from "~/lib/requestHelper";
-import type { Property, Links, Meta, Collection, CollectionWithProperties, CollectionProperty } from "~/types";
+import type { Property, Links, Meta, Collection, CollectionWithProperties, CollectionProperty, Tag } from "~/types";
 
 type CollectionsResponse = {
   data: Collection[];
   links: Links;
   meta: Meta;
+};
+
+type AllCollectionsResponse = {
+  data: Collection[];
 };
 
 type CollectionResponse = {
@@ -23,31 +27,35 @@ type PropertiesResponse = {
   meta: Meta;
 };
 
-type UseCollectionsProps = {
+type UseElement = {
   session: Session | null;
   status: string;
 };
 
-type UseCollectionProps = {
+type UseElementWithElementId = {
   session: Session | null;
   status: string;
-  collectionId: string;
+  elementId: string;
 };
 
-type UsePropertyProps = {
-  session: Session | null;
-  status: string;
-  propertyId: string;
-};
-
-type UsePropertiesProps = {
+type UseElementWithPageNumber = {
   session: Session | null;
   status: string;
   page: number;
 };
 
+type TagsResponse = {
+  data: Tag[];
+};
+
+/* Keep this one to paginate the collections page? */
 const fetchCollections = async (session: Session | null) => {
   const response = (await makeRequest("me/lists", "GET", session?.user.access_token)) as CollectionsResponse;
+  return response;
+};
+
+const fetchAllCollections = async (session: Session | null) => {
+  const response = (await makeRequest("me/lists/all", "GET", session?.user.access_token)) as AllCollectionsResponse;
   return response;
 };
 
@@ -72,7 +80,12 @@ const fetchProperty = async (session: Session | null, id: string) => {
   return response.data;
 };
 
-export const useCollections = ({ session, status }: UseCollectionsProps) => {
+const fetchTags = async (session: Session | null) => {
+  const response = (await makeRequest("me/tags", "GET", session?.user.access_token)) as TagsResponse;
+  return response.data;
+};
+
+export const useCollections = ({ session, status }: UseElement) => {
   return useQuery({
     queryKey: ["collections"],
     queryFn: () => fetchCollections(session),
@@ -80,7 +93,15 @@ export const useCollections = ({ session, status }: UseCollectionsProps) => {
   });
 };
 
-export const useCollection = ({ session, status, collectionId }: UseCollectionProps) => {
+export const useAllCollections = ({ session, status }: UseElement) => {
+  return useQuery({
+    queryKey: ["collections"],
+    queryFn: () => fetchAllCollections(session),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useCollection = ({ session, status, elementId: collectionId }: UseElementWithElementId) => {
   return useQuery({
     queryKey: ["collection", collectionId],
     queryFn: () => fetchCollection(session, collectionId),
@@ -88,7 +109,7 @@ export const useCollection = ({ session, status, collectionId }: UseCollectionPr
   });
 };
 
-export const useProperty = ({ session, status, propertyId }: UsePropertyProps) => {
+export const useProperty = ({ session, status, elementId: propertyId }: UseElementWithElementId) => {
   return useQuery<Property>({
     queryKey: ["property", propertyId],
     queryFn: () => fetchProperty(session, propertyId),
@@ -96,10 +117,18 @@ export const useProperty = ({ session, status, propertyId }: UsePropertyProps) =
   });
 };
 
-export const useProperties = ({ session, status, page }: UsePropertiesProps) => {
+export const useProperties = ({ session, status, page }: UseElementWithPageNumber) => {
   return useQuery({
     queryKey: ["properties", page],
     queryFn: () => fetchProperties(session, page),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useTags = ({ session, status }: UseElement) => {
+  return useQuery({
+    queryKey: ["tags"],
+    queryFn: () => fetchTags(session),
     enabled: status === "authenticated",
   });
 };

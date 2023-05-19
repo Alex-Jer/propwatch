@@ -11,6 +11,8 @@ import Shell from "~/components/layout/Shell";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import NextNProgress from "nextjs-progressbar";
+import { NavbarSearch } from "~/components/layout/NavbarSearch";
+import Properties from "./properties";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +25,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
   const router = useRouter();
 
   const isAppRoute = router.pathname !== "/" && !router.pathname.startsWith("/auth");
+  const isPropertySearch: boolean | undefined = Component === Properties;
 
   return (
     <SessionProvider session={session}>
@@ -31,7 +34,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
           <QueryClientProvider client={queryClient}>
             <NextNProgress options={{ showSpinner: false }} />
             {isAppRoute ? (
-              <Shell>
+              <Shell useNavbarSearch={isPropertySearch}>
                 <Component {...pageProps} />
               </Shell>
             ) : (

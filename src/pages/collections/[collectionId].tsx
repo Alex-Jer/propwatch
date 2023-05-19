@@ -15,7 +15,7 @@ const Collection: NextPage = () => {
   const { data, isLoading, isError } = useCollection({
     session,
     status,
-    collectionId: String(collectionId ?? ""),
+    elementId: String(collectionId ?? ""),
   });
 
   if (isLoading) {

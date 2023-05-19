@@ -44,7 +44,7 @@ type Characteristic = {
   value: string;
 };
 
-type Tag = {
+export type Tag = {
   id: number;
   name: string;
 };
@@ -124,6 +124,7 @@ export type CollectionProperties = {
 
 export type ShellProps = {
   children: ReactNode;
+  useNavbarSearch?: boolean;
 };
 
 export type HeaderActionProps = {

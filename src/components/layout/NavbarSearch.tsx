@@ -10,7 +10,6 @@ import {
   ActionIcon,
   Tooltip,
   rem,
-  useMantineColorScheme,
   MediaQuery,
   Burger,
   useMantineTheme,
@@ -21,7 +20,6 @@ import {
   IconSelector,
   IconListNumbers,
   IconTrash,
-  IconInbox,
   IconFolder,
   IconBuildingEstate,
 } from "@tabler/icons-react";
@@ -36,14 +34,22 @@ type Props = {
   setOpened: (opened: boolean) => void;
 };
 
-export function NavbarDefault({ opened, setOpened }: Props) {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+export function NavbarSearch({ opened, setOpened }: Props) {
   const { classes } = useStyles();
   const theme = useMantineTheme();
 
   const { data: session, status } = useSession();
-  const { data: colData, isLoading, isError } = useAllCollections({ session, status });
+  const {
+    data: colData,
+    isLoading: isLoadingCollections,
+    isError: isErrorCollection,
+  } = useAllCollections({ session, status });
   const collections = colData?.data;
+
+  const { data: tags, isLoading: isLoadingTags, isError: isErrorTags } = useTags({ session, status });
+
+  const isLoading = isLoadingCollections || isLoadingTags;
+  const isError = isErrorCollection || isErrorTags;
 
   //TODO: Better organization; Better error/loading processing; Better planning
 
@@ -56,7 +62,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
   }
 
   const links = [
-    { icon: IconBuildingEstate, label: "My Properties", url: "/properties" },
+    { icon: IconBuildingEstate, label: "My Properties", url: "#" },
     {
       icon: IconListNumbers,
       label: "My collections",
@@ -65,8 +71,6 @@ export function NavbarDefault({ opened, setOpened }: Props) {
     },
     { icon: IconTrash, url: "", label: "Trash" },
   ];
-
-  const light = colorScheme === "light";
 
   const mainLinks = links.map((link) => (
     <Link href={link.url} key={link.label}>
