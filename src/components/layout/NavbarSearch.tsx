@@ -26,8 +26,9 @@ import {
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
-import { SearchOptions, type Collection } from "~/types";
+import type { SearchOptions, Collection } from "~/types";
 import { UserButton } from "./UserButton";
+import { useRouter } from "next/router";
 
 type Props = {
   opened: boolean;
@@ -90,14 +91,23 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
     </Link>
   ));
 
-  const collectionLinks = collections?.map((collection: Collection) => (
-    <UnstyledButton key={collection.name} className={classes.mainLink}>
-      <div className={classes.mainLinkInner}>
-        <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
-        <span>{collection.name}</span>
-      </div>
-    </UnstyledButton>
-  ));
+  const collectionLinks = collections?.map((collection: Collection) => {
+    const active = search.list == collection.id;
+    return (
+      <UnstyledButton
+        onClick={() => {
+          if (!active) setSearch({ ...search, list: collection.id });
+        }}
+        key={collection.id}
+        className={classes.mainLink}
+      >
+        <div className={active ? classes.mainLinkInnerActive : classes.mainLinkInner}>
+          <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
+          <span>{collection.name}</span>
+        </div>
+      </UnstyledButton>
+    );
+  });
 
   return (
     <Navbar width={{ sm: 300 }} p="md" pt={0} className={classes.navbar} hiddenBreakpoint="sm" hidden={!opened}>
@@ -192,6 +202,13 @@ const useStyles = createStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     flex: 1,
+  },
+
+  mainLinkInnerActive: {
+    display: "flex",
+    alignItems: "center",
+    flex: 1,
+    color: "red",
   },
 
   mainLinkIcon: {

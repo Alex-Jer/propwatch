@@ -10,7 +10,6 @@ import type { SearchOptions, CollectionProperty } from "~/types";
 
 type PropertiesPageProps = {
   search: SearchOptions;
-  setSearch: (search: SearchOptions) => void;
 };
 
 const Properties: NextPage<PropertiesPageProps> = ({ search }) => {

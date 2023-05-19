@@ -141,8 +141,8 @@ export type UserButtonProps = UnstyledButtonProps & {
 
 export type SearchOptions = {
   query?: string;
-  include_tags?: number[];
-  exclude_tags?: number[];
-  list?: number;
-  adm?: number;
+  include_tags?: string[];
+  exclude_tags?: string[];
+  list?: string;
+  adm?: string;
 };
