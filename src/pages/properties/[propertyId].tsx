@@ -43,7 +43,7 @@ const Property: NextPage = () => {
     address: { coordinates },
   } = property;
 
-  const renderHeader = (property: Property) => {
+  const renderHeader = () => {
     return (
       <>
         <div className="mb-2 flex justify-between">
@@ -58,20 +58,26 @@ const Property: NextPage = () => {
     );
   };
 
-  const renderGallery = () => {
+  const renderCover = () => {
     if (coverUrl == null) return <div>Loading...</div>;
     return (
       <>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {/* <span onClick={open}> */}
           <MainCarousel images={photos} />
+          {/* </span> */}
         </div>
-
-        {/* <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="col-span-1 md:col-span-2">
-            <CardsCarousel data={photos} currentUrl={coverUrl} setCover={setCoverUrl} />
-          </div>
-        </div> */}
       </>
+    );
+  };
+
+  const renderDrawer = () => {
+    return (
+      <Drawer opened={opened} onClose={close} position="bottom" size="100%">
+        <div className="flex h-screen items-center">
+          <CardsCarousel data={photos} currentUrl={coverUrl} setCover={setCoverUrl} />
+        </div>
+      </Drawer>
     );
   };
 
@@ -128,15 +134,11 @@ const Property: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {renderHeader(property)}
-      {renderGallery()}
+      {renderHeader()}
+      {renderCover()}
+      {renderDrawer()}
 
-      <Drawer opened={opened} onClose={close} position="bottom" size="100%">
-        <div className="h-full bg-red-400">
-          <CardsCarousel data={photos} currentUrl={coverUrl} setCover={setCoverUrl} />
-        </div>
-      </Drawer>
-
+      {/* TODO: Test Button */}
       <Group position="left" className="mt-4">
         <Button onClick={open}>Open Drawer</Button>
       </Group>
