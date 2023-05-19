@@ -92,7 +92,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
 
   const collectionLinks = collections?.map((collection: Collection) => {
     const active = search.list == collection.id;
-    const color = active ? classes.active : classes.iconDefaultColor;
+    const color = active ? classes.active : "";
     return (
       <UnstyledButton
         onClick={() => {
@@ -128,7 +128,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   const tagLinks = tags?.map((tag: Tag) => {
     const enabled = search.include_tags?.includes(tag.id.toString());
     const disabled = search.exclude_tags?.includes(tag.id.toString());
-    const color = enabled ? classes.enabled : disabled ? classes.disabled : classes.iconDefaultColor;
+    const color = enabled ? classes.enabled : disabled ? classes.disabled : "";
     return (
       <UnstyledButton
         onClick={() => {
@@ -285,23 +285,20 @@ const useStyles = createStyles((theme) => ({
   },
 
   active: {
-    color: "mediumpurple",
+    color: "mediumpurple !important",
   },
 
   enabled: {
-    color: "green",
+    color: "green !important",
   },
 
   disabled: {
-    color: "red",
-  },
-
-  iconDefaultColor: {
-    color: theme.colorScheme === "dark" ? theme.colors.dark[2] : theme.colors.gray[6]
+    color: "red !important",
   },
 
   mainLinkIcon: {
     marginRight: theme.spacing.sm,
+    color: theme.colorScheme === "dark" ? theme.colors.dark[2] : theme.colors.gray[6],
   },
 
   mainLinkBadge: {
