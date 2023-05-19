@@ -37,7 +37,11 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
             <NextNProgress options={{ showSpinner: false }} />
             {isAppRoute ? (
               <Shell useNavbarSearch={isPropertySearch} search={search} setSearch={setSearch}>
-                {isPropertySearch ? <Properties {...pageProps} search={search} /> : <Component {...pageProps} />}
+                {isPropertySearch ? (
+                  <Properties {...pageProps} search={search} setSearch={setSearch} />
+                ) : (
+                  <Component {...pageProps} />
+                )}
               </Shell>
             ) : (
               <Component {...pageProps} />

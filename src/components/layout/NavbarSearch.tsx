@@ -22,13 +22,13 @@ import {
   IconTrash,
   IconFolder,
   IconBuildingEstate,
+  IconTag,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
-import type { SearchOptions, Collection } from "~/types";
+import type { SearchOptions, Collection, Tag } from "~/types";
 import { UserButton } from "./UserButton";
-import { useRouter } from "next/router";
 
 type Props = {
   opened: boolean;
@@ -65,7 +65,6 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   }
 
   const links = [
-    { icon: IconBuildingEstate, label: "My Properties", url: "#" },
     {
       icon: IconListNumbers,
       label: "My collections",
@@ -96,12 +95,16 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
     return (
       <UnstyledButton
         onClick={() => {
-          if (!active) setSearch({ ...search, list: collection.id });
+          if (!active) {
+            setSearch({ ...search, list: collection.id });
+          } else {
+            setSearch({ ...search, list: undefined });
+          }
         }}
         key={collection.id}
         className={classes.mainLink}
       >
-        <div className={active ? classes.mainLinkInnerActive : classes.mainLinkInner}>
+        <div className={`${classes.mainLinkInner} ${active ? classes.active : ""}`}>
           <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
           <span>{collection.name}</span>
         </div>
@@ -109,8 +112,56 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
     );
   });
 
+  const addToList = (list: string[] | undefined, newElement: string): string[] => {
+    const listReturn = list ?? [];
+    listReturn.push(newElement);
+    return listReturn;
+  };
+
+  const removeFromList = (list: string[] | undefined, element: string): string[] => {
+    const listReturn = list ?? [];
+    listReturn.splice(listReturn.indexOf(element), 1);
+    return listReturn;
+  };
+
+  const tagLinks = tags?.map((tag: Tag) => {
+    const enabled = search.include_tags?.includes(tag.id.toString());
+    const disabled = search.exclude_tags?.includes(tag.id.toString());
+    return (
+      <UnstyledButton
+        onClick={() => {
+          if (!enabled && !disabled) {
+            setSearch({ ...search, include_tags: addToList(search.include_tags, tag.id.toString()) });
+          } else if (enabled) {
+            setSearch({
+              ...search,
+              include_tags: removeFromList(search.include_tags, tag.id.toString()),
+              exclude_tags: addToList(search.exclude_tags, tag.id.toString()),
+            });
+          } else if (disabled) {
+            setSearch({ ...search, exclude_tags: removeFromList(search.exclude_tags, tag.id.toString()) });
+          }
+        }}
+        key={tag.id}
+        className={classes.mainLink}
+      >
+        <div className={`${classes.mainLinkInner} ${enabled ? classes.enabled : disabled ? classes.disabled : ""}`}>
+          <IconTag size={20} className={classes.mainLinkIcon} stroke={1.5} />
+          <span>{tag.name}</span>
+        </div>
+      </UnstyledButton>
+    );
+  });
+
   return (
-    <Navbar width={{ sm: 300 }} p="md" pt={0} className={classes.navbar} hiddenBreakpoint="sm" hidden={!opened}>
+    <Navbar
+      width={{ sm: 300 }}
+      p="md"
+      pt={0}
+      className={`${classes.navbar} overflow-auto`}
+      hiddenBreakpoint="sm"
+      hidden={!opened}
+    >
       <MediaQuery largerThan="sm" styles={{ display: "none" }}>
         <Burger opened={opened} onClick={() => setOpened(!opened)} size="sm" color={theme.colors.gray[6]} mr="xl" />
       </MediaQuery>
@@ -134,7 +185,21 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
       />
 
       <Navbar.Section className={classes.section}>
-        <div className={classes.mainLinks}>{mainLinks}</div>
+        <div className={classes.mainLinks}>
+          <UnstyledButton
+            onClick={() => {
+              setSearch({});
+            }}
+            key="My Properties"
+            className={classes.mainLink}
+          >
+            <div className={classes.mainLinkInner}>
+              <IconBuildingEstate size={20} className={classes.mainLinkIcon} stroke={1.5} />
+              <span>My Properties</span>
+            </div>
+          </UnstyledButton>
+          {mainLinks}
+        </div>
       </Navbar.Section>
 
       <Navbar.Section className={classes.section}>
@@ -150,6 +215,15 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
         </Group>
         <div className={classes.sectionContent}>{collectionLinks}</div>
       </Navbar.Section>
+
+      <Navbar.Section className={classes.section}>
+        <Group className={classes.sectionHeader} position="apart">
+          <Text size="xs" weight={500} color="dimmed">
+            My Tags
+          </Text>
+        </Group>
+        <div className={classes.sectionContent}>{tagLinks}</div>
+      </Navbar.Section>
     </Navbar>
   );
 }
@@ -157,6 +231,10 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
 const useStyles = createStyles((theme) => ({
   navbar: {
     paddingTop: 0,
+    "&::-webkit-scrollbar": {
+      display: "none" /* Chromium */,
+    },
+    "scrollbar-width": "none" /* Firefox */,
   },
 
   section: {
@@ -204,10 +282,15 @@ const useStyles = createStyles((theme) => ({
     flex: 1,
   },
 
-  mainLinkInnerActive: {
-    display: "flex",
-    alignItems: "center",
-    flex: 1,
+  active: {
+    color: "mediumpurple",
+  },
+
+  enabled: {
+    color: "green",
+  },
+
+  disabled: {
     color: "red",
   },
 

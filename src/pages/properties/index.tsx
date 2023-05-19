@@ -3,19 +3,25 @@ import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PropertyCard } from "~/components/PropertyCard";
 import { useProperties } from "~/hooks/useQueries";
 import type { SearchOptions, CollectionProperty } from "~/types";
 
 type PropertiesPageProps = {
   search: SearchOptions;
+  setSearch: (search: SearchOptions) => void;
 };
 
 const Properties: NextPage<PropertiesPageProps> = ({ search }) => {
   const { data: session, status } = useSession();
 
   const [activePage, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
+
   const {
     data: propData,
     isLoading,
