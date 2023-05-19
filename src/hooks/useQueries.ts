@@ -1,7 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Session } from "next-auth";
 import { makeRequest } from "~/lib/requestHelper";
-import type { Property, Links, Meta, Collection, CollectionWithProperties, CollectionProperty, Tag } from "~/types";
+import type {
+  Property,
+  Links,
+  Meta,
+  Collection,
+  CollectionWithProperties,
+  CollectionProperty,
+  Tag,
+  SearchOptions,
+} from "~/types";
 
 type CollectionsResponse = {
   data: Collection[];
@@ -44,6 +53,13 @@ type UseElementWithPageNumber = {
   page: number;
 };
 
+type UseProperties = {
+  session: Session | null;
+  status: string;
+  search: SearchOptions;
+  page: number;
+};
+
 type TagsResponse = {
   data: Tag[];
 };
@@ -65,9 +81,16 @@ const fetchCollection = async (session: Session | null, id: string) => {
   return response;
 };
 
-const fetchProperties = async (session: Session | null, page = 1) => {
+const fetchProperties = async (session: Session | null, search: SearchOptions = {}, page = 1) => {
+  let extraFields = "";
+  if (search.query) extraFields += `&query=${encodeURIComponent(search.query)}`;
+  if (search.list) extraFields += `&list_id=${encodeURIComponent(search.list)}`;
+  if (search.adm) extraFields += `&adm_id=${encodeURIComponent(search.adm)}`;
+  if (search.include_tags) extraFields += `&include_tags=${encodeURIComponent(JSON.stringify(search.include_tags))}`;
+  if (search.exclude_tags) extraFields += `&exclude_tags=${encodeURIComponent(JSON.stringify(search.exclude_tags))}`;
+
   const response = (await makeRequest(
-    `me/properties?page=${page}`,
+    `me/properties?page=${page}${extraFields}`,
     "GET",
     session?.user.access_token
   )) as PropertiesResponse;
@@ -117,10 +140,10 @@ export const useProperty = ({ session, status, elementId: propertyId }: UseEleme
   });
 };
 
-export const useProperties = ({ session, status, page }: UseElementWithPageNumber) => {
+export const useProperties = ({ session, status, search, page }: UseProperties) => {
   return useQuery({
-    queryKey: ["properties", page],
-    queryFn: () => fetchProperties(session, page),
+    queryKey: ["properties", search, page] /* TODO: Is this worth it ? */,
+    queryFn: () => fetchProperties(session, search, page),
     enabled: status === "authenticated",
   });
 };

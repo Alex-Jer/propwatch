@@ -13,7 +13,7 @@ type PropertiesPageProps = {
   setSearch: (search: SearchOptions) => void;
 };
 
-const Properties: NextPage<PropertiesPageProps> = () => {
+const Properties: NextPage<PropertiesPageProps> = ({ search }) => {
   const { data: session, status } = useSession();
 
   const [activePage, setPage] = useState(1);
@@ -24,6 +24,7 @@ const Properties: NextPage<PropertiesPageProps> = () => {
   } = useProperties({
     session,
     status,
+    search,
     page: activePage,
   });
 
