@@ -27,7 +27,7 @@ import {
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useAllCollections } from "~/hooks/useQueries";
+import { useAllCollections, useTags } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 import { UserButton } from "./UserButton";
 
@@ -42,8 +42,19 @@ export function NavbarSearch({ opened, setOpened }: Props) {
   const theme = useMantineTheme();
 
   const { data: session, status } = useSession();
-  const { data: colData, isLoading, isError } = useAllCollections({ session, status });
+  const {
+    data: colData,
+    isLoading: isLoadingCollections,
+    isError: isErrorCollection,
+  } = useAllCollections({ session, status });
   const collections = colData?.data;
+
+  const { data: tags, isLoading: isLoadingTags, isError: isErrorTags } = useTags({ session, status });
+
+  const isLoading = isLoadingCollections || isLoadingTags;
+  const isError = isErrorCollection || isErrorTags;
+
+  //TODO: Better organization; Better error/loading processing; Better planning
 
   if (isLoading) {
     console.log("Loading...");
@@ -122,7 +133,7 @@ export function NavbarSearch({ opened, setOpened }: Props) {
       </Navbar.Section>
 
       <Navbar.Section className={classes.section}>
-        <Group className={classes.collectionsHeader} position="apart">
+        <Group className={classes.sectionHeader} position="apart">
           <Text size="xs" weight={500} color="dimmed">
             My Collections
           </Text>
@@ -132,7 +143,7 @@ export function NavbarSearch({ opened, setOpened }: Props) {
             </ActionIcon>
           </Tooltip>
         </Group>
-        <div className={classes.collections}>{collectionLinks}</div>
+        <div className={classes.sectionContent}>{collectionLinks}</div>
       </Navbar.Section>
     </Navbar>
   );
@@ -200,19 +211,19 @@ const useStyles = createStyles((theme) => ({
     pointerEvents: "none",
   },
 
-  collections: {
+  sectionContent: {
     paddingLeft: `calc(${theme.spacing.md} - ${rem(6)})`,
     paddingRight: `calc(${theme.spacing.md} - ${rem(6)})`,
     paddingBottom: theme.spacing.md,
   },
 
-  collectionsHeader: {
+  sectionHeader: {
     paddingLeft: `calc(${theme.spacing.md} + ${rem(2)})`,
     paddingRight: theme.spacing.md,
     marginBottom: rem(5),
   },
 
-  collectionLink: {
+  sectionLink: {
     display: "block",
     padding: `${rem(8)} ${theme.spacing.xs}`,
     textDecoration: "none",

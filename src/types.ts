@@ -44,7 +44,7 @@ type Characteristic = {
   value: string;
 };
 
-type Tag = {
+export type Tag = {
   id: number;
   name: string;
 };

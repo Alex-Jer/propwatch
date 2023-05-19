@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Session } from "next-auth";
 import { makeRequest } from "~/lib/requestHelper";
-import type { Property, Links, Meta, Collection, CollectionWithProperties, CollectionProperty } from "~/types";
+import type { Property, Links, Meta, Collection, CollectionWithProperties, CollectionProperty, Tag } from "~/types";
 
 type CollectionsResponse = {
   data: Collection[];
@@ -44,6 +44,10 @@ type UseElementWithPageNumber = {
   page: number;
 };
 
+type TagsResponse = {
+  data: Tag[];
+};
+
 /* Keep this one to paginate the collections page? */
 const fetchCollections = async (session: Session | null) => {
   const response = (await makeRequest("me/lists", "GET", session?.user.access_token)) as CollectionsResponse;
@@ -73,6 +77,11 @@ const fetchProperties = async (session: Session | null, page = 1) => {
 const fetchProperty = async (session: Session | null, id: string) => {
   const response = (await makeRequest(`me/properties/${id}`, "GET", session?.user.access_token)) as PropertyResponse;
   console.log("response", response);
+  return response.data;
+};
+
+const fetchTags = async (session: Session | null) => {
+  const response = (await makeRequest("me/tags", "GET", session?.user.access_token)) as TagsResponse;
   return response.data;
 };
 
@@ -112,6 +121,14 @@ export const useProperties = ({ session, status, page }: UseElementWithPageNumbe
   return useQuery({
     queryKey: ["properties", page],
     queryFn: () => fetchProperties(session, page),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useTags = ({ session, status }: UseElement) => {
+  return useQuery({
+    queryKey: ["tags"],
+    queryFn: () => fetchTags(session),
     enabled: status === "authenticated",
   });
 };
