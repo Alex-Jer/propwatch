@@ -27,7 +27,7 @@ import {
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useCollections } from "~/hooks/useQueries";
+import { useAllCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 import { UserButton } from "./UserButton";
 
@@ -42,7 +42,7 @@ export function NavbarSearch({ opened, setOpened }: Props) {
   const theme = useMantineTheme();
 
   const { data: session, status } = useSession();
-  const { data: colData, isLoading, isError } = useCollections({ session, status });
+  const { data: colData, isLoading, isError } = useAllCollections({ session, status });
   const collections = colData?.data;
 
   if (isLoading) {
@@ -59,7 +59,7 @@ export function NavbarSearch({ opened, setOpened }: Props) {
       icon: IconListNumbers,
       label: "My collections",
       url: "/collections",
-      notifications: colData?.meta.total ?? 0,
+      notifications: colData?.data.length ?? 0,
     },
     { icon: IconTrash, url: "", label: "Trash" },
   ];
