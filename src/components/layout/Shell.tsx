@@ -1,14 +1,9 @@
 import { AppShell, useMantineTheme } from "@mantine/core";
 import { useState } from "react";
 import { type ShellProps } from "~/types";
-import { NavHeader } from "./Header";
+import { NavHeader } from "./NavHeader";
 import { NavbarDefault } from "./Navbar";
 import { NavbarSearch } from "./NavbarSearch";
-
-const links = [
-  { link: "/collections", label: "My Collections", links: [] },
-  { link: "/about", label: "About", links: [] },
-];
 
 const Shell = ({ children, useNavbarSearch }: ShellProps) => {
   const theme = useMantineTheme();
@@ -32,7 +27,7 @@ const Shell = ({ children, useNavbarSearch }: ShellProps) => {
           <NavbarDefault opened={opened} setOpened={setOpened} />
         )
       }
-      header={<NavHeader links={links} />}
+      header={<NavHeader />}
     >
       {children}
     </AppShell>

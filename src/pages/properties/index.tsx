@@ -62,11 +62,13 @@ const Properties: NextPage = () => {
         <title>My Properties</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
         {renderProperties(properties)}
       </div>
+
       <Pagination.Root value={activePage} onChange={setPage} total={propData.meta.last_page}>
-        <Group spacing={5} position="center">
+        <Group spacing={5} position="center" className="mt-4">
           <Pagination.First />
           <Pagination.Previous />
           <Pagination.Items />
