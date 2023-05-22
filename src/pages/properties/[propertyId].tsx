@@ -21,7 +21,6 @@ const Property: NextPage = () => {
   const { data: property, isLoading, isError } = useProperty({ session, status, elementId: String(propertyId ?? "") });
 
   const [coverUrl, setCoverUrl] = useState("");
-
   const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
@@ -106,6 +105,7 @@ const Property: NextPage = () => {
               latitude,
               zoom: 15,
             }}
+            style={{ width: "100%", height: "400px" }}
             mapStyle="mapbox://styles/mapbox/streets-v11"
           >
             <Marker longitude={longitude} latitude={latitude}>
@@ -132,16 +132,18 @@ const Property: NextPage = () => {
       <Head>
         <title>{property.title}</title>
         <link rel="icon" href="/favicon.ico" />
+        <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
       </Head>
 
-      {renderHeader()}
-      {renderCover()}
-      {renderDrawer()}
-
-      {/* TODO: Test Button */}
-      <Group position="left" className="mt-4">
-        <Button onClick={open}>Open Drawer</Button>
-      </Group>
+      <div className="rounded-lg border border-shark-700 bg-shark-950 p-6">
+        {renderHeader()}
+        {renderCover()}
+        {renderDrawer()}
+        {/* TODO: Test Button */}
+        <Group position="left" className="mt-4">
+          <Button onClick={open}>Open Drawer</Button>
+        </Group>
+      </div>
 
       {renderDescription(property)}
       {renderMap()}

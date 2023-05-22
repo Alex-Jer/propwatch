@@ -13,7 +13,7 @@ const Shell = ({ children, useNavbarSearch }: ShellProps) => {
     <AppShell
       styles={{
         main: {
-          background: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
+          background: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
         },
       }}
       layout="alt"

@@ -21,13 +21,12 @@ import {
   IconSelector,
   IconListNumbers,
   IconTrash,
-  IconInbox,
   IconFolder,
   IconBuildingEstate,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useAllCollections, useTags } from "~/hooks/useQueries";
+import { useAllCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 import { UserButton } from "./UserButton";
 
@@ -143,6 +142,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
 const useStyles = createStyles((theme) => ({
   navbar: {
     paddingTop: 0,
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
 
   section: {
