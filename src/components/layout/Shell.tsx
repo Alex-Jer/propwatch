@@ -5,10 +5,7 @@ import { NavbarDefault } from "./Navbar";
 import { NavbarSearch } from "./NavbarSearch";
 import { NavHeader } from "./NavHeader";
 
-const links = [
-  { link: "/collections", label: "My Collections" },
-  { link: "/about", label: "About" },
-];
+const links = [{ link: "/collections", label: "My Collections" }];
 
 const Shell = ({ children, useNavbarSearch, search, setSearch }: ShellProps) => {
   const theme = useMantineTheme();
