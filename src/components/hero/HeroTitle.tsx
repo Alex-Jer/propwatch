@@ -1,10 +1,49 @@
 import { createStyles, Container, Text, Button, Group, rem } from "@mantine/core";
+import Link from "next/link";
+
+export function HeroTitle() {
+  const { classes } = useStyles();
+
+  return (
+    <div className={classes.wrapper}>
+      <Container size={700} className={classes.inner}>
+        <h1 className={classes.title}>
+          An{" "}
+          <Text component="span" variant="gradient" gradient={{ from: "blue", to: "cyan" }} inherit>
+            all-in-one
+          </Text>{" "}
+          real estate manager
+        </h1>
+
+        <Text className={classes.description} color="dimmed">
+          Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.
+        </Text>
+
+        <Group className={classes.controls}>
+          <Button size="xl" className={classes.control} variant="gradient" gradient={{ from: "blue", to: "cyan" }}>
+            <Link href="/auth/login">Get started</Link>
+          </Button>
+
+          <Button
+            component="a"
+            href="https://github.com/mantinedev/mantine"
+            size="xl"
+            variant="default"
+            className={classes.control}
+          >
+            GitHub
+          </Button>
+        </Group>
+      </Container>
+    </div>
+  );
+}
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
     boxSizing: "border-box",
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
 
   inner: {
@@ -63,41 +102,3 @@ const useStyles = createStyles((theme) => ({
     },
   },
 }));
-
-export function HeroTitle() {
-  const { classes } = useStyles();
-
-  return (
-    <div className={classes.wrapper}>
-      <Container size={700} className={classes.inner}>
-        <h1 className={classes.title}>
-          An{" "}
-          <Text component="span" variant="gradient" gradient={{ from: "blue", to: "cyan" }} inherit>
-            all-in-one
-          </Text>{" "}
-          real estate manager
-        </h1>
-
-        <Text className={classes.description} color="dimmed">
-          Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.
-        </Text>
-
-        <Group className={classes.controls}>
-          <Button size="xl" className={classes.control} variant="gradient" gradient={{ from: "blue", to: "cyan" }}>
-            Get started
-          </Button>
-
-          <Button
-            component="a"
-            href="https://github.com/mantinedev/mantine"
-            size="xl"
-            variant="default"
-            className={classes.control}
-          >
-            GitHub
-          </Button>
-        </Group>
-      </Container>
-    </div>
-  );
-}

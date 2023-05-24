@@ -13,25 +13,7 @@ export function NavHeader({ links }: HeaderActionProps) {
   const router = useRouter();
   const { data: session } = useSession();
 
-  const items = links.map((link) => {
-    // const menuItems = link.links?.map((item) => <Menu.Item key={item.link}>{item.label}</Menu.Item>);
-
-    // if (menuItems) {
-    //   return (
-    //     <Menu key={link.label} trigger="hover" transitionProps={{ exitDuration: 0 }} withinPortal>
-    //       <Menu.Target>
-    //         <a href={link.link} className={classes.link} onClick={(event) => event.preventDefault()}>
-    //           <Center>
-    //             <span className={classes.linkLabel}>{link.label}</span>
-    //             {/* <IconChevronDown size={rem(12)} stroke={1.5} /> */}
-    //           </Center>
-    //         </a>
-    //       </Menu.Target>
-    //       {/* <Menu.Dropdown>{menuItems}</Menu.Dropdown> */}
-    //     </Menu>
-    //   );
-    // }
-
+  const items = links?.map((link) => {
     return (
       <Link key={link.label} href={link.link}>
         <span className={classes.link}>{link.label}</span>
@@ -71,7 +53,7 @@ export function NavHeader({ links }: HeaderActionProps) {
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
           {/* <MantineLogo size={28} /> */}
           <Link href="/">
-            <span className="w-44">Lorem Ipsum</span>
+            <span className="w-44 font-bold">realtywatch</span>
           </Link>
         </Group>
         <Group spacing={5} className={classes.links}>
@@ -87,7 +69,7 @@ export function NavHeader({ links }: HeaderActionProps) {
 
 const useStyles = createStyles((theme) => ({
   header: {
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
     borderBottom: 0,
   },
 

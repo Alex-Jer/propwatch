@@ -21,7 +21,6 @@ import {
   IconSelector,
   IconListNumbers,
   IconTrash,
-  IconInbox,
   IconFolder,
   IconBuildingEstate,
 } from "@tabler/icons-react";
@@ -146,6 +145,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
 const useStyles = createStyles((theme) => ({
   navbar: {
     paddingTop: 0,
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
 
   section: {

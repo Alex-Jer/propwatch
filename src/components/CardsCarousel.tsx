@@ -1,16 +1,40 @@
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
-import { createStyles, Paper, useMantineTheme, rem } from "@mantine/core";
+import { createStyles, Paper, useMantineTheme, rem, getStylesRef } from "@mantine/core";
 
 const useStyles = createStyles(() => ({
   card: {
-    height: rem(150),
+    height: rem(350),
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "flex-start",
     backgroundSize: "cover",
     backgroundPosition: "center",
+  },
+
+  carousel: {
+    "&:hover": {
+      [`& .${getStylesRef("carouselControls")}`]: {
+        opacity: 1,
+      },
+    },
+  },
+
+  carouselControls: {
+    ref: getStylesRef("carouselControls"),
+    transition: "opacity 150ms ease",
+    opacity: 0,
+  },
+
+  carouselIndicator: {
+    width: rem(4),
+    height: rem(4),
+    transition: "width 250ms ease",
+
+    "&[data-active]": {
+      width: rem(16),
+    },
   },
 }));
 
@@ -50,6 +74,7 @@ function Card({ url, currentUrl, setCover }: CardProps) {
 export function CardsCarousel({ data, currentUrl, setCover }: CarouselProps) {
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const { classes } = useStyles();
 
   const slides = data.map((item) => (
     <Carousel.Slide key={item.url}>
@@ -58,7 +83,20 @@ export function CardsCarousel({ data, currentUrl, setCover }: CarouselProps) {
   ));
 
   return (
-    <Carousel slideSize="30%" slideGap="sm" align="start" slidesToScroll={mobile ? 1 : 2} loop withIndicators>
+    <Carousel
+      slideSize={mobile ? "100%" : "30%"}
+      slideGap="sm"
+      align="start"
+      slidesToScroll={mobile ? 1 : 2}
+      className="w-full"
+      loop
+      withIndicators
+      classNames={{
+        root: classes.carousel,
+        controls: classes.carouselControls,
+        indicator: classes.carouselIndicator,
+      }}
+    >
       {slides}
     </Carousel>
   );

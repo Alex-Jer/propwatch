@@ -130,7 +130,7 @@ export type ShellProps = {
 };
 
 export type HeaderActionProps = {
-  links: { link: string; label: string /* links: { link: string; label: string }[] */ }[];
+  links?: { link: string; label: string }[];
 };
 
 export type UserButtonProps = UnstyledButtonProps & {

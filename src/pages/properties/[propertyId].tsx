@@ -21,7 +21,6 @@ const Property: NextPage = () => {
   const { data: property, isLoading, isError } = useProperty({ session, status, elementId: String(propertyId ?? "") });
 
   const [coverUrl, setCoverUrl] = useState("");
-
   const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
@@ -43,7 +42,7 @@ const Property: NextPage = () => {
     address: { coordinates },
   } = property;
 
-  const renderHeader = (property: Property) => {
+  const renderHeader = () => {
     return (
       <>
         <div className="mb-2 flex justify-between">
@@ -58,20 +57,26 @@ const Property: NextPage = () => {
     );
   };
 
-  const renderGallery = () => {
+  const renderCover = () => {
     if (coverUrl == null) return <div>Loading...</div>;
     return (
       <>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {/* <span onClick={open}> */}
           <MainCarousel images={photos} />
+          {/* </span> */}
         </div>
-
-        {/* <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="col-span-1 md:col-span-2">
-            <CardsCarousel data={photos} currentUrl={coverUrl} setCover={setCoverUrl} />
-          </div>
-        </div> */}
       </>
+    );
+  };
+
+  const renderDrawer = () => {
+    return (
+      <Drawer opened={opened} onClose={close} position="bottom" size="100%">
+        <div className="flex h-screen items-center">
+          <CardsCarousel data={photos} currentUrl={coverUrl} setCover={setCoverUrl} />
+        </div>
+      </Drawer>
     );
   };
 
@@ -100,6 +105,7 @@ const Property: NextPage = () => {
               latitude,
               zoom: 15,
             }}
+            style={{ width: "100%", height: "400px" }}
             mapStyle="mapbox://styles/mapbox/streets-v11"
           >
             <Marker longitude={longitude} latitude={latitude}>
@@ -126,20 +132,18 @@ const Property: NextPage = () => {
       <Head>
         <title>{property.title}</title>
         <link rel="icon" href="/favicon.ico" />
+        <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
       </Head>
 
-      {renderHeader(property)}
-      {renderGallery()}
-
-      <Drawer opened={opened} onClose={close} position="bottom" size="100%">
-        <div className="h-full bg-red-400">
-          <CardsCarousel data={photos} currentUrl={coverUrl} setCover={setCoverUrl} />
-        </div>
-      </Drawer>
-
-      <Group position="left" className="mt-4">
-        <Button onClick={open}>Open Drawer</Button>
-      </Group>
+      <div className="rounded-lg border border-shark-700 bg-shark-950 p-6">
+        {renderHeader()}
+        {renderCover()}
+        {renderDrawer()}
+        {/* TODO: Test Button */}
+        <Group position="left" className="mt-4">
+          <Button onClick={open}>Open Drawer</Button>
+        </Group>
+      </div>
 
       {renderDescription(property)}
       {renderMap()}
