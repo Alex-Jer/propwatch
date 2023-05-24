@@ -1,13 +1,13 @@
 import { AppShell, useMantineTheme } from "@mantine/core";
 import { useState } from "react";
 import { type ShellProps } from "~/types";
-import { NavHeader } from "./Header";
 import { NavbarDefault } from "./Navbar";
 import { NavbarSearch } from "./NavbarSearch";
+import { NavHeader } from "./NavHeader";
 
 const links = [
-  { link: "/collections", label: "My Collections", links: [] },
-  { link: "/about", label: "About", links: [] },
+  { link: "/collections", label: "My Collections" },
+  { link: "/about", label: "About" },
 ];
 
 const Shell = ({ children, useNavbarSearch, search, setSearch }: ShellProps) => {
