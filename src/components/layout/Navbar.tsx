@@ -36,7 +36,6 @@ type Props = {
 };
 
 export function NavbarDefault({ opened, setOpened }: Props) {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const { classes } = useStyles();
   const theme = useMantineTheme();
 
@@ -55,7 +54,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
   }
 
   const links = [
-    { icon: IconBuildingEstate, label: "My Properties", url: "/properties" },
+    { icon: IconBuildingEstate, label: "All Properties", url: "/properties" },
     {
       icon: IconListNumbers,
       label: "My collections",
@@ -64,8 +63,6 @@ export function NavbarDefault({ opened, setOpened }: Props) {
     },
     { icon: IconTrash, url: "", label: "Trash" },
   ];
-
-  const light = colorScheme === "light";
 
   const mainLinks = links.map((link) => (
     <Link href={link.url} key={link.label}>

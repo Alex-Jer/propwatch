@@ -65,6 +65,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   }
 
   const links = [
+    { icon: IconBuildingEstate, label: "All Properties", url: "/properties" },
     {
       icon: IconListNumbers,
       label: "My collections",
@@ -76,7 +77,13 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
 
   const mainLinks = links.map((link) => (
     <Link href={link.url} key={link.label}>
-      <UnstyledButton key={link.label} className={classes.mainLink}>
+      <UnstyledButton
+        key={link.label}
+        className={classes.mainLink}
+        onClick={() => {
+          setSearch({});
+        }}
+      >
         <div className={classes.mainLinkInner}>
           <link.icon size={20} className={classes.mainLinkIcon} stroke={1.5} />
           <span>{link.label}</span>
@@ -187,21 +194,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
       />
 
       <Navbar.Section className={classes.section}>
-        <div className={classes.mainLinks}>
-          <UnstyledButton
-            onClick={() => {
-              setSearch({});
-            }}
-            key="My Properties"
-            className={classes.mainLink}
-          >
-            <div className={classes.mainLinkInner}>
-              <IconBuildingEstate size={20} className={classes.mainLinkIcon} stroke={1.5} />
-              <span>My Properties</span>
-            </div>
-          </UnstyledButton>
-          {mainLinks}
-        </div>
+        <div className={classes.mainLinks}>{mainLinks}</div>
       </Navbar.Section>
 
       <Navbar.Section className={classes.section}>
