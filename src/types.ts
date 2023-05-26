@@ -129,10 +129,6 @@ export type ShellProps = {
   setSearch: (search: SearchOptions) => void;
 };
 
-export type HeaderActionProps = {
-  links?: { link: string; label: string }[];
-};
-
 export type UserButtonProps = UnstyledButtonProps & {
   image: string;
   name: string;

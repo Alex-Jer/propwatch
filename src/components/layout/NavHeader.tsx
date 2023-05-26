@@ -1,15 +1,18 @@
 import { Burger, Button, Container, Group, Header, createStyles, rem } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { type HeaderActionProps } from "~/types";
 import { useSession } from "next-auth/react";
+
+type HeaderActionProps = {
+  links?: { link: string; label: string }[];
+  opened: boolean;
+  setOpened: (opened: boolean) => void;
+};
 
 const HEADER_HEIGHT = rem(60);
 
-export function NavHeader({ links }: HeaderActionProps) {
+export function NavHeader({ links, opened, setOpened }: HeaderActionProps) {
   const { classes } = useStyles();
-  const [opened, { toggle }] = useDisclosure(false);
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -50,8 +53,7 @@ export function NavHeader({ links }: HeaderActionProps) {
     <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }} mb={20} className={classes.header}>
       <Container className={classes.inner} fluid>
         <Group>
-          <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
-          {/* <MantineLogo size={28} /> */}
+          <Burger opened={opened} onClick={() => setOpened(!opened)} className={classes.burger} size="sm" />
           <Link href="/">
             <span className="w-44 font-bold">realtywatch</span>
           </Link>

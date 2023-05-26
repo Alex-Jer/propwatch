@@ -85,11 +85,8 @@ export function NavbarDefault({ opened, setOpened }: Props) {
       <UnstyledButton key={collection.name} className={classes.mainLink}>
         <div className={classes.mainLinkInner}>
           <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
-          <span>{collection.name}</span>
+          <p className="mr-auto w-60 max-w-xs overflow-hidden truncate">{collection.name}</p>
         </div>
-        <Badge size="sm" variant="filled" className={classes.mainLinkBadge}>
-          {collection.num_properties}
-        </Badge>
       </UnstyledButton>
     </Link>
   ));
@@ -133,7 +130,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
             </ActionIcon>
           </Tooltip>
         </Group>
-        <div className={classes.sectionContent}>{collectionLinks}</div>
+        <div className={`${classes.sectionContent}`}>{collectionLinks}</div>
       </Navbar.Section>
     </Navbar>
   );
