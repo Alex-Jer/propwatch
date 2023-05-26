@@ -5,8 +5,6 @@ import { NavbarDefault } from "./Navbar";
 import { NavbarSearch } from "./NavbarSearch";
 import { NavHeader } from "./NavHeader";
 
-const links = [{ link: "/collections", label: "My Collections" }];
-
 const Shell = ({ children, useNavbarSearch, search, setSearch }: ShellProps) => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
@@ -15,7 +13,7 @@ const Shell = ({ children, useNavbarSearch, search, setSearch }: ShellProps) => 
     <AppShell
       styles={{
         main: {
-          background: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
+          background: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
         },
       }}
       layout="alt"
@@ -29,7 +27,7 @@ const Shell = ({ children, useNavbarSearch, search, setSearch }: ShellProps) => 
           <NavbarDefault opened={opened} setOpened={setOpened} />
         )
       }
-      header={<NavHeader links={links} />}
+      header={<NavHeader />}
     >
       {children}
     </AppShell>

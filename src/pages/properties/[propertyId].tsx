@@ -135,7 +135,7 @@ const Property: NextPage = () => {
         <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
       </Head>
 
-      <div className="rounded-lg border border-shark-700 bg-shark-950 p-6">
+      <div className="rounded-lg border border-shark-700 bg-shark-950 p-6 mb-4">
         {renderHeader()}
         {renderCover()}
         {renderDrawer()}
@@ -145,8 +145,13 @@ const Property: NextPage = () => {
         </Group>
       </div>
 
-      {renderDescription(property)}
-      {renderMap()}
+      <div className="rounded-lg border border-shark-700 bg-shark-950 p-6 mb-4">
+        {renderDescription(property)}
+      </div>
+
+      <div className="rounded-lg border border-shark-700 bg-shark-950 p-6 mb-4">
+        {renderMap()}
+      </div>
     </>
   );
 };
