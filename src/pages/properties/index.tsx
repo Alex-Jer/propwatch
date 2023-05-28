@@ -1,4 +1,5 @@
 import { Group, Pagination } from "@mantine/core";
+import { IconBuildingEstate } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
@@ -73,6 +74,13 @@ const Properties: NextPage<PropertiesPageProps> = ({ search }) => {
         <title>My Properties</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      <div className="mb-2 flex flex-row items-center">
+        <IconBuildingEstate className="-mt-1 mr-2" strokeWidth={1.5} />
+        <h1 className="pb-1 text-base font-semibold">All Properties</h1>
+      </div>
+
+      <div className="-mx-4 mb-4 border-b border-shark-700" />
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
         {renderProperties(properties)}

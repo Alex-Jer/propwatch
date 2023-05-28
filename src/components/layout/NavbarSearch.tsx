@@ -65,7 +65,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   }
 
   const links = [
-    { icon: IconBuildingEstate, label: "All Properties", url: "/properties" },
+    { icon: IconBuildingEstate, label: "All properties", url: "/properties" },
     {
       icon: IconListNumbers,
       label: "All collections",
