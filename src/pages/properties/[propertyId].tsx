@@ -12,6 +12,7 @@ import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "publ
 import { MainCarousel } from "~/components/MainCarousel";
 import { useDisclosure } from "@mantine/hooks";
 import { Button, Drawer, Group } from "@mantine/core";
+import CardBackground from "~/components/CardBackground";
 
 const Property: NextPage = () => {
   const router = useRouter();
@@ -95,7 +96,7 @@ const Property: NextPage = () => {
     const longitude = coordinates.longitude;
     return (
       <>
-        <h2 className="mt-4 text-3xl">Location</h2>
+        <h2 className="mb-2 text-3xl">Location</h2>
         <div className="h-3/6 w-auto">
           {/* TODO: token */}
           <Map
@@ -105,7 +106,7 @@ const Property: NextPage = () => {
               latitude,
               zoom: 15,
             }}
-            style={{ width: "100%", height: "400px" }}
+            style={{ width: "100%", height: "400px", borderRadius: "12px" }}
             mapStyle="mapbox://styles/mapbox/streets-v11"
           >
             <Marker longitude={longitude} latitude={latitude}>
@@ -135,7 +136,7 @@ const Property: NextPage = () => {
         <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
       </Head>
 
-      <div className="rounded-lg border border-shark-700 bg-shark-950 p-6 mb-4">
+      <CardBackground className="pt-6">
         {renderHeader()}
         {renderCover()}
         {renderDrawer()}
@@ -143,15 +144,11 @@ const Property: NextPage = () => {
         <Group position="left" className="mt-4">
           <Button onClick={open}>Open Drawer</Button>
         </Group>
-      </div>
+      </CardBackground>
 
-      <div className="rounded-lg border border-shark-700 bg-shark-950 p-6 mb-4">
-        {renderDescription(property)}
-      </div>
+      <CardBackground>{renderDescription(property)}</CardBackground>
 
-      <div className="rounded-lg border border-shark-700 bg-shark-950 p-6 mb-4">
-        {renderMap()}
-      </div>
+      <CardBackground className="pt-6">{renderMap()}</CardBackground>
     </>
   );
 };

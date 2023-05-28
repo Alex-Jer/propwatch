@@ -1,5 +1,4 @@
-import { IconEye, IconMessageCircle } from "@tabler/icons-react";
-import { Card, Text, Group, Center, createStyles, getStylesRef, rem } from "@mantine/core";
+import { Card, Text, Group, createStyles, getStylesRef, rem } from "@mantine/core";
 
 interface PropertyCardProps {
   image: string;
@@ -8,7 +7,7 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ image, title, author }: PropertyCardProps) {
-  const { classes, theme } = useStyles();
+  const { classes } = useStyles();
 
   return (
     <Card p="lg" shadow="lg" className={classes.card} radius="md" component="a" target="_blank">
@@ -52,7 +51,6 @@ const useStyles = createStyles((theme) => ({
     position: "relative",
     height: rem(280),
     /* width: rem(280), */
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
 
     [`&:hover .${getStylesRef("image")}`]: {
       transform: "scale(1.03)",

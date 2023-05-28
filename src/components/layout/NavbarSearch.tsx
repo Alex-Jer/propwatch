@@ -68,7 +68,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
     { icon: IconBuildingEstate, label: "All Properties", url: "/properties" },
     {
       icon: IconListNumbers,
-      label: "My collections",
+      label: "All collections",
       url: "/collections",
       notifications: colData?.total ?? 0,
     },
@@ -114,7 +114,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
       >
         <div className={`${classes.mainLinkInner} ${color}`}>
           <IconFolder size={20} className={`${classes.mainLinkIcon} ${color}`} stroke={1.5} />
-          <span>{collection.name}</span>
+          <p className="w-60 overflow-hidden truncate">{collection.name}</p>
         </div>
       </UnstyledButton>
     );

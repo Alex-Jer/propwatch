@@ -10,7 +10,6 @@ import {
   ActionIcon,
   Tooltip,
   rem,
-  useMantineColorScheme,
   MediaQuery,
   Burger,
   useMantineTheme,
@@ -54,10 +53,10 @@ export function NavbarDefault({ opened, setOpened }: Props) {
   }
 
   const links = [
-    { icon: IconBuildingEstate, label: "All Properties", url: "/properties" },
+    { icon: IconBuildingEstate, label: "All properties", url: "/properties" },
     {
       icon: IconListNumbers,
-      label: "My collections",
+      label: "All collections",
       url: "/collections",
       notifications: colData?.total ?? 0,
     },
@@ -85,7 +84,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
       <UnstyledButton key={collection.name} className={classes.mainLink}>
         <div className={classes.mainLinkInner}>
           <IconFolder size={20} className={classes.mainLinkIcon} stroke={1.5} />
-          <p className="mr-auto w-60 max-w-xs overflow-hidden truncate">{collection.name}</p>
+          <p className="w-60 overflow-hidden truncate">{collection.name}</p>
         </div>
       </UnstyledButton>
     </Link>
@@ -130,7 +129,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
             </ActionIcon>
           </Tooltip>
         </Group>
-        <div className={`${classes.sectionContent}`}>{collectionLinks}</div>
+        <div className={classes.sectionContent}>{collectionLinks}</div>
       </Navbar.Section>
     </Navbar>
   );

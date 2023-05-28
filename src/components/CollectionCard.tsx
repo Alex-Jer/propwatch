@@ -18,12 +18,12 @@ const useStyles = createStyles((theme) => ({
 
 interface CollectionCardProps {
   image: string;
-  category: string;
+  description: string;
   title: string;
   date: string;
 }
 
-export function CollectionCard({ image, category, title, date }: CollectionCardProps) {
+export function CollectionCard({ image, description, title, date }: CollectionCardProps) {
   const { classes } = useStyles();
   return (
     <Card withBorder radius="md" p={0} className={classes.card}>
@@ -34,7 +34,7 @@ export function CollectionCard({ image, category, title, date }: CollectionCardP
             {title}
           </Text>
           <Text transform="uppercase" color="dimmed" weight={500} size="xs">
-            {category}
+            {description}
           </Text>
           <Group noWrap spacing="xs">
             <Text size="xs" color="dimmed">

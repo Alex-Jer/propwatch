@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CollectionCard } from "~/components/CollectionCard";
 import { useCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
+import { IconListNumbers } from "@tabler/icons-react";
 
 const Collections: NextPage = () => {
   const { data: session, status } = useSession();
@@ -32,7 +33,7 @@ const Collections: NextPage = () => {
               date={collection.num_properties.toString() + " properties"}
               image={"https://cdn.discordapp.com/attachments/701787191298490448/1105434110849204344/image.png"}
               title={collection.name}
-              category={collection.description}
+              description={collection.description}
             />
           </Link>
         ))}
@@ -43,9 +44,16 @@ const Collections: NextPage = () => {
   return (
     <>
       <Head>
-        <title>My Collections</title>
+        <title>All Collections</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      <div className="mb-2 flex flex-row items-center">
+        <IconListNumbers className="-mt-1 mr-2" strokeWidth={1.5} />
+        <h1 className="pb-1 text-base font-semibold">All Collections</h1>
+      </div>
+
+      <div className="-mx-4 mb-2 border-b border-shark-700" />
 
       {renderCollections(collections)}
     </>

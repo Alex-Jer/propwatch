@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import CardBackground from "~/components/CardBackground";
 import { PropertyCard } from "~/components/PropertyCard";
 import { useCollection } from "~/hooks/useQueries";
 import { type CollectionProperty } from "~/types";
@@ -61,11 +62,13 @@ const Collection: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1>{collection?.name}</h1>
+      <CardBackground className="pt-4">
+        <h1 className="pb-2">{collection?.name}</h1>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-        {renderProperties(collection.properties.data)}
-      </div>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+          {renderProperties(collection.properties.data)}
+        </div>
+      </CardBackground>
     </>
   );
 };
