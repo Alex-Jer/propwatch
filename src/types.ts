@@ -14,6 +14,7 @@ export type Collection = {
   name: string;
   description: string;
   num_properties: number;
+  tags: string[];
 };
 
 export type CollectionWithProperties = {
