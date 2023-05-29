@@ -36,6 +36,7 @@ const Collections: NextPage = () => {
               tags={collection.tags}
               date={collection.num_properties.toString() + " properties"}
             />
+            <div className="border-b border-shark-700 pb-4" />
           </Link>
         ))}
       </span>
@@ -54,7 +55,7 @@ const Collections: NextPage = () => {
         <h1 className="pb-1 text-base font-semibold">All Collections</h1>
       </div>
 
-      <div className="-mx-4 mb-2 border-b border-shark-700" />
+      <div className="-mx-4 mb-4 border-b border-shark-700" />
 
       {renderCollections(collections)}
     </>

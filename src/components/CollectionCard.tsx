@@ -23,16 +23,16 @@ interface CollectionCardProps {
 export function CollectionCard({ image, description, title, tags, date }: CollectionCardProps) {
   const { classes } = useStyles();
   return (
-    <Card radius={0} className="border-b border-shark-700">
+    <Card radius={0} padding={0}>
       <Group noWrap spacing={0}>
-        <Image src={image} height={140} width={140} alt={title} className="-ml-4" />
+        <Image src={image} height={140} width={140} alt={title} className="flex-shrink-0" />
 
         <div className={classes.body}>
-          <Text className={classes.title} mt="xs" mb="md">
+          <Text className={classes.title} mb="xs">
             {title}
           </Text>
 
-          <Text transform="uppercase" color="dimmed" weight={500} size="xs">
+          <Text size="sm" color="dimmed">
             {description}
           </Text>
 
