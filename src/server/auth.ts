@@ -2,7 +2,6 @@ import { type GetServerSidePropsContext } from "next";
 import { getServerSession, type DefaultSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-import { env } from "~/env.mjs";
 import { login } from "~/lib/requestHelper";
 
 /**
@@ -41,7 +40,7 @@ export const authOptions: NextAuthOptions = {
     jwt({ token, user }) {
       if (user) {
         token.id = user.access_token;
-        token.photo_url = `${env.NEXT_PUBLIC_API_URL}${user.photo_url}`;
+        token.photo_url = user.photo_url;
       }
       return token;
     },
