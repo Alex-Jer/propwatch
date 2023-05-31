@@ -62,11 +62,11 @@ const Property: NextPage = () => {
     if (coverUrl == null) return <div>Loading...</div>;
     return (
       <>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {/* <span onClick={open}> */}
-          <MainCarousel images={photos} />
-          {/* </span> */}
-        </div>
+        {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-3"> */}
+        {/* <span onClick={open}> */}
+        <MainCarousel images={photos} />
+        {/* </span> */}
+        {/* </div> */}
       </>
     );
   };
@@ -96,7 +96,7 @@ const Property: NextPage = () => {
     const longitude = coordinates.longitude;
     return (
       <>
-        <h2 className="mb-2 text-3xl">Location</h2>
+        <h2 className="my-2 text-3xl">Location</h2>
         <div className="h-3/6 w-auto">
           {/* TODO: token */}
           <Map
@@ -140,15 +140,20 @@ const Property: NextPage = () => {
         {renderHeader()}
         {renderCover()}
         {renderDrawer()}
+
         {/* TODO: Test Button */}
         <Group position="left" className="mt-4">
           <Button onClick={open}>Open Drawer</Button>
         </Group>
+
+        <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
+
+        {renderDescription(property)}
+
+        <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
+
+        {renderMap()}
       </CardBackground>
-
-      <CardBackground>{renderDescription(property)}</CardBackground>
-
-      <CardBackground className="pt-6">{renderMap()}</CardBackground>
     </>
   );
 };
