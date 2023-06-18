@@ -94,6 +94,7 @@ const Property: NextPage = () => {
     //TODO: If coordinates are null? Can they even be null?
     const latitude = coordinates.latitude;
     const longitude = coordinates.longitude;
+
     return (
       <>
         <h2 className="my-2 text-3xl">Location</h2>
