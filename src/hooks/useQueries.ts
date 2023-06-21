@@ -65,9 +65,20 @@ type TagsResponse = {
   data: Tag[];
 };
 
+const fetchCollection = async (session: Session | null, id: string) => {
+  // TODO: fix API response
+  const response = (await makeRequest(`me/lists/${id}`, "GET", session?.user.access_token)) as CollectionResponse;
+  return response;
+};
+
 /* Keep this one to paginate the collections page? */
 const fetchCollections = async (session: Session | null) => {
   const response = (await makeRequest("me/lists", "GET", session?.user.access_token)) as CollectionsResponse;
+  return response;
+};
+
+const fetchAllCollections = async (session: Session | null) => {
+  const response = (await makeRequest("me/lists/all", "GET", session?.user.access_token)) as SidebarCollectionsResponse;
   return response;
 };
 
@@ -80,19 +91,15 @@ const fetchSidebarCollections = async (session: Session | null) => {
   return response;
 };
 
-const fetchAllCollections = async (session: Session | null) => {
-  const response = (await makeRequest("me/lists/all", "GET", session?.user.access_token)) as SidebarCollectionsResponse;
-  return response;
-};
-
-const fetchCollection = async (session: Session | null, id: string) => {
-  // TODO: fix API response
-  const response = (await makeRequest(`me/lists/${id}`, "GET", session?.user.access_token)) as CollectionResponse;
-  return response;
+const fetchProperty = async (session: Session | null, id: string) => {
+  const response = (await makeRequest(`me/properties/${id}`, "GET", session?.user.access_token)) as PropertyResponse;
+  console.log("response", response); // TODO: console.log
+  return response.data;
 };
 
 const fetchProperties = async (session: Session | null, search: SearchOptions = {}, page = 1) => {
   let extraFields = "";
+
   if (search.query) extraFields += `&query=${encodeURIComponent(search.query)}`;
   if (search.list) extraFields += `&list_id=${encodeURIComponent(search.list)}`;
   if (search.adm) extraFields += `&adm_id=${encodeURIComponent(search.adm)}`;
@@ -104,18 +111,26 @@ const fetchProperties = async (session: Session | null, search: SearchOptions = 
     "GET",
     session?.user.access_token
   )) as PropertiesResponse;
+
   return response;
 };
 
-const fetchProperty = async (session: Session | null, id: string) => {
-  const response = (await makeRequest(`me/properties/${id}`, "GET", session?.user.access_token)) as PropertyResponse;
-  console.log("response", response);
+const fetchTags = async (session: Session | null) => {
+  const response = (await makeRequest("me/tags", "GET", session?.user.access_token)) as TagsResponse;
   return response.data;
 };
 
 const fetchTagsSidebar = async (session: Session | null) => {
   const response = (await makeRequest("me/tags/sidebar", "GET", session?.user.access_token)) as TagsResponse;
   return response.data;
+};
+
+export const useCollection = ({ session, status, elementId: collectionId }: UseElementWithElementId) => {
+  return useQuery({
+    queryKey: ["collection", collectionId],
+    queryFn: () => fetchCollection(session, collectionId),
+    enabled: status === "authenticated",
+  });
 };
 
 export const useCollections = ({ session, status }: UseElement) => {
@@ -142,14 +157,6 @@ export const useAllCollections = ({ session, status }: UseElement) => {
   });
 };
 
-export const useCollection = ({ session, status, elementId: collectionId }: UseElementWithElementId) => {
-  return useQuery({
-    queryKey: ["collection", collectionId],
-    queryFn: () => fetchCollection(session, collectionId),
-    enabled: status === "authenticated",
-  });
-};
-
 export const useProperty = ({ session, status, elementId: propertyId }: UseElementWithElementId) => {
   return useQuery<Property>({
     queryKey: ["property", propertyId],
@@ -162,6 +169,14 @@ export const useProperties = ({ session, status, search, page }: UseProperties) 
   return useQuery({
     queryKey: ["properties", search, page] /* TODO: Is this worth it ? */,
     queryFn: () => fetchProperties(session, search, page),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useTags = ({ session, status }: UseElement) => {
+  return useQuery({
+    queryKey: ["tags"],
+    queryFn: () => fetchTags(session),
     enabled: status === "authenticated",
   });
 };

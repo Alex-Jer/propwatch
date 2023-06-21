@@ -50,6 +50,11 @@ export type Tag = {
   name: string;
 };
 
+export type SelectOption = {
+  value: string;
+  label: string;
+};
+
 type Media = {
   photos: { url: string }[];
   videos: { url: string }[];

@@ -40,13 +40,14 @@ type Props = {
 export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   const { classes } = useStyles();
   const theme = useMantineTheme();
-
   const { data: session, status } = useSession();
+
   const {
     data: colData,
     isLoading: isLoadingCollections,
     isError: isErrorCollection,
   } = useSidebarCollections({ session, status });
+
   const collections = colData?.data;
 
   const { data: tags, isLoading: isLoadingTags, isError: isErrorTags } = useTagsSidebar({ session, status });

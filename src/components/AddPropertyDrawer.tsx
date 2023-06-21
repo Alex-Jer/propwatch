@@ -1,4 +1,4 @@
-import { Button, Drawer } from "@mantine/core";
+import { Button, Drawer, Loader } from "@mantine/core";
 import { TextInput } from "@mantine/core";
 import { Textarea } from "@mantine/core";
 import { Select } from "@mantine/core";
@@ -6,8 +6,11 @@ import { MultiSelect } from "@mantine/core";
 import { Group } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import { IconCurrencyEuro } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
+import { useAllCollections, useTags } from "~/hooks/useQueries";
+import { type SelectOption } from "~/types";
 
-interface NewPropertyDrawerProps {
+interface AddPropertyDrawerProps {
   opened: boolean;
   close: () => void;
 }
@@ -43,26 +46,45 @@ const typology = [
   { value: "t10", label: "T10" },
 ];
 
-const status = [
+const currentStatus = [
   { value: "available", label: "Available" },
   { value: "unavailable", label: "Unavailable" },
   { value: "unknown", label: "Unknown" },
 ];
 
-const tags = [
-  { value: "tag1", label: "Tag 1" },
-  { value: "tag2", label: "Tag 2" },
-  { value: "tag3", label: "Tag 3" },
-];
-
-const lists = [
-  { value: "list1", label: "List 1" },
-  { value: "list2", label: "List 2" },
-  { value: "list3", label: "List 3" },
-];
-
-export function NewPropertyDrawer({ opened, close }: NewPropertyDrawerProps) {
+export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [selectedListingType, setSelectedListingType] = useInputState("");
+  const { data: session, status } = useSession();
+
+  const { data: tagsData, isLoading: tagsIsLoading, isError: tagsIsError } = useTags({ session, status });
+
+  const {
+    data: collectionsData,
+    isLoading: collectionsIsLoading,
+    isError: collectionsIsError,
+  } = useAllCollections({ session, status });
+
+  let tags = [] as SelectOption[];
+  let collections = [] as SelectOption[];
+
+  if (tagsData) {
+    tags = tagsData.map((tag) => ({
+      value: tag.id.toString(),
+      label: tag.name,
+    }));
+  }
+
+  if (collectionsData) {
+    collections = collectionsData.data.map((collection) => ({
+      value: collection.id.toString(),
+      label: collection.name,
+    }));
+  }
+
+  const handleClick = () => {
+    console.log({ tags });
+    console.log({ collections });
+  };
 
   return (
     <>
@@ -73,6 +95,7 @@ export function NewPropertyDrawer({ opened, close }: NewPropertyDrawerProps) {
         position="right"
         size="60%"
         overlayProps={{ opacity: 0.5, blur: 4 }}
+        keepMounted
       >
         <div className="container mx-auto px-8">
           <div className="grid grid-cols-1 gap-6">
@@ -83,15 +106,23 @@ export function NewPropertyDrawer({ opened, close }: NewPropertyDrawerProps) {
               <Select
                 data={listingType}
                 label="Listing Type"
+                placeholder="Listing Type"
                 searchable
                 nothingFound="No options"
                 value={selectedListingType}
                 onChange={setSelectedListingType}
               />
 
-              <Select data={propertyType} label="Property Type" searchable nothingFound="No options" />
-              <Select data={typology} label="Typology" searchable creatable />
-              <Select data={status} label="Current Status" />
+              <Select
+                data={propertyType}
+                label="Property Type"
+                placeholder="Property Type"
+                searchable
+                nothingFound="No options"
+              />
+
+              <Select data={typology} label="Typology" placeholder="Typology" searchable creatable />
+              <Select data={currentStatus} placeholder="Current Status" label="Current Status" />
             </Group>
 
             <Group position="apart" grow>
@@ -121,11 +152,28 @@ export function NewPropertyDrawer({ opened, close }: NewPropertyDrawerProps) {
             </Group>
 
             <Group position="apart" grow>
-              <MultiSelect data={tags} label="Tags" placeholder="Tags" searchable clearable creatable />
-              <MultiSelect data={lists} label="Lists" placeholder="Lists" searchable clearable creatable />
+              <MultiSelect
+                data={tags}
+                label="Tags"
+                placeholder="Tags"
+                icon={tagsIsLoading && <Loader size="1rem" />}
+                searchable
+                clearable
+                creatable
+              />
+
+              <MultiSelect
+                data={collections}
+                label="Collections"
+                placeholder="Collections"
+                icon={collectionsIsLoading && <Loader size="1rem" />}
+                searchable
+                clearable
+                creatable
+              />
             </Group>
 
-            <Button variant="light" fullWidth>
+            <Button variant="light" fullWidth onClick={handleClick}>
               Add Property
             </Button>
           </div>

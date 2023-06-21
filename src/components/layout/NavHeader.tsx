@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { IconStarFilled } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import { NewPropertyDrawer } from "../NewPropertyDrawer";
+import { AddPropertyDrawer } from "../AddPropertyDrawer";
 
 type HeaderActionProps = {
   links?: { link: string; label: string }[];
@@ -73,7 +73,7 @@ export function NavHeader({ links, opened, setOpened }: HeaderActionProps) {
         </Container>
       </Header>
 
-      <NewPropertyDrawer opened={drawerOpened} close={close} />
+      <AddPropertyDrawer opened={drawerOpened} close={close} />
     </>
   );
 }

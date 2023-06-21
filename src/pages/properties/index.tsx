@@ -16,7 +16,6 @@ type PropertiesPageProps = {
 
 const Properties: NextPage<PropertiesPageProps> = ({ search }) => {
   const { data: session, status } = useSession();
-
   const [activePage, setPage] = useState(1);
 
   useEffect(() => {
