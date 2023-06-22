@@ -1,4 +1,4 @@
-import { Button, Drawer, Loader } from "@mantine/core";
+import { Button, Drawer, Loader, Stepper } from "@mantine/core";
 import { TextInput } from "@mantine/core";
 import { Textarea } from "@mantine/core";
 import { Select } from "@mantine/core";
@@ -7,6 +7,7 @@ import { Group } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import { IconCurrencyEuro } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
 import { type SelectOption } from "~/types";
 
@@ -54,15 +55,14 @@ const currentStatus = [
 
 export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [selectedListingType, setSelectedListingType] = useInputState("");
+  const [stepperActive, setStepperActive] = useState(1);
+  const nextStep = () => setStepperActive((current) => (current < 3 ? current + 1 : current));
+  const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
+
   const { data: session, status } = useSession();
 
-  const { data: tagsData, isLoading: tagsIsLoading, isError: tagsIsError } = useTags({ session, status });
-
-  const {
-    data: collectionsData,
-    isLoading: collectionsIsLoading,
-    isError: collectionsIsError,
-  } = useAllCollections({ session, status });
+  const { data: tagsData, isLoading: tagsIsLoading } = useTags({ session, status });
+  const { data: collectionsData, isLoading: collectionsIsLoading } = useAllCollections({ session, status });
 
   let tags = [] as SelectOption[];
   let collections = [] as SelectOption[];
@@ -81,101 +81,142 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     }));
   }
 
-  const handleClick = () => {
-    console.log({ tags });
-    console.log({ collections });
-  };
-
   return (
     <>
       <Drawer
+        title="Add Property"
         opened={opened}
         onClose={close}
-        title="Add Property"
         position="right"
         size="60%"
         overlayProps={{ opacity: 0.5, blur: 4 }}
         keepMounted
+        styles={{
+          header: {
+            display: "flex",
+            flexDirection: "column",
+            padding: "1rem 1.5rem",
+          },
+          title: {
+            marginBottom: "1rem",
+            fontSize: "1.5rem",
+            fontWeight: 700,
+          },
+          close: {
+            position: "absolute",
+            top: 0,
+            right: 0,
+            margin: "1rem",
+          },
+        }}
       >
         <div className="container mx-auto px-8">
           <div className="grid grid-cols-1 gap-6">
-            <TextInput label="Title" placeholder="Title" />
-            <Textarea label="Description" placeholder="Description" autosize minRows={2} maxRows={5} />
+            <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
+              <Stepper.Step label="Main Info" description="Basic info about the property">
+                <TextInput className="mb-3" label="Title" placeholder="Title" />
+                <Textarea
+                  className="mb-3"
+                  label="Description"
+                  placeholder="Description"
+                  autosize
+                  minRows={2}
+                  maxRows={5}
+                />
 
-            <Group position="apart" grow>
-              <Select
-                data={listingType}
-                label="Listing Type"
-                placeholder="Listing Type"
-                searchable
-                nothingFound="No options"
-                value={selectedListingType}
-                onChange={setSelectedListingType}
-              />
+                <Group className="mb-3" position="apart" grow>
+                  <Select
+                    data={propertyType}
+                    label="Property Type"
+                    placeholder="Property Type"
+                    searchable
+                    nothingFound="No options"
+                  />
 
-              <Select
-                data={propertyType}
-                label="Property Type"
-                placeholder="Property Type"
-                searchable
-                nothingFound="No options"
-              />
+                  <Select data={typology} label="Typology" placeholder="Typology" searchable creatable />
+                  <Select data={currentStatus} placeholder="Current Status" label="Current Status" />
+                </Group>
 
-              <Select data={typology} label="Typology" placeholder="Typology" searchable creatable />
-              <Select data={currentStatus} placeholder="Current Status" label="Current Status" />
-            </Group>
+                <Group className="mb-3" position="apart" grow>
+                  <TextInput
+                    label="Gross Area"
+                    placeholder="Gross Area"
+                    icon="m²"
+                    styles={{ icon: { fontSize: "16px" } }}
+                  />
+                  <TextInput
+                    label="Net Area"
+                    placeholder="Net Area"
+                    icon="m²"
+                    styles={{ icon: { fontSize: "16px" } }}
+                  />
+                  <TextInput label="Numer of Bathrooms" placeholder="Bathrooms" />
+                </Group>
 
-            <Group position="apart" grow>
-              <TextInput
-                label="Current Sale Price"
-                placeholder="Current Sale Price"
-                icon={<IconCurrencyEuro size="1rem" />}
-                disabled={selectedListingType === "rent"}
-              />
-              <TextInput
-                label="Current Rent Price"
-                placeholder="Current Rent Price"
-                icon={<IconCurrencyEuro size="1rem" />}
-                disabled={selectedListingType === "sale"}
-              />
-            </Group>
+                <Group position="apart" grow>
+                  <MultiSelect
+                    data={tags}
+                    label="Tags"
+                    placeholder="Tags"
+                    icon={tagsIsLoading && <Loader size="1rem" />}
+                    searchable
+                    clearable
+                    creatable
+                  />
 
-            <Group position="apart" grow>
-              <TextInput
-                label="Gross Area"
-                placeholder="Gross Area"
-                icon="m²"
-                styles={{ icon: { fontSize: "16px" } }}
-              />
-              <TextInput label="Net Area" placeholder="Net Area" icon="m²" styles={{ icon: { fontSize: "16px" } }} />
-              <TextInput label="Numer of Bathrooms" placeholder="Bathrooms" />
-            </Group>
+                  <MultiSelect
+                    data={collections}
+                    label="Collections"
+                    placeholder="Collections"
+                    icon={collectionsIsLoading && <Loader size="1rem" />}
+                    searchable
+                    clearable
+                    creatable
+                  />
+                </Group>
+              </Stepper.Step>
 
-            <Group position="apart" grow>
-              <MultiSelect
-                data={tags}
-                label="Tags"
-                placeholder="Tags"
-                icon={tagsIsLoading && <Loader size="1rem" />}
-                searchable
-                clearable
-                creatable
-              />
+              <Stepper.Step label="Characteristics & Media" description="Characteristics and media">
+                Step 2
+              </Stepper.Step>
 
-              <MultiSelect
-                data={collections}
-                label="Collections"
-                placeholder="Collections"
-                icon={collectionsIsLoading && <Loader size="1rem" />}
-                searchable
-                clearable
-                creatable
-              />
-            </Group>
+              <Stepper.Step label="Offers & Prices" description="Offers and prices">
+                <Group position="apart" grow>
+                  <Select
+                    data={listingType}
+                    label="Listing Type"
+                    placeholder="Listing Type"
+                    searchable
+                    nothingFound="No options"
+                    value={selectedListingType}
+                    onChange={setSelectedListingType}
+                  />
 
-            <Button variant="light" fullWidth onClick={handleClick}>
-              Add Property
-            </Button>
+                  <TextInput
+                    label="Current Sale Price"
+                    placeholder="Current Sale Price"
+                    icon={<IconCurrencyEuro size="1rem" />}
+                    disabled={selectedListingType === "rent"}
+                  />
+
+                  <TextInput
+                    label="Current Rent Price"
+                    placeholder="Current Rent Price"
+                    icon={<IconCurrencyEuro size="1rem" />}
+                    disabled={selectedListingType === "sale"}
+                  />
+                </Group>
+              </Stepper.Step>
+            </Stepper>
+
+            <div className="flex justify-end space-x-2">
+              <Button variant="default" onClick={prevStep} disabled={stepperActive === 0}>
+                Back
+              </Button>
+              <Button onClick={nextStep} disabled={stepperActive === 3}>
+                Next
+              </Button>
+            </div>
           </div>
         </div>
       </Drawer>
