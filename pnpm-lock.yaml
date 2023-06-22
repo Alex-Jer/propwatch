@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@emotion/react':
     specifier: ^11.11.0
@@ -85,6 +89,12 @@ dependencies:
   react-dom:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
+  react-hook-form:
+    specifier: ^7.45.0
+    version: 7.45.0(react@18.2.0)
+  react-hook-form-mantine:
+    specifier: ^1.0.10
+    version: 1.0.10(@mantine/core@6.0.10)(react-dom@18.2.0)(react-hook-form@7.45.0)(react@18.2.0)
   react-map-gl:
     specifier: ^7.0.23
     version: 7.0.23(mapbox-gl@2.14.1)(react@18.2.0)
@@ -4410,6 +4420,29 @@ packages:
       attr-accept: 2.2.2
       file-selector: 0.6.0
       prop-types: 15.8.1
+      react: 18.2.0
+    dev: false
+
+  /react-hook-form-mantine@1.0.10(@mantine/core@6.0.10)(react-dom@18.2.0)(react-hook-form@7.45.0)(react@18.2.0):
+    resolution: {integrity: sha512-sTKVZ31n5Waxt7B/U9u9EpfI1TVqKUV6MI+2W9h0XxbMbINR0n4/QmhBPJguHbyTOgWT8G0IgYDVZiqh/lUyYg==}
+    peerDependencies:
+      '@mantine/core': ^6.0.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      react-hook-form: ^7.43
+    dependencies:
+      '@mantine/core': 6.0.10(@emotion/react@11.11.0)(@mantine/hooks@6.0.10)(@types/react@18.2.6)(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-hook-form: 7.45.0(react@18.2.0)
+    dev: false
+
+  /react-hook-form@7.45.0(react@18.2.0):
+    resolution: {integrity: sha512-AbHeZ4ad+0dEIknSW9dBgIwcvRDfZ1O97sgj75WaMdOX0eg8TBiUf9wxzVkIjZbk76BBIE9lmFOzyD4PN80ZQg==}
+    engines: {node: '>=12.22.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18
+    dependencies:
       react: 18.2.0
     dev: false
 

@@ -1,15 +1,12 @@
-import { Button, Drawer, Loader, Stepper } from "@mantine/core";
-import { TextInput } from "@mantine/core";
-import { Textarea } from "@mantine/core";
-import { Select } from "@mantine/core";
-import { MultiSelect } from "@mantine/core";
-import { Group } from "@mantine/core";
-import { useInputState } from "@mantine/hooks";
-import { IconCurrencyEuro } from "@tabler/icons-react";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { useAllCollections, useTags } from "~/hooks/useQueries";
+import { useForm } from "react-hook-form";
+import { TextInput, Textarea, Select, MultiSelect, NumberInput } from "react-hook-form-mantine";
+import { useInputState } from "@mantine/hooks";
+import { Button, Drawer, Loader, Stepper, Group } from "@mantine/core";
+import { IconBathFilled, IconCurrencyEuro } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
 import { type SelectOption } from "~/types";
+import { useAllCollections, useTags } from "~/hooks/useQueries";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -82,6 +79,8 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     }));
   }
 
+  const { control, handleSubmit } = useForm();
+
   return (
     <>
       <Drawer
@@ -113,118 +112,178 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
       >
         <div className="container mx-auto px-8">
           <div className="grid grid-cols-1 gap-6">
-            <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
-              <Stepper.Step label="Main Info" description="Basic info about the property">
-                <TextInput className="mb-3" label="Title" placeholder="Title" />
-                <Textarea
-                  className="mb-3"
-                  label="Description"
-                  placeholder="Description"
-                  autosize
-                  minRows={2}
-                  maxRows={5}
-                />
-
-                <Group className="mb-3" position="apart" grow>
-                  <Select
-                    data={propertyType}
-                    label="Property Type"
-                    placeholder="Property Type"
-                    searchable
-                    nothingFound="No options"
-                  />
-
-                  <Select data={typology} label="Typology" placeholder="Typology" searchable creatable />
-                  <Select data={currentStatus} placeholder="Current Status" label="Current Status" />
-                </Group>
-
-                <Group className="mb-3" position="apart" grow>
+            <form
+              onSubmit={handleSubmit(
+                (data) => console.log(data),
+                (error) => console.log(error)
+              )}
+            >
+              <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
+                <Stepper.Step label="Main Info" description="Basic info about the property">
                   <TextInput
-                    label="Gross Area"
-                    placeholder="Gross Area"
-                    icon="m²"
-                    styles={{ icon: { fontSize: "16px" } }}
+                    className="mb-3"
+                    name="Title"
+                    label="Title"
+                    placeholder="Title"
+                    control={control}
+                    required
+                    withAsterisk
                   />
-                  <TextInput
-                    label="Net Area"
-                    placeholder="Net Area"
-                    icon="m²"
-                    styles={{ icon: { fontSize: "16px" } }}
-                  />
-                  <TextInput label="Numer of Bathrooms" placeholder="Bathrooms" />
-                </Group>
-
-                <Group position="apart" grow>
-                  <MultiSelect
-                    data={tags}
-                    label="Tags"
-                    placeholder="Tags"
-                    icon={tagsIsLoading && <Loader size="1rem" />}
-                    searchable
-                    clearable
-                    creatable
-                    getCreateLabel={(query) => `+ Create ${query} `}
-                    onCreate={(query) => {
-                      const newTag = { value: query, label: query };
-                      tags.push(newTag);
-                      tags.sort((a, b) => a.label.localeCompare(b.label));
-                      return newTag;
-                    }}
+                  <Textarea
+                    className="mb-3"
+                    name="Description"
+                    label="Description"
+                    placeholder="Description"
+                    control={control}
+                    autosize
+                    minRows={2}
+                    maxRows={5}
                   />
 
-                  <MultiSelect
-                    data={collections}
-                    label="Collections"
-                    placeholder="Collections"
-                    icon={collectionsIsLoading && <Loader size="1rem" />}
-                    searchable
-                    clearable
-                    creatable
-                  />
-                </Group>
-              </Stepper.Step>
+                  <Group className="mb-3" position="apart" grow>
+                    <Select
+                      data={propertyType}
+                      name="Property Type"
+                      label="Property Type"
+                      placeholder="Property Type"
+                      control={control}
+                      searchable
+                      nothingFound="No options"
+                    />
 
-              <Stepper.Step label="Characteristics & Media" description="Characteristics and media">
-                Step 2
-              </Stepper.Step>
+                    <Select
+                      data={typology}
+                      name="Typology"
+                      label="Typology"
+                      placeholder="Typology"
+                      control={control}
+                      searchable
+                      creatable
+                    />
+                    <Select
+                      data={currentStatus}
+                      name="Current Status"
+                      placeholder="Current Status"
+                      label="Current Status"
+                      control={control}
+                    />
+                  </Group>
 
-              <Stepper.Step label="Offers & Prices" description="Offers and prices">
-                <Group position="apart" grow>
-                  <Select
-                    data={listingType}
-                    label="Listing Type"
-                    placeholder="Listing Type"
-                    searchable
-                    nothingFound="No options"
-                    value={selectedListingType}
-                    onChange={setSelectedListingType}
-                  />
+                  <Group className="mb-3" position="apart" grow>
+                    <NumberInput
+                      name="Gross Area"
+                      label="Gross Area"
+                      placeholder="Gross Area"
+                      control={control}
+                      icon="m²"
+                      step={5}
+                      min={0}
+                      styles={{ icon: { fontSize: "16px" } }}
+                    />
+                    <NumberInput
+                      name="Net Area"
+                      label="Net Area"
+                      placeholder="Net Area"
+                      control={control}
+                      icon="m²"
+                      step={5}
+                      min={0}
+                      styles={{ icon: { fontSize: "16px" } }}
+                    />
+                    <NumberInput
+                      name="Number of Bathrooms"
+                      label="Numer of Bathrooms"
+                      placeholder="Bathrooms"
+                      control={control}
+                      icon={<IconBathFilled size="1rem" />}
+                      min={0}
+                    />
+                  </Group>
 
-                  <TextInput
-                    label="Current Sale Price"
-                    placeholder="Current Sale Price"
-                    icon={<IconCurrencyEuro size="1rem" />}
-                    disabled={selectedListingType === "rent"}
-                  />
+                  <Group className="mb-3" position="apart" grow>
+                    <MultiSelect
+                      data={tags}
+                      name="Tags"
+                      label="Tags"
+                      placeholder="Tags"
+                      control={control}
+                      icon={tagsIsLoading && <Loader size="1rem" />}
+                      searchable
+                      clearable
+                      creatable
+                      getCreateLabel={(query) => `+ Create ${query} `}
+                      onCreate={(query) => {
+                        const newTag = { value: query, label: query };
+                        tags.push(newTag);
+                        tags.sort((a, b) => a.label.localeCompare(b.label));
+                        return newTag;
+                      }}
+                    />
 
-                  <TextInput
-                    label="Current Rent Price"
-                    placeholder="Current Rent Price"
-                    icon={<IconCurrencyEuro size="1rem" />}
-                    disabled={selectedListingType === "sale"}
-                  />
-                </Group>
-              </Stepper.Step>
-            </Stepper>
+                    <MultiSelect
+                      data={collections}
+                      name="Collections"
+                      label="Collections"
+                      placeholder="Collections"
+                      control={control}
+                      icon={collectionsIsLoading && <Loader size="1rem" />}
+                      searchable
+                      clearable
+                      creatable
+                    />
+                  </Group>
+                </Stepper.Step>
 
-            <div className="flex justify-end space-x-2">
-              <Button variant="default" onClick={prevStep} disabled={stepperActive === 0}>
-                Back
-              </Button>
-              <Button onClick={nextStep} disabled={stepperActive === 3}>
-                Next
-              </Button>
-            </div>
+                <Stepper.Step label="Characteristics & Media" description="Characteristics and media">
+                  Step 2
+                </Stepper.Step>
+
+                <Stepper.Step label="Offers & Prices" description="Offers and prices">
+                  <Group className="mb-3" position="apart" grow>
+                    <Select
+                      data={listingType}
+                      name="Listing Type"
+                      label="Listing Type"
+                      placeholder="Listing Type"
+                      control={control}
+                      nothingFound="No options"
+                      clearable
+                      onChange={setSelectedListingType}
+                    />
+
+                    <NumberInput
+                      name="Current Sale Price"
+                      label="Current Sale Price"
+                      placeholder="Current Sale Price"
+                      control={control}
+                      icon={<IconCurrencyEuro size="1rem" />}
+                      min={0}
+                      disabled={selectedListingType === "rent"}
+                    />
+
+                    <NumberInput
+                      name="Current Rent Price"
+                      label="Current Rent Price"
+                      placeholder="Current Rent Price"
+                      control={control}
+                      icon={<IconCurrencyEuro size="1rem" />}
+                      min={0}
+                      disabled={selectedListingType === "sale"}
+                    />
+                  </Group>
+                </Stepper.Step>
+              </Stepper>
+
+              <div className="flex justify-end space-x-2">
+                <Button variant="default" onClick={prevStep} disabled={stepperActive === 0}>
+                  Back
+                </Button>
+                <Button onClick={nextStep} disabled={stepperActive === 3}>
+                  Next
+                </Button>
+                <Button type="submit">Submit</Button>
+              </div>
+            </form>
           </div>
         </div>
       </Drawer>
