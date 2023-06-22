@@ -22,6 +22,8 @@ interface AddPropertyDrawerProps {
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
+const TOTAL_STEPS = 5;
+
 const listingType = [
   { value: "sale", label: "Sale" },
   { value: "rent", label: "Rent" },
@@ -105,9 +107,10 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [stepperActive, setStepperActive] = useState(0);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
 
-  const nextStep = () => setStepperActive((current) => (current < 5 ? current + 1 : current));
+  const nextStep = () => setStepperActive((current) => (current < TOTAL_STEPS ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
 
   const { data: session, status } = useSession();
@@ -287,7 +290,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                       icon={collectionsIsLoading && <Loader size="1rem" />}
                       searchable
                       clearable
-                      creatable
                     />
                   </Group>
                 </Stepper.Step>
@@ -373,16 +375,28 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                     />
                   </Group>
                 </Stepper.Step>
+
+                <Stepper.Completed>
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    Lorem ipsum dolor sit amet, officia excepteur ex fugiat reprehenderit enim labore culpa sint ad nisi
+                    Lorem pariatur mollit ex esse exercitation amet. Nisi anim cupidatat excepteur officia.
+                    Reprehenderit nostrud nostrud ipsum Lorem est aliquip amet voluptate voluptate dolor minim nulla est
+                    proident. Nostrud officia pariatur ut officia. Sit irure elit esse ea nulla sunt ex occaecat
+                    reprehenderit commodo officia dolor Lorem duis laboris cupidatat officia voluptate. Culpa proident
+                    adipisicing id nulla nisi laboris ex in Lorem sunt duis officia eiusmod. Aliqua reprehenderit
+                    commodo ex non excepteur duis sunt velit enim. Voluptate laboris sint cupidatat ullamco ut ea
+                    consectetur et est culpa et culpa duis.
+                  </div>
+                </Stepper.Completed>
               </Stepper>
 
               <div className="flex justify-end space-x-2">
                 <Button variant="default" onClick={prevStep} disabled={stepperActive === 0}>
                   Back
                 </Button>
-                <Button onClick={nextStep} disabled={stepperActive === 5}>
-                  Next
+                <Button type={stepperActive === TOTAL_STEPS ? "submit" : "button"} onClick={nextStep}>
+                  {stepperActive === TOTAL_STEPS ? "Submit" : "Next"}
                 </Button>
-                <Button type="submit">Submit</Button>
               </div>
             </form>
           </div>
