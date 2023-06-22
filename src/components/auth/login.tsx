@@ -22,11 +22,12 @@ type Inputs = {
 };
 
 export function LoginForm() {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   const form = useForm<Inputs>({
+    // TODO: Temp values
     initialValues: { email: "test123@example.com", password: "123456" },
     validate: {
       email: (value: string) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
@@ -45,7 +46,6 @@ export function LoginForm() {
     }
 
     void router.push("/collections");
-
     setIsLoading(false);
   };
 
