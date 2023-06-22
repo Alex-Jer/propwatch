@@ -55,7 +55,8 @@ const currentStatus = [
 
 export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [selectedListingType, setSelectedListingType] = useInputState("");
-  const [stepperActive, setStepperActive] = useState(1);
+  const [stepperActive, setStepperActive] = useState(0);
+
   const nextStep = () => setStepperActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
 
@@ -162,6 +163,13 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                     searchable
                     clearable
                     creatable
+                    getCreateLabel={(query) => `+ Create ${query} `}
+                    onCreate={(query) => {
+                      const newTag = { value: query, label: query };
+                      tags.push(newTag);
+                      tags.sort((a, b) => a.label.localeCompare(b.label));
+                      return newTag;
+                    }}
                   />
 
                   <MultiSelect
