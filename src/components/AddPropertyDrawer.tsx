@@ -29,7 +29,10 @@ const listingType = [
 ];
 
 const schema = z.object({
-  Title: z.string().nonempty({ message: "A title is required" }),
+  Title: z
+    .string()
+    .nonempty({ message: "A title is required" })
+    .min(5, { message: "Title must be at least 5 characters long" }),
   Description: z.string(),
   "Property Type": z.string(),
   Typology: z.string(),
@@ -40,7 +43,7 @@ const schema = z.object({
   "Listing Type": z.string(),
   "Current Sale Price": z.number().nonnegative().optional(),
   "Current Rent Price": z.number().nonnegative().optional(),
-  Tags: z.array(z.string()),
+  Tags: z.array(z.string().max(32, { message: "Tag must be at most 32 characters long" })),
   Collections: z.array(z.string()),
   Files: z.array(z.any()),
   Blueprints: z.array(z.any()),
@@ -116,8 +119,14 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
           <div className="grid grid-cols-1 gap-6">
             <form
               onSubmit={handleSubmit(
-                (data) => console.log({ data }),
-                (error) => console.log({ error })
+                (data) => {
+                  console.log(stepperActive);
+                  console.log({ data });
+                },
+                (error) => {
+                  console.log(stepperActive);
+                  console.log({ error });
+                }
               )}
             >
               <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
@@ -225,9 +234,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 <Button variant="default" onClick={prevStep} disabled={stepperActive === 0}>
                   Back
                 </Button>
-                <Button type={stepperActive === TOTAL_STEPS ? "submit" : "button"} onClick={nextStep}>
-                  {stepperActive === TOTAL_STEPS ? "Submit" : "Next"}
-                </Button>
+                <Button onClick={nextStep}>{stepperActive === TOTAL_STEPS ? "Add Property" : "Next"}</Button>
               </div>
             </form>
           </div>

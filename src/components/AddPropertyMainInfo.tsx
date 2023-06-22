@@ -147,6 +147,7 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
           placeholder="Tags"
           control={control}
           icon={tagsIsLoading && <Loader size="1rem" />}
+          maxSelectedValues={10}
           searchable
           clearable
           creatable

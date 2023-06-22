@@ -93,7 +93,6 @@ const fetchSidebarCollections = async (session: Session | null) => {
 
 const fetchProperty = async (session: Session | null, id: string) => {
   const response = (await makeRequest(`me/properties/${id}`, "GET", session?.user.access_token)) as PropertyResponse;
-  console.log("response", response); // TODO: console.log
   return response.data;
 };
 
