@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { TextInput, Textarea, Select, MultiSelect, NumberInput } from "react-hook-form-mantine";
 import { useInputState } from "@mantine/hooks";
-import { Button, Drawer, Loader, Stepper, Group, createStyles } from "@mantine/core";
+import { Button, Drawer, Loader, Stepper, Group, createStyles, Divider } from "@mantine/core";
 import { IconBathFilled, IconCurrencyEuro } from "@tabler/icons-react";
 import { FilePond, registerPlugin } from "react-filepond";
 import "filepond/dist/filepond.min.css";
@@ -71,9 +71,11 @@ const schema = z.object({
   "Listing Type": z.string(),
   "Current Sale Price": z.number().positive().optional(),
   "Current Rent Price": z.number().positive().optional(),
+  "Media Type": z.string(),
   Tags: z.array(z.string()),
   Collections: z.array(z.string()),
   Files: z.array(z.any()),
+  Blueprints: z.array(z.any()),
 });
 
 const defaultValues: FormSchemaType = {
@@ -88,9 +90,11 @@ const defaultValues: FormSchemaType = {
   "Listing Type": "",
   "Current Sale Price": undefined,
   "Current Rent Price": undefined,
+  "Media Type": "",
   Tags: [],
   Collections: [],
   Files: [],
+  Blueprints: [],
 };
 
 type FormSchemaType = z.infer<typeof schema>;
@@ -99,7 +103,9 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const { classes } = useStyles();
   const [selectedListingType, setSelectedListingType] = useInputState("");
   const [stepperActive, setStepperActive] = useState(0);
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
+  const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
 
   const nextStep = () => setStepperActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
@@ -287,8 +293,9 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   </Group>
                 </Stepper.Step>
 
-                <Stepper.Step label="Characteristics & Media" description="Characteristics and media">
-                  <div className="mb-6">
+                <Stepper.Step label="Media & Blueprints" description="Media and Blueprints">
+                  <div className="mb-8">
+                    <Divider my="xs" label="Images and Videos" labelPosition="center" />
                     <Controller
                       name="Files"
                       control={control}
@@ -301,8 +308,30 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                             setSelectedFiles(files);
                             onChange(files);
                           }}
-                          labelIdle="Drag & Drop your files or <span class='filepond--label-action'>Browse</span>"
+                          labelIdle="Drag & Drop your media or <span class='filepond--label-action'>click to browse</span>"
                           allowMultiple={true}
+                        />
+                      )}
+                    />
+                  </div>
+
+                  <div className="mb-6">
+                    <Divider my="xs" label="Blueprints" labelPosition="center" />
+                    <Controller
+                      name="Blueprints"
+                      control={control}
+                      render={({ field: { onChange } }) => (
+                        <FilePond
+                          className={classes.filePond}
+                          files={selectedBlueprints}
+                          onupdatefiles={(blueprintItems) => {
+                            const blueprints = blueprintItems.map((blueprintItem) => blueprintItem.file);
+                            setSelectedBlueprints(blueprints);
+                            onChange(blueprints);
+                          }}
+                          labelIdle="Drag & Drop your blueprints or <span class='filepond--label-action'>click to browse</span>"
+                          allowMultiple={true}
+                          acceptedFileTypes={["image/*", "application/pdf"]}
                         />
                       )}
                     />
