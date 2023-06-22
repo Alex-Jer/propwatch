@@ -107,7 +107,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
 
-  const nextStep = () => setStepperActive((current) => (current < 3 ? current + 1 : current));
+  const nextStep = () => setStepperActive((current) => (current < 5 ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
 
   const { data: session, status } = useSession();
@@ -193,7 +193,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                     minRows={2}
                     maxRows={5}
                   />
-
                   <Group className="mb-3" position="apart" grow>
                     <Select
                       data={propertyType}
@@ -380,7 +379,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 <Button variant="default" onClick={prevStep} disabled={stepperActive === 0}>
                   Back
                 </Button>
-                <Button onClick={nextStep} disabled={stepperActive === 3}>
+                <Button onClick={nextStep} disabled={stepperActive === 5}>
                   Next
                 </Button>
                 <Button type="submit">Submit</Button>
