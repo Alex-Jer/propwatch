@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Select, NumberInput } from "react-hook-form-mantine";
 import { useInputState } from "@mantine/hooks";
@@ -26,6 +26,7 @@ const listingType = [
   { value: "sale", label: "Sale" },
   { value: "rent", label: "Rent" },
   { value: "both", label: "Both" },
+  { value: "none", label: "None" },
 ];
 
 const schema = z.object({
@@ -77,11 +78,14 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
+  const [addPropertyCounter, setAddPropertyCounter] = useState(0);
 
   const nextStep = () => setStepperActive((current) => (current < TOTAL_STEPS ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
 
-  const { control, handleSubmit } = useForm<FormSchemaType>({
+  const addPropertyButtonRef = useRef(null);
+
+  const { control, handleSubmit, reset } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
   });
@@ -120,11 +124,21 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
             <form
               onSubmit={handleSubmit(
                 (data) => {
-                  console.log(stepperActive);
-                  console.log({ data });
+                  // HACK: Bug workaround
+                  const buttonText = addPropertyButtonRef?.current?.querySelector(".mantine-Button-label").textContent;
+                  const containsAddProperty = buttonText?.includes("Add Property");
+                  if (containsAddProperty) {
+                    setAddPropertyCounter((current) => current + 1);
+                    if (addPropertyCounter > 0) {
+                      console.log({ data });
+                      setAddPropertyCounter(0);
+                      reset(defaultValues);
+                      setStepperActive(0);
+                      close();
+                    }
+                  }
                 },
                 (error) => {
-                  console.log(stepperActive);
                   console.log({ error });
                 }
               )}
@@ -144,6 +158,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                     <Controller
                       name="Files"
                       control={control}
+                      defaultValue={[]}
                       render={({ field: { onChange } }) => (
                         <FilePond
                           className={classes.filePond}
@@ -234,7 +249,13 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 <Button variant="default" onClick={prevStep} disabled={stepperActive === 0}>
                   Back
                 </Button>
-                <Button onClick={nextStep}>{stepperActive === TOTAL_STEPS ? "Add Property" : "Next"}</Button>
+                <Button
+                  ref={addPropertyButtonRef}
+                  type={stepperActive === TOTAL_STEPS ? "submit" : "button"}
+                  onClick={nextStep}
+                >
+                  {stepperActive === TOTAL_STEPS ? "Add Property" : "Next"}
+                </Button>
               </div>
             </form>
           </div>
