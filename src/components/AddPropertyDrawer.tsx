@@ -5,12 +5,12 @@ import { useInputState } from "@mantine/hooks";
 import { Button, Drawer, Stepper, Group, createStyles, Divider } from "@mantine/core";
 import { IconCurrencyEuro } from "@tabler/icons-react";
 import { FilePond, registerPlugin } from "react-filepond";
-import "filepond/dist/filepond.min.css";
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import "filepond/dist/filepond.min.css";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { AddPropertyMainInfo } from "./AddPropertyMainInfo";
 
 interface AddPropertyDrawerProps {
@@ -116,8 +116,8 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
           <div className="grid grid-cols-1 gap-6">
             <form
               onSubmit={handleSubmit(
-                (data) => console.log(data),
-                (error) => console.log(error)
+                (data) => console.log({ data }),
+                (error) => console.log({ error })
               )}
             >
               <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">

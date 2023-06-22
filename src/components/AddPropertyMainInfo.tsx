@@ -62,8 +62,6 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
 
   return (
     <div>
-      <h1>Property Main Info</h1>
-
       <TextInput className="mb-3" name="Title" label="Title" placeholder="Title" control={control} withAsterisk />
       <Textarea
         className="mb-3"
