@@ -1,9 +1,14 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { TextInput, Textarea, Select, MultiSelect, NumberInput } from "react-hook-form-mantine";
 import { useInputState } from "@mantine/hooks";
-import { Button, Drawer, Loader, Stepper, Group } from "@mantine/core";
+import { Button, Drawer, Loader, Stepper, Group, createStyles } from "@mantine/core";
 import { IconBathFilled, IconCurrencyEuro } from "@tabler/icons-react";
+import { FilePond, registerPlugin } from "react-filepond";
+import "filepond/dist/filepond.min.css";
+import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { useSession } from "next-auth/react";
 import { type SelectOption } from "~/types";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
@@ -14,6 +19,8 @@ interface AddPropertyDrawerProps {
   opened: boolean;
   close: () => void;
 }
+
+registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 const listingType = [
   { value: "sale", label: "Sale" },
@@ -61,11 +68,12 @@ const schema = z.object({
   "Gross Area": z.number().positive().optional(),
   "Net Area": z.number().positive().optional(),
   "Number of Bathrooms": z.number().positive().optional(),
+  "Listing Type": z.string(),
   "Current Sale Price": z.number().positive().optional(),
   "Current Rent Price": z.number().positive().optional(),
   Tags: z.array(z.string()),
   Collections: z.array(z.string()),
-  "Listing Type": z.string(),
+  Files: z.array(z.any()),
 });
 
 const defaultValues: FormSchemaType = {
@@ -82,13 +90,16 @@ const defaultValues: FormSchemaType = {
   "Current Rent Price": undefined,
   Tags: [],
   Collections: [],
+  Files: [],
 };
 
 type FormSchemaType = z.infer<typeof schema>;
 
 export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
+  const { classes } = useStyles();
   const [selectedListingType, setSelectedListingType] = useInputState("");
   const [stepperActive, setStepperActive] = useState(0);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const nextStep = () => setStepperActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
@@ -187,7 +198,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                       searchable
                       nothingFound="No options"
                     />
-
                     <Select
                       data={typology}
                       name="Typology"
@@ -263,7 +273,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                         return newTag;
                       }}
                     />
-
                     <MultiSelect
                       data={collections}
                       name="Collections"
@@ -279,7 +288,25 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 </Stepper.Step>
 
                 <Stepper.Step label="Characteristics & Media" description="Characteristics and media">
-                  Step 2
+                  <div className="mb-6">
+                    <Controller
+                      name="Files"
+                      control={control}
+                      render={({ field: { onChange } }) => (
+                        <FilePond
+                          className={classes.filePond}
+                          files={selectedFiles}
+                          onupdatefiles={(fileItems) => {
+                            const files = fileItems.map((fileItem) => fileItem.file);
+                            setSelectedFiles(files);
+                            onChange(files);
+                          }}
+                          labelIdle="Drag & Drop your files or <span class='filepond--label-action'>Browse</span>"
+                          allowMultiple={true}
+                        />
+                      )}
+                    />
+                  </div>
                 </Stepper.Step>
 
                 <Stepper.Step label="Offers & Prices" description="Offers and prices">
@@ -294,7 +321,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                       clearable
                       onChange={setSelectedListingType}
                     />
-
                     <NumberInput
                       name="Current Sale Price"
                       label="Current Sale Price"
@@ -304,7 +330,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                       min={0}
                       disabled={selectedListingType === "rent"}
                     />
-
                     <NumberInput
                       name="Current Rent Price"
                       label="Current Rent Price"
@@ -334,3 +359,33 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     </>
   );
 }
+
+const useStyles = createStyles((theme) => ({
+  filePond: {
+    "& .filepond--drop-label": {
+      color: theme.colors.dark[0],
+
+      "& .filepond--label-action": {
+        "&:hover": {
+          textDecoration: "underline",
+        },
+      },
+    },
+
+    "& .filepond--panel-root": {
+      backgroundColor: theme.colors.dark[5],
+    },
+
+    "& .filepond--drip-blob": {
+      backgroundColor: theme.colors.dark[1],
+    },
+
+    "& .filepond--item-panel": {
+      backgroundColor: theme.colors.dark[4],
+    },
+
+    "& .filepond--credits": {
+      color: theme.colors.gray[0],
+    },
+  },
+}));
