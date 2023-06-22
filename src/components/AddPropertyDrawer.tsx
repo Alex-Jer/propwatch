@@ -7,6 +7,8 @@ import { IconBathFilled, IconCurrencyEuro } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { type SelectOption } from "~/types";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -50,6 +52,40 @@ const currentStatus = [
   { value: "unknown", label: "Unknown" },
 ];
 
+const schema = z.object({
+  Title: z.string().nonempty({ message: "A title is required" }),
+  Description: z.string(),
+  "Property Type": z.string(),
+  Typology: z.string(),
+  "Current Status": z.string(),
+  "Gross Area": z.number().positive().optional(),
+  "Net Area": z.number().positive().optional(),
+  "Number of Bathrooms": z.number().positive().optional(),
+  "Current Sale Price": z.number().positive().optional(),
+  "Current Rent Price": z.number().positive().optional(),
+  Tags: z.array(z.string()),
+  Collections: z.array(z.string()),
+  "Listing Type": z.string(),
+});
+
+const defaultValues: FormSchemaType = {
+  Title: "",
+  Description: "",
+  "Property Type": "",
+  Typology: "",
+  "Current Status": "",
+  "Gross Area": undefined,
+  "Net Area": undefined,
+  "Number of Bathrooms": undefined,
+  "Listing Type": "",
+  "Current Sale Price": undefined,
+  "Current Rent Price": undefined,
+  Tags: [],
+  Collections: [],
+};
+
+type FormSchemaType = z.infer<typeof schema>;
+
 export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [selectedListingType, setSelectedListingType] = useInputState("");
   const [stepperActive, setStepperActive] = useState(0);
@@ -58,6 +94,10 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
 
   const { data: session, status } = useSession();
+  const { control, handleSubmit } = useForm<FormSchemaType>({
+    resolver: zodResolver(schema),
+    defaultValues,
+  });
 
   const { data: tagsData, isLoading: tagsIsLoading } = useTags({ session, status });
   const { data: collectionsData, isLoading: collectionsIsLoading } = useAllCollections({ session, status });
@@ -78,8 +118,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
       label: collection.name,
     }));
   }
-
-  const { control, handleSubmit } = useForm();
 
   return (
     <>
@@ -126,7 +164,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                     label="Title"
                     placeholder="Title"
                     control={control}
-                    required
                     withAsterisk
                   />
                   <Textarea
@@ -159,6 +196,13 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                       control={control}
                       searchable
                       creatable
+                      getCreateLabel={(query) => `+ Create ${query} `}
+                      onCreate={(query) => {
+                        const newTypology = { value: query, label: query };
+                        typology.push(newTypology);
+                        typology.sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
+                        return newTypology;
+                      }}
                     />
                     <Select
                       data={currentStatus}
@@ -192,7 +236,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                     />
                     <NumberInput
                       name="Number of Bathrooms"
-                      label="Numer of Bathrooms"
+                      label="Number of Bathrooms"
                       placeholder="Bathrooms"
                       control={control}
                       icon={<IconBathFilled size="1rem" />}
