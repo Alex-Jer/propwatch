@@ -143,7 +143,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
         opened={opened}
         onClose={close}
         position="right"
-        size="60%"
+        size="65%"
         overlayProps={{ opacity: 0.5, blur: 4 }}
         keepMounted
         styles={{
@@ -174,7 +174,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
               )}
             >
               <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
-                <Stepper.Step label="Main Info" description="Basic info about the property">
+                <Stepper.Step label="Main Info">
                   <TextInput
                     className="mb-3"
                     name="Title"
@@ -293,7 +293,11 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   </Group>
                 </Stepper.Step>
 
-                <Stepper.Step label="Media & Blueprints" description="Media and Blueprints">
+                <Stepper.Step label="Address"></Stepper.Step>
+
+                <Stepper.Step label="Characteristics"></Stepper.Step>
+
+                <Stepper.Step label="Media & Blueprints">
                   <div className="mb-8">
                     <Divider my="xs" label="Images and Videos" labelPosition="center" />
                     <Controller
@@ -338,7 +342,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   </div>
                 </Stepper.Step>
 
-                <Stepper.Step label="Offers & Prices" description="Offers and prices">
+                <Stepper.Step label="Offers & Prices">
                   <Group className="mb-3" position="apart" grow>
                     <Select
                       data={listingType}
