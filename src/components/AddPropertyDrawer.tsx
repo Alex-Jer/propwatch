@@ -35,9 +35,9 @@ const schema = z.object({
     .nonempty({ message: "A title is required" })
     .min(5, { message: "Title must be at least 5 characters long" }),
   Description: z.string().max(5000, { message: "Description must be at most 5000 characters long" }),
-  "Property Type": z.string(),
+  "Property Type": z.enum(["house", "apartment", "office", "shop", "warehouse", "garage", "land", "other"]).optional(),
   Typology: z.string().max(12, { message: "Typology must be at most 12 characters long" }),
-  "Current Status": z.string(),
+  "Current Status": z.enum(["available", "unavailable", "unknown"]).optional(),
   "Gross Area": z.number().int().nonnegative().optional(),
   "Net Area": z.number().int().nonnegative().optional(),
   "Number of Bathrooms": z.number().int().nonnegative().optional(),
@@ -53,9 +53,9 @@ const schema = z.object({
 const defaultValues: FormSchemaType = {
   Title: "",
   Description: "",
-  "Property Type": "",
+  "Property Type": undefined,
   Typology: "",
-  "Current Status": "",
+  "Current Status": undefined,
   "Gross Area": undefined,
   "Net Area": undefined,
   "Number of Bathrooms": undefined,
