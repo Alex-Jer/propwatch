@@ -2,24 +2,18 @@ import { useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Select, NumberInput } from "react-hook-form-mantine";
 import { useInputState } from "@mantine/hooks";
-import { Button, Drawer, Stepper, Group, createStyles, Divider } from "@mantine/core";
+import { Button, Drawer, Stepper, Group } from "@mantine/core";
 import { IconCheck, IconCurrencyEuro } from "@tabler/icons-react";
-import { FilePond, registerPlugin } from "react-filepond";
-import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
-import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import "filepond/dist/filepond.min.css";
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { AddPropertyMainInfo } from "./AddPropertyMainInfo";
 import { notifications } from "@mantine/notifications";
+import { AddPropertyMedia } from "./AddPropertyMedia";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
   close: () => void;
 }
-
-registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 const TOTAL_STEPS = 5;
 
@@ -72,7 +66,6 @@ const defaultValues: FormSchemaType = {
 export type FormSchemaType = z.infer<typeof schema>;
 
 export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
-  const { classes } = useStyles();
   const [selectedListingType, setSelectedListingType] = useInputState("");
   const [stepperActive, setStepperActive] = useState(0);
   const [addPropertyCounter, setAddPropertyCounter] = useState(0);
@@ -178,49 +171,13 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 <Stepper.Step label="Characteristics"></Stepper.Step>
 
                 <Stepper.Step label="Media & Blueprints">
-                  <div className="mb-8">
-                    <Divider my="xs" label="Images and Videos" labelPosition="center" />
-                    <Controller
-                      name="Files"
-                      control={control}
-                      defaultValue={[]}
-                      render={({ field: { onChange } }) => (
-                        <FilePond
-                          className={classes.filePond}
-                          files={selectedFiles}
-                          onupdatefiles={(fileItems) => {
-                            const files = fileItems.map((fileItem) => fileItem.file);
-                            setSelectedFiles(files);
-                            onChange(files);
-                          }}
-                          labelIdle="Drag & Drop your media or <span class='filepond--label-action'>click to browse</span>"
-                          allowMultiple={true}
-                        />
-                      )}
-                    />
-                  </div>
-
-                  <div className="mb-6">
-                    <Divider my="xs" label="Blueprints" labelPosition="center" />
-                    <Controller
-                      name="Blueprints"
-                      control={control}
-                      render={({ field: { onChange } }) => (
-                        <FilePond
-                          className={classes.filePond}
-                          files={selectedBlueprints}
-                          onupdatefiles={(blueprintItems) => {
-                            const blueprints = blueprintItems.map((blueprintItem) => blueprintItem.file);
-                            setSelectedBlueprints(blueprints);
-                            onChange(blueprints);
-                          }}
-                          labelIdle="Drag & Drop your blueprints or <span class='filepond--label-action'>click to browse</span>"
-                          allowMultiple={true}
-                          acceptedFileTypes={["image/*", "application/pdf"]}
-                        />
-                      )}
-                    />
-                  </div>
+                  <AddPropertyMedia
+                    control={control}
+                    selectedFiles={selectedFiles}
+                    setSelectedFiles={setSelectedFiles}
+                    selectedBlueprints={selectedBlueprints}
+                    setSelectedBlueprints={setSelectedBlueprints}
+                  />
                 </Stepper.Step>
 
                 <Stepper.Step label="Offers & Prices">
@@ -289,33 +246,3 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     </>
   );
 }
-
-const useStyles = createStyles((theme) => ({
-  filePond: {
-    "& .filepond--drop-label": {
-      color: theme.colors.dark[0],
-
-      "& .filepond--label-action": {
-        "&:hover": {
-          textDecoration: "underline",
-        },
-      },
-    },
-
-    "& .filepond--panel-root": {
-      backgroundColor: theme.colors.dark[5],
-    },
-
-    "& .filepond--drip-blob": {
-      backgroundColor: theme.colors.dark[1],
-    },
-
-    "& .filepond--item-panel": {
-      backgroundColor: theme.colors.dark[4],
-    },
-
-    "& .filepond--credits": {
-      color: theme.colors.gray[0],
-    },
-  },
-}));
