@@ -7,12 +7,24 @@ import { Property } from "~/types";
 import { CardsCarousel } from "~/components/CardsCarousel";
 import Map, { Marker } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useEffect, useState } from "react";
+import { type FunctionComponent, type SVGProps, useEffect, useState } from "react";
 import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "public/icons";
 import { MainCarousel } from "~/components/MainCarousel";
 import { useDisclosure } from "@mantine/hooks";
 import { Button, Drawer, Group } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
+
+type MarkerIconComponent = FunctionComponent<SVGProps<SVGSVGElement>>;
+
+const markerIcons: { [key: string]: MarkerIconComponent } = {
+  house: House,
+  apartment: Apartment,
+  office: Office,
+  shop: Shop,
+  warehouse: Warehouse,
+  garage: Garage,
+  default: Default,
+};
 
 const Property: NextPage = () => {
   const router = useRouter();
@@ -90,6 +102,9 @@ const Property: NextPage = () => {
     );
   };
 
+  const markerType = property?.type.toLowerCase();
+  const MarkerIcon = (markerIcons[markerType] as MarkerIconComponent) || markerIcons.default;
+
   const renderMap = () => {
     //TODO: If coordinates are null? Can they even be null?
     const latitude = coordinates.latitude;
@@ -111,22 +126,12 @@ const Property: NextPage = () => {
             mapStyle="mapbox://styles/mapbox/streets-v11"
           >
             <Marker longitude={longitude} latitude={latitude}>
-              {markerIcons[property.type] || markerIcons.default}
+              <MarkerIcon />
             </Marker>
           </Map>
         </div>
       </>
     );
-  };
-
-  const markerIcons = {
-    house: House,
-    apartment: Apartment,
-    office: Office,
-    shop: Shop,
-    warehouse: Warehouse,
-    garage: Garage,
-    default: Default,
   };
 
   return (
