@@ -134,7 +134,6 @@ const Property: NextPage = () => {
       <Head>
         <title>{property.title}</title>
         <link rel="icon" href="/favicon.ico" />
-        <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
       </Head>
 
       <CardBackground className="pt-6">
