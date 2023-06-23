@@ -157,7 +157,7 @@ const Property: NextPage = () => {
 
         <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
 
-        {renderMap()}
+        {coordinates && renderMap()}
       </CardBackground>
     </>
   );
