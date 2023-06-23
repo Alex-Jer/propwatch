@@ -1,4 +1,5 @@
 import { Group, Loader } from "@mantine/core";
+import { useInputState } from "@mantine/hooks";
 import { IconBathFilled } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { type Control } from "react-hook-form";
@@ -43,6 +44,8 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
   const { data: tagsData, isLoading: tagsIsLoading } = useTags({ session, status });
   const { data: collectionsData, isLoading: collectionsIsLoading } = useAllCollections({ session, status });
 
+  const [selectedPropertyType, setSelectedPropertyType] = useInputState("");
+
   let tags = [] as SelectOption[];
   let collections = [] as SelectOption[];
 
@@ -82,6 +85,14 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
           control={control}
           searchable
           nothingFound="No options"
+          onChange={setSelectedPropertyType}
+        />
+        <Select
+          data={currentStatuses}
+          name="Current Status"
+          placeholder="Current Status"
+          label="Current Status"
+          control={control}
         />
         <Select
           data={typologies}
@@ -98,13 +109,7 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
             typologies.sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
             return newTypology;
           }}
-        />
-        <Select
-          data={currentStatuses}
-          name="Current Status"
-          placeholder="Current Status"
-          label="Current Status"
-          control={control}
+          disabled={selectedPropertyType === "land"}
         />
       </Group>
 
