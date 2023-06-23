@@ -74,11 +74,11 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const { classes } = useStyles();
   const [selectedListingType, setSelectedListingType] = useInputState("");
   const [stepperActive, setStepperActive] = useState(0);
+  const [addPropertyCounter, setAddPropertyCounter] = useState(0);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
-  const [addPropertyCounter, setAddPropertyCounter] = useState(0);
 
   const nextStep = () => setStepperActive((current) => (current < TOTAL_STEPS ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
@@ -89,6 +89,38 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     resolver: zodResolver(schema),
     defaultValues,
   });
+
+  const resetForm = () => {
+    setAddPropertyCounter(0);
+    reset(defaultValues);
+    setStepperActive(0);
+    setSelectedFiles([]);
+    setSelectedBlueprints([]);
+  };
+
+  const addProperty = (data: FormSchemaType) => {
+    if (addPropertyButtonRef.current === null) {
+      return;
+    }
+
+    const addPropertyButtonElement = addPropertyButtonRef.current as HTMLElement;
+    const buttonText = addPropertyButtonElement?.querySelector(".mantine-Button-label")?.textContent;
+    const containsAddProperty = buttonText?.includes("Add Property");
+
+    // HACK: Check if the button text contains "Add Property"
+    if (containsAddProperty) {
+      setAddPropertyCounter((current) => current + 1);
+
+      // HACK: Only submit the form if the button has been clicked twice
+      if (addPropertyCounter === 0) {
+        return;
+      }
+
+      console.log({ data });
+      resetForm();
+      close();
+    }
+  };
 
   return (
     <>
@@ -122,25 +154,10 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
         <div className="container mx-auto px-8">
           <div className="grid grid-cols-1 gap-6">
             <form
+              /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
               onSubmit={handleSubmit(
-                (data) => {
-                  // HACK: Bug workaround
-                  const buttonText = addPropertyButtonRef?.current?.querySelector(".mantine-Button-label").textContent;
-                  const containsAddProperty = buttonText?.includes("Add Property");
-                  if (containsAddProperty) {
-                    setAddPropertyCounter((current) => current + 1);
-                    if (addPropertyCounter > 0) {
-                      console.log({ data });
-                      setAddPropertyCounter(0);
-                      reset(defaultValues);
-                      setStepperActive(0);
-                      close();
-                    }
-                  }
-                },
-                (error) => {
-                  console.log({ error });
-                }
+                (data: FormSchemaType) => addProperty(data),
+                (error) => console.log({ error })
               )}
             >
               <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
