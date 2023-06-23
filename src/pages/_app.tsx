@@ -27,7 +27,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
   const isAppRoute = router.pathname !== "/" && !router.pathname.startsWith("/auth");
 
   const [search, setSearch] = useState({});
-  const isPropertySearch: boolean | undefined = Component === Properties;
+  const isPropertySearch: boolean | undefined = Component == Properties;
 
   return (
     <SessionProvider session={session}>
