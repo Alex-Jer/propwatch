@@ -43,6 +43,18 @@ const schema = z.object({
   Collections: z.array(z.string()),
   Files: z.array(z.any()),
   Blueprints: z.array(z.any()),
+  /* ADDRESS */
+  "Full Address": z.string().max(200, { message: "Address must be at most 200 characters long" }),
+  "Postal Code": z
+    .string()
+    .max(10, { message: "Postal Code must be at most 20 characters long" })
+    .min(4, { message: "Postal Code must be at least 4 characters long" })
+    .optional(),
+  Latitude: z.number().optional(),
+  Longitude: z.number().optional(),
+  Adm1: z.number().optional(),
+  Adm2: z.number().optional(),
+  Adm3: z.number().optional(),
 });
 
 const defaultValues: FormSchemaType = {
@@ -61,6 +73,13 @@ const defaultValues: FormSchemaType = {
   Collections: [],
   Files: [],
   Blueprints: [],
+  "Full Address": "",
+  "Postal Code": "",
+  Latitude: undefined,
+  Longitude: undefined,
+  Adm1: undefined,
+  Adm2: undefined,
+  Adm3: undefined,
 };
 
 export type FormSchemaType = z.infer<typeof schema>;
