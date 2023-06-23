@@ -126,7 +126,7 @@ const Property: NextPage = () => {
             mapStyle="mapbox://styles/mapbox/streets-v11"
           >
             <Marker longitude={longitude} latitude={latitude}>
-              <MarkerIcon />
+              <MarkerIcon className="h-8" />
             </Marker>
           </Map>
         </div>
