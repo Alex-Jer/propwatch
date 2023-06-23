@@ -1,6 +1,7 @@
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
+import { Notifications } from "@mantine/notifications";
 
 import { type ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { emCache } from "~/lib/emotionCache";
@@ -32,6 +33,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
     <SessionProvider session={session}>
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <MantineProvider theme={{ colorScheme }} emotionCache={cache} withGlobalStyles withNormalizeCSS>
+          <Notifications />
           <QueryClientProvider client={queryClient}>
             <NextNProgress options={{ showSpinner: false }} />
             {isAppRoute ? (

@@ -3,7 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Select, NumberInput } from "react-hook-form-mantine";
 import { useInputState } from "@mantine/hooks";
 import { Button, Drawer, Stepper, Group, createStyles, Divider } from "@mantine/core";
-import { IconCurrencyEuro } from "@tabler/icons-react";
+import { IconCheck, IconCurrencyEuro } from "@tabler/icons-react";
 import { FilePond, registerPlugin } from "react-filepond";
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { AddPropertyMainInfo } from "./AddPropertyMainInfo";
+import { notifications } from "@mantine/notifications";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -119,6 +120,13 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
       console.log({ data });
       resetForm();
       close();
+
+      notifications.show({
+        title: "Property added",
+        message: "Your property has been added successfully!",
+        icon: <IconCheck size="1.1rem" />,
+        color: "teal",
+      });
     }
   };
 
