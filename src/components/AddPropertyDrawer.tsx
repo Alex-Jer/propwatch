@@ -34,13 +34,13 @@ const schema = z.object({
     .string()
     .nonempty({ message: "A title is required" })
     .min(5, { message: "Title must be at least 5 characters long" }),
-  Description: z.string(),
+  Description: z.string().max(5000, { message: "Description must be at most 5000 characters long" }),
   "Property Type": z.string(),
-  Typology: z.string(),
+  Typology: z.string().max(12, { message: "Typology must be at most 12 characters long" }),
   "Current Status": z.string(),
-  "Gross Area": z.number().nonnegative().optional(),
-  "Net Area": z.number().nonnegative().optional(),
-  "Number of Bathrooms": z.number().nonnegative().optional(),
+  "Gross Area": z.number().int().nonnegative().optional(),
+  "Net Area": z.number().int().nonnegative().optional(),
+  "Number of Bathrooms": z.number().int().nonnegative().optional(),
   "Listing Type": z.string(),
   "Current Sale Price": z.number().nonnegative().optional(),
   "Current Rent Price": z.number().nonnegative().optional(),

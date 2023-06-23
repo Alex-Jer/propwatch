@@ -10,7 +10,7 @@ export function PropertyCard({ image, title, author }: PropertyCardProps) {
   const { classes } = useStyles();
 
   return (
-    <Card p="lg" shadow="lg" className={classes.card} radius="md" component="a" target="_blank">
+    <Card p="lg" shadow="lg" className={classes.card} radius="md" component="a">
       <div className={classes.image} style={{ backgroundImage: `url(${image})` }} />
       <div className={classes.overlay} />
 
