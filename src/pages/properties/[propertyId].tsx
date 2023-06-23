@@ -13,6 +13,7 @@ import { MainCarousel } from "~/components/MainCarousel";
 import { useDisclosure } from "@mantine/hooks";
 import { Button, Drawer, Group } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
+import { env } from "~/env.mjs";
 
 type MarkerIconComponent = FunctionComponent<SVGProps<SVGSVGElement>>;
 
@@ -114,9 +115,8 @@ const Property: NextPage = () => {
       <>
         <h2 className="my-2 text-3xl">Location</h2>
         <div className="h-3/6 w-auto">
-          {/* TODO: token */}
           <Map
-            mapboxAccessToken="pk.eyJ1IjoiYWxleGplciIsImEiOiJjbGhkbHlqZ2UwbnJ1M2ZudmtuMnZuZnJwIn0.H-iqt45XSgHUA3wU35eQ7Q"
+            mapboxAccessToken={env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
             initialViewState={{
               longitude,
               latitude,

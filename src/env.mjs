@@ -26,6 +26,7 @@ const server = z.object({
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
   NEXT_PUBLIC_API_URL: z.string().url(),
+  NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: z.string().min(1),
 });
 
 /**
@@ -42,6 +43,7 @@ const processEnv = {
   DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+  NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
 };
 
 // Don't touch the part below
