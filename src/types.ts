@@ -128,6 +128,13 @@ export type CollectionProperties = {
   links: Links;
 };
 
+export type AdministrativeDivision = {
+  id: number;
+  name: string;
+  level: number;
+  parent_id: number;
+};
+
 export type ShellProps = {
   children: ReactNode;
   useNavbarSearch?: boolean;

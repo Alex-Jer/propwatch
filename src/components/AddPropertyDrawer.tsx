@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AddPropertyMainInfo } from "./AddPropertyMainInfo";
 import { notifications } from "@mantine/notifications";
 import { AddPropertyMedia } from "./AddPropertyMedia";
+import { AddPropertyAddress } from "./AddPropertyAddress";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -185,7 +186,9 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   <AddPropertyMainInfo control={control} />
                 </Stepper.Step>
 
-                <Stepper.Step label="Address"></Stepper.Step>
+                <Stepper.Step label="Address">
+                  <AddPropertyAddress control={control} />
+                </Stepper.Step>
 
                 <Stepper.Step label="Characteristics"></Stepper.Step>
 

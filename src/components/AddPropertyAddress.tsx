@@ -1,67 +1,50 @@
-import { Group, Loader } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
-import { IconBathFilled } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { type Control } from "react-hook-form";
-import { TextInput, Textarea, Select, MultiSelect, NumberInput } from "react-hook-form-mantine";
-import { useAllCollections, useTags } from "~/hooks/useQueries";
-import { type SelectOption } from "~/types";
+import { useAdms, useAdms2, useAdms3 } from "~/hooks/useQueries";
+import { type AdministrativeDivision, type SelectOption } from "~/types";
 import { type FormSchemaType } from "./AddPropertyDrawer";
-
-const propertyTypes = [
-  { value: "house", label: "House" },
-  { value: "apartment", label: "Apartment" },
-  { value: "office", label: "Office" },
-  { value: "shop", label: "Shop" },
-  { value: "warehouse", label: "Warehouse" },
-  { value: "garage", label: "Garage" },
-  { value: "land", label: "Land" },
-  { value: "other", label: "Other" },
-];
-
-const typologies = [
-  { value: "t0", label: "T0" },
-  { value: "t1", label: "T1" },
-  { value: "t2", label: "T2" },
-  { value: "t3", label: "T3" },
-  { value: "t4", label: "T4" },
-  { value: "t5", label: "T5" },
-  { value: "t6", label: "T6" },
-  { value: "t7", label: "T7" },
-  { value: "t8", label: "T8" },
-  { value: "t9", label: "T9" },
-  { value: "t10", label: "T10" },
-];
-
-const currentStatuses = [
-  { value: "available", label: "Available" },
-  { value: "unavailable", label: "Unavailable" },
-  { value: "unknown", label: "Unknown" },
-];
+import { NumberInput, Select, TextInput } from "react-hook-form-mantine";
+import { Group, Loader } from "@mantine/core";
+import { useEffect } from "react";
+import { IconTag, IconWorldLatitude, IconWorldLongitude } from "@tabler/icons-react";
 
 export function AddPropertyAddress({ control }: { control: Control<FormSchemaType> }) {
-  //const { data: session, status } = useSession();
-  //const { data: tagsData, isLoading: tagsIsLoading } = useTags({ session, status });
-  //const { data: collectionsData, isLoading: collectionsIsLoading } = useAllCollections({ session, status });
+  const { data: session, status } = useSession();
 
-  const [selectedPropertyType, setSelectedPropertyType] = useInputState("");
+  const [selectedAdm1, setSelectedAdm1] = useInputState("");
+  const [selectedAdm2, setSelectedAdm2] = useInputState("");
 
-  let tags = [] as SelectOption[];
-  let collections = [] as SelectOption[];
+  const { data: adm1Data, isLoading: adm1IsLoading } = useAdms({ session, status });
 
-  /*if (tagsData) {
-    tags = tagsData.map((tag) => ({
-      value: tag.id.toString(),
-      label: tag.name,
+  const { data: adm2Data, isLoading: adm2IsLoading } = useAdms2({
+    session,
+    status,
+    parentId: selectedAdm1 ? selectedAdm1 : "1",
+  });
+
+  const { data: adm3Data, isLoading: adm3IsLoading } = useAdms3({
+    session,
+    status,
+    parentId: selectedAdm2 ? selectedAdm2 : "2",
+  });
+
+  let adm1 = [] as SelectOption[];
+  let adm2 = [] as SelectOption[];
+  let adm3 = [] as SelectOption[];
+
+  const processAdmData = (data: AdministrativeDivision[]) => {
+    return data.map((adm) => ({
+      value: adm.id.toString(),
+      label: adm.name,
     }));
-  }
+  };
 
-  if (collectionsData) {
-    collections = collectionsData.data.map((collection) => ({
-      value: collection.id.toString(),
-      label: collection.name,
-    }));
-  }*/
+  if (adm1Data) adm1 = processAdmData(adm1Data);
+
+  if (adm2Data) adm2 = processAdmData(adm2Data);
+
+  if (adm3Data) adm3 = processAdmData(adm3Data);
 
   // TODO: withAsterisk doesn't match reality, required_without_all:Full Address,Adm 1 Id
   return (
@@ -69,110 +52,83 @@ export function AddPropertyAddress({ control }: { control: Control<FormSchemaTyp
       <TextInput
         className="mb-3"
         name="Full Address"
-        label="Title"
-        placeholder="Title"
+        label="Address"
+        placeholder="123, Ai Hoshino Street"
         control={control}
         withAsterisk
       />
       <Group className="mb-3" position="apart" grow>
         <Select
-          data={propertyTypes}
-          name="Property Type"
-          label="Property Type"
-          placeholder="Property Type"
+          data={adm1}
+          name="Adm1"
+          label="Distrito"
+          placeholder="Distrito"
+          icon={adm1IsLoading && <Loader size="1rem" />}
           control={control}
           searchable
           nothingFound="No options"
-          onChange={setSelectedPropertyType}
+          onChange={(selectedOption) => {
+            setSelectedAdm1(selectedOption);
+            setSelectedAdm2("");
+            //TODO: disable Adm2 and Adm3 until Adm1 is selected
+            //TODO: clear Adm2 and Adm3 when Adm1 is changed
+          }}
         />
         <Select
-          data={currentStatuses}
-          name="Current Status"
-          placeholder="Current Status"
-          label="Current Status"
-          control={control}
-        />
-        <Select
-          data={typologies}
-          name="Typology"
-          label="Typology"
-          placeholder="Typology"
+          data={adm2}
+          name="Adm2"
+          label="Concelho"
+          placeholder="Concelho"
+          icon={adm2IsLoading && <Loader size="1rem" />}
           control={control}
           searchable
-          creatable
-          getCreateLabel={(query) => `+ Create ${query} `}
-          onCreate={(query) => {
-            const newTypology = { value: query, label: query };
-            typologies.push(newTypology);
-            typologies.sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
-            return newTypology;
+          nothingFound="No options"
+          onChange={(selectedOption) => {
+            setSelectedAdm2(selectedOption);
+            //TODO: disable  Adm3 until Adm1 is selected
+            //TODO: clear Adm3 when Adm2 is changed
           }}
-          disabled={selectedPropertyType === "land"}
+        />
+        <Select
+          data={adm3}
+          name="Adm3"
+          label="Freguesia"
+          placeholder="Freguesia"
+          icon={adm3IsLoading && <Loader size="1rem" />}
+          control={control}
+          searchable
+          nothingFound="No options"
         />
       </Group>
 
       <Group className="mb-3" position="apart" grow>
-        <NumberInput
-          name="Gross Area"
-          label="Gross Area"
-          placeholder="Gross Area"
+        <TextInput
+          name="Postal Code"
+          label="Postal Code"
+          placeholder="Postal Code"
           control={control}
-          icon="m²"
-          step={5}
-          min={0}
-          styles={{ icon: { fontSize: "16px" } }}
+          icon={<IconTag size="1rem" />}
         />
         <NumberInput
-          name="Net Area"
-          label="Net Area"
-          placeholder="Net Area"
+          name="Latitude"
+          label="Latitude"
+          placeholder="Latitude"
           control={control}
-          icon="m²"
-          step={5}
-          min={0}
-          styles={{ icon: { fontSize: "16px" } }}
+          icon={<IconWorldLatitude size="1rem" />}
+          min={-90}
+          max={90}
         />
         <NumberInput
-          name="Number of Bathrooms"
-          label="Number of Bathrooms"
-          placeholder="Bathrooms"
+          name="Longitude"
+          label="Longitude"
+          placeholder="Longitude"
           control={control}
-          icon={<IconBathFilled size="1rem" />}
-          min={0}
+          icon={<IconWorldLongitude size="1rem" />}
+          min={-180}
+          max={180}
         />
       </Group>
-
-      <Group className="mb-3" position="apart" grow>
-        <MultiSelect
-          data={tags}
-          name="Tags"
-          label="Tags"
-          placeholder="Tags"
-          control={control}
-          icon={tagsIsLoading && <Loader size="1rem" />}
-          maxSelectedValues={10}
-          searchable
-          clearable
-          creatable
-          getCreateLabel={(query) => `+ Create ${query} `}
-          onCreate={(query) => {
-            const newTag = { value: query, label: query };
-            tags.push(newTag);
-            tags.sort((a, b) => a.label.localeCompare(b.label));
-            return newTag;
-          }}
-        />
-        <MultiSelect
-          data={collections}
-          name="Collections"
-          label="Collections"
-          placeholder="Collections"
-          control={control}
-          icon={collectionsIsLoading && <Loader size="1rem" />}
-          searchable
-          clearable
-        />
-      </Group>
+      {/* TODO: Map */}
     </div>
   );
 }

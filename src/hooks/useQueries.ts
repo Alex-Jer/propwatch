@@ -10,6 +10,7 @@ import type {
   CollectionProperty,
   Tag,
   SearchOptions,
+  AdministrativeDivision,
 } from "~/types";
 
 type CollectionsResponse = {
@@ -37,6 +38,14 @@ type PropertiesResponse = {
   meta: Meta;
 };
 
+type TagsResponse = {
+  data: Tag[];
+};
+
+type AdmsResponse = {
+  data: AdministrativeDivision[];
+};
+
 type UseElement = {
   session: Session | null;
   status: string;
@@ -61,8 +70,15 @@ type UseProperties = {
   page: number;
 };
 
-type TagsResponse = {
-  data: Tag[];
+type UseAdms = {
+  session: Session | null;
+  status: string;
+  parentId: string;
+};
+
+type UseAdmsWithoutParent = {
+  session: Session | null;
+  status: string;
 };
 
 const fetchCollection = async (session: Session | null, id: string) => {
@@ -121,6 +137,15 @@ const fetchTags = async (session: Session | null) => {
 
 const fetchTagsSidebar = async (session: Session | null) => {
   const response = (await makeRequest("me/tags/sidebar", "GET", session?.user.access_token)) as TagsResponse;
+  return response.data;
+};
+
+const fetchAdms = async (session: Session | null, level: number, parentId: string | null) => {
+  const response = (await makeRequest(
+    `administrative-divisions/level/${level}${parentId ? `?parent_id=${parentId}` : ""}`,
+    "GET",
+    session?.user.access_token
+  )) as AdmsResponse;
   return response.data;
 };
 
@@ -184,6 +209,30 @@ export const useTagsSidebar = ({ session, status }: UseElement) => {
   return useQuery({
     queryKey: ["tags"],
     queryFn: () => fetchTagsSidebar(session),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useAdms = ({ session, status }: UseAdmsWithoutParent) => {
+  return useQuery({
+    queryKey: ["adms1"],
+    queryFn: () => fetchAdms(session, 1, null),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useAdms2 = ({ session, status, parentId }: UseAdms) => {
+  return useQuery({
+    queryKey: ["adms2_" + parentId],
+    queryFn: () => fetchAdms(session, 2, parentId),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useAdms3 = ({ session, status, parentId }: UseAdms) => {
+  return useQuery({
+    queryKey: ["adms3_" + parentId],
+    queryFn: () => fetchAdms(session, 3, parentId),
     enabled: status === "authenticated",
   });
 };

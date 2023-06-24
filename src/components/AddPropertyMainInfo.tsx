@@ -66,16 +66,6 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
   return (
     <div>
       <TextInput className="mb-3" name="Title" label="Title" placeholder="Title" control={control} withAsterisk />
-      <Textarea
-        className="mb-3"
-        name="Description"
-        label="Description"
-        placeholder="Description"
-        control={control}
-        autosize
-        minRows={2}
-        maxRows={5}
-      />
       <Group className="mb-3" position="apart" grow>
         <Select
           data={propertyTypes}
