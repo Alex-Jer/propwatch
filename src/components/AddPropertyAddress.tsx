@@ -1,15 +1,19 @@
 import { useInputState } from "@mantine/hooks";
 import { useSession } from "next-auth/react";
-import { type Control } from "react-hook-form";
+import { type UseFormResetField, type Control } from "react-hook-form";
 import { useAdms, useAdms2, useAdms3 } from "~/hooks/useQueries";
 import { type AdministrativeDivision, type SelectOption } from "~/types";
 import { type FormSchemaType } from "./AddPropertyDrawer";
 import { NumberInput, Select, TextInput } from "react-hook-form-mantine";
 import { Group, Loader } from "@mantine/core";
-import { useEffect } from "react";
 import { IconTag, IconWorldLatitude, IconWorldLongitude } from "@tabler/icons-react";
 
-export function AddPropertyAddress({ control }: { control: Control<FormSchemaType> }) {
+type AddPropertyAddressProps = {
+  control: Control<FormSchemaType>;
+  resetField: UseFormResetField<FormSchemaType>;
+};
+
+export function AddPropertyAddress({ control, resetField }: AddPropertyAddressProps) {
   const { data: session, status } = useSession();
 
   const [selectedAdm1, setSelectedAdm1] = useInputState("");
@@ -33,18 +37,16 @@ export function AddPropertyAddress({ control }: { control: Control<FormSchemaTyp
   let adm2 = [] as SelectOption[];
   let adm3 = [] as SelectOption[];
 
-  const processAdmData = (data: AdministrativeDivision[]) => {
+  const formatAdmData = (data: AdministrativeDivision[]) => {
     return data.map((adm) => ({
       value: adm.id.toString(),
       label: adm.name,
     }));
   };
 
-  if (adm1Data) adm1 = processAdmData(adm1Data);
-
-  if (adm2Data) adm2 = processAdmData(adm2Data);
-
-  if (adm3Data) adm3 = processAdmData(adm3Data);
+  if (adm1Data) adm1 = formatAdmData(adm1Data);
+  if (adm2Data) adm2 = formatAdmData(adm2Data);
+  if (adm3Data) adm3 = formatAdmData(adm3Data);
 
   // TODO: withAsterisk doesn't match reality, required_without_all:Full Address,Adm 1 Id
   return (
@@ -66,12 +68,12 @@ export function AddPropertyAddress({ control }: { control: Control<FormSchemaTyp
           icon={adm1IsLoading && <Loader size="1rem" />}
           control={control}
           searchable
+          clearable
           nothingFound="No options"
-          onChange={(selectedOption) => {
-            setSelectedAdm1(selectedOption);
-            setSelectedAdm2("");
-            //TODO: disable Adm2 and Adm3 until Adm1 is selected
-            //TODO: clear Adm2 and Adm3 when Adm1 is changed
+          onChange={(value) => {
+            setSelectedAdm1(value);
+            resetField("Adm2", { defaultValue: "" });
+            resetField("Adm3", { defaultValue: "" });
           }}
         />
         <Select
@@ -82,12 +84,13 @@ export function AddPropertyAddress({ control }: { control: Control<FormSchemaTyp
           icon={adm2IsLoading && <Loader size="1rem" />}
           control={control}
           searchable
+          clearable
           nothingFound="No options"
-          onChange={(selectedOption) => {
-            setSelectedAdm2(selectedOption);
-            //TODO: disable  Adm3 until Adm1 is selected
-            //TODO: clear Adm3 when Adm2 is changed
+          onChange={(value) => {
+            setSelectedAdm2(value);
+            resetField("Adm3", { defaultValue: "" });
           }}
+          disabled={!selectedAdm1}
         />
         <Select
           data={adm3}
@@ -97,7 +100,9 @@ export function AddPropertyAddress({ control }: { control: Control<FormSchemaTyp
           icon={adm3IsLoading && <Loader size="1rem" />}
           control={control}
           searchable
+          clearable
           nothingFound="No options"
+          disabled={!selectedAdm2}
         />
       </Group>
 

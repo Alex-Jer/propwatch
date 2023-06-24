@@ -3,7 +3,7 @@ import { useInputState } from "@mantine/hooks";
 import { IconBathFilled } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { type Control } from "react-hook-form";
-import { TextInput, Textarea, Select, MultiSelect, NumberInput } from "react-hook-form-mantine";
+import { TextInput, Select, MultiSelect, NumberInput } from "react-hook-form-mantine";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
 import { type SelectOption } from "~/types";
 import { type FormSchemaType } from "./AddPropertyDrawer";

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Select, NumberInput } from "react-hook-form-mantine";
 import { useInputState } from "@mantine/hooks";
 import { Button, Drawer, Stepper, Group } from "@mantine/core";
@@ -49,13 +49,15 @@ const schema = z.object({
   "Postal Code": z
     .string()
     .max(10, { message: "Postal Code must be at most 20 characters long" })
-    .min(4, { message: "Postal Code must be at least 4 characters long" })
+    .refine((value) => value === "" || value.length >= 4, {
+      message: "Postal Code must be at least 4 characters long",
+    })
     .optional(),
   Latitude: z.number().optional(),
   Longitude: z.number().optional(),
-  Adm1: z.number().optional(),
-  Adm2: z.number().optional(),
-  Adm3: z.number().optional(),
+  Adm1: z.string().optional().nullable(),
+  Adm2: z.string().optional().nullable(),
+  Adm3: z.string().optional().nullable(),
 });
 
 const defaultValues: FormSchemaType = {
@@ -99,7 +101,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
   const addPropertyButtonRef = useRef(null);
 
-  const { control, handleSubmit, reset } = useForm<FormSchemaType>({
+  const { control, handleSubmit, reset, resetField } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
   });
@@ -187,7 +189,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 </Stepper.Step>
 
                 <Stepper.Step label="Address">
-                  <AddPropertyAddress control={control} />
+                  <AddPropertyAddress control={control} resetField={resetField} />
                 </Stepper.Step>
 
                 <Stepper.Step label="Characteristics"></Stepper.Step>
