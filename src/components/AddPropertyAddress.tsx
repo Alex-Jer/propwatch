@@ -72,6 +72,7 @@ export function AddPropertyAddress({ control, resetField }: AddPropertyAddressPr
           nothingFound="No options"
           onChange={(value) => {
             setSelectedAdm1(value);
+            setSelectedAdm2(null); // required so Adm3 is disabled
             resetField("Adm2", { defaultValue: "" });
             resetField("Adm3", { defaultValue: "" });
           }}
@@ -118,6 +119,9 @@ export function AddPropertyAddress({ control, resetField }: AddPropertyAddressPr
           name="Latitude"
           label="Latitude"
           placeholder="Latitude"
+          precision={6}
+          hideControls
+          decimalSeparator=","
           control={control}
           icon={<IconWorldLatitude size="1rem" />}
           min={-90}
@@ -127,13 +131,16 @@ export function AddPropertyAddress({ control, resetField }: AddPropertyAddressPr
           name="Longitude"
           label="Longitude"
           placeholder="Longitude"
+          precision={6}
+          hideControls
+          decimalSeparator=","
           control={control}
           icon={<IconWorldLongitude size="1rem" />}
           min={-180}
           max={180}
         />
       </Group>
-      {/* TODO: Map */}
+      {/* TODO: Map & get address from point */}
     </div>
   );
 }

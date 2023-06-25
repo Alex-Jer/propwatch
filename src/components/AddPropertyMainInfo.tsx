@@ -112,6 +112,8 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
           icon="m²"
           step={5}
           min={0}
+          stepHoldDelay={500}
+          stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
           styles={{ icon: { fontSize: "16px" } }}
         />
         <NumberInput
@@ -122,6 +124,8 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
           icon="m²"
           step={5}
           min={0}
+          stepHoldDelay={500}
+          stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
           styles={{ icon: { fontSize: "16px" } }}
         />
         <NumberInput
