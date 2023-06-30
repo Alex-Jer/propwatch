@@ -59,6 +59,7 @@ const schema = z.object({
   Adm1: z.string().optional().nullable(),
   Adm2: z.string().optional().nullable(),
   Adm3: z.string().optional().nullable(),
+  Rating: z.number().optional().nullable(),
 });
 
 const defaultValues: FormSchemaType = {
@@ -85,6 +86,7 @@ const defaultValues: FormSchemaType = {
   Adm1: undefined,
   Adm2: undefined,
   Adm3: undefined,
+  Rating: 0,
 };
 
 export type FormSchemaType = z.infer<typeof schema>;

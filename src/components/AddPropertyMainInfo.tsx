@@ -1,4 +1,4 @@
-import { Group, Loader } from "@mantine/core";
+import { Group, Loader, Rating } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import { IconBathFilled } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
@@ -168,6 +168,11 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
           searchable
           clearable
         />
+      </Group>
+      <Group>
+        {/*TODO: style the label */}
+        <div> Rating: </div>
+        <Rating name="Rating" fractions={2} defaultValue={1.5} />
       </Group>
     </div>
   );
