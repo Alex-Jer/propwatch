@@ -42,8 +42,9 @@ const schema = z.object({
   "Current Rent Price": z.number().nonnegative().optional(),
   Tags: z.array(z.string().max(32, { message: "Tag must be at most 32 characters long" })),
   Collections: z.array(z.string()),
-  Files: z.array(z.any()),
+  Images: z.array(z.any()),
   Blueprints: z.array(z.any()),
+  Videos: z.array(z.any()),
   /* ADDRESS */
   "Full Address": z.string().max(200, { message: "Address must be at most 200 characters long" }),
   "Postal Code": z
@@ -74,8 +75,9 @@ const defaultValues: FormSchemaType = {
   "Current Rent Price": undefined,
   Tags: [],
   Collections: [],
-  Files: [],
+  Images: [],
   Blueprints: [],
+  Videos: [],
   "Full Address": "",
   "Postal Code": "",
   Latitude: undefined,
@@ -92,9 +94,11 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [stepperActive, setStepperActive] = useState(0);
   const [addPropertyCounter, setAddPropertyCounter] = useState(0);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
+  const [selectedImages, setSelectedImages] = useState<any[]>([]);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
 
   const nextStep = () => setStepperActive((current) => (current < TOTAL_STEPS ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
@@ -110,8 +114,9 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     setAddPropertyCounter(0);
     reset(defaultValues);
     setStepperActive(0);
-    setSelectedFiles([]);
+    setSelectedImages([]);
     setSelectedBlueprints([]);
+    setSelectedVideos([]);
   };
 
   const addProperty = (data: FormSchemaType) => {
@@ -197,10 +202,12 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 <Stepper.Step label="Media & Blueprints">
                   <AddPropertyMedia
                     control={control}
-                    selectedFiles={selectedFiles}
-                    setSelectedFiles={setSelectedFiles}
+                    selectedImages={selectedImages}
+                    setSelectedImages={setSelectedImages}
                     selectedBlueprints={selectedBlueprints}
                     setSelectedBlueprints={setSelectedBlueprints}
+                    selectedVideos={selectedVideos}
+                    setSelectedVideos={setSelectedVideos}
                   />
                 </Stepper.Step>
 

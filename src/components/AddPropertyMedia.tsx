@@ -3,54 +3,60 @@ import { Controller, type Control } from "react-hook-form";
 import { type FormSchemaType } from "./AddPropertyDrawer";
 import { FilePond, registerPlugin } from "react-filepond";
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 
-registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
+registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview, FilePondPluginFileValidateType);
 
 interface AddPropertyMediaProps {
   control: Control<FormSchemaType>;
-  selectedFiles: File[];
-  setSelectedFiles: (files: File[]) => void;
+  selectedImages: File[];
+  setSelectedImages: (files: File[]) => void;
   selectedBlueprints: File[];
   setSelectedBlueprints: (blueprints: File[]) => void;
+  selectedVideos: File[];
+  setSelectedVideos: (videos: File[]) => void;
 }
 
 export function AddPropertyMedia({
   control,
-  selectedFiles,
-  setSelectedFiles,
+  selectedImages,
+  setSelectedImages,
   selectedBlueprints,
   setSelectedBlueprints,
+  selectedVideos,
+  setSelectedVideos,
 }: AddPropertyMediaProps) {
   const { classes } = useStyles();
 
   return (
     <>
       <div className="mb-8">
-        <Divider my="xs" label="Images and Videos" labelPosition="center" />
+        <Divider my="xs" label="Images" labelPosition="center" />
         <Controller
-          name="Files"
+          name="Images"
           control={control}
           defaultValue={[]}
           render={({ field: { onChange } }) => (
             <FilePond
               className={classes.filePond}
-              files={selectedFiles}
+              files={selectedImages}
               onupdatefiles={(fileItems) => {
                 const files = fileItems.map((fileItem) => fileItem.file);
-                setSelectedFiles(files as File[]);
+                setSelectedImages(files as File[]);
                 onChange(files);
               }}
-              labelIdle="Drag & Drop your media or <span class='filepond--label-action'>click to browse</span>"
+              labelIdle="Drag & Drop your images or <span class='filepond--label-action'>click to browse</span>"
               allowMultiple={true}
+              acceptedFileTypes={["image/jpeg", "image/png", "image/webp", "image/gif"]}
             />
           )}
         />
       </div>
 
-      <div className="mb-6">
+      <div className="mb-8">
         <Divider my="xs" label="Blueprints" labelPosition="center" />
         <Controller
           name="Blueprints"
@@ -66,7 +72,29 @@ export function AddPropertyMedia({
               }}
               labelIdle="Drag & Drop your blueprints or <span class='filepond--label-action'>click to browse</span>"
               allowMultiple={true}
-              acceptedFileTypes={["image/*", "application/pdf"]}
+              acceptedFileTypes={["image/jpeg", "image/png", "image/webp", "application/pdf"]}
+            />
+          )}
+        />
+      </div>
+
+      <div className="mb-6">
+        <Divider my="xs" label="Videos" labelPosition="center" />
+        <Controller
+          name="Videos"
+          control={control}
+          render={({ field: { onChange } }) => (
+            <FilePond
+              className={classes.filePond}
+              files={selectedVideos}
+              onupdatefiles={(videoItems) => {
+                const videos = videoItems.map((videoItem) => videoItem.file);
+                setSelectedVideos(videos as File[]);
+                onChange(videos);
+              }}
+              labelIdle="Drag & Drop your videos or <span class='filepond--label-action'>click to browse</span>"
+              allowMultiple={true}
+              acceptedFileTypes={["video/mp4", "video/webm", "video/h264", "video/3gp"]}
             />
           )}
         />
