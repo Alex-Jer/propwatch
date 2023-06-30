@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 dependencies:
   '@emotion/react':
     specifier: ^11.11.0
@@ -74,6 +70,9 @@ dependencies:
   filepond:
     specifier: ^4.30.4
     version: 4.30.4
+  filepond-plugin-file-validate-type:
+    specifier: ^1.2.8
+    version: 1.2.8(filepond@4.30.4)
   filepond-plugin-image-exif-orientation:
     specifier: ^1.0.11
     version: 1.0.11(filepond@4.30.4)
@@ -2816,6 +2815,14 @@ packages:
       flat-cache: 3.0.4
     dev: true
 
+  /filepond-plugin-file-validate-type@1.2.8(filepond@4.30.4):
+    resolution: {integrity: sha512-UBTqIWbk5+5R0GBELI8svu01MHWjFSLfc9DfCMvFtHKXLdJMxY1p37ChC4YKQjhfODaTuvLnNVRsukMGMFZBBg==}
+    peerDependencies:
+      filepond: '>=1.x <5.x'
+    dependencies:
+      filepond: 4.30.4
+    dev: false
+
   /filepond-plugin-image-exif-orientation@1.0.11(filepond@4.30.4):
     resolution: {integrity: sha512-hLBc12Fk6Zkj3L8mSAn+elugHOqT5rLUbgVXQQIQjMe0FsGjtpoxqeVR6jt4IWHGat2L9sFAgU2TGmd1mqosCg==}
     peerDependencies:
@@ -5283,3 +5290,7 @@ packages:
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
     dev: false
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
