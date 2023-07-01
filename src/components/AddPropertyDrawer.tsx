@@ -10,6 +10,11 @@ import { AddPropertyMainInfo } from "./AddPropertyMainInfo";
 import { notifications } from "@mantine/notifications";
 import { AddPropertyMedia } from "./AddPropertyMedia";
 import { AddPropertyAddress } from "./AddPropertyAddress";
+import { useMutation } from "@tanstack/react-query";
+import { makeRequest } from "~/lib/requestHelper";
+import { useSession } from "next-auth/react";
+import { env } from "~/env.mjs";
+import axios from "axios";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -122,6 +127,8 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const nextStep = () => setStepperActive((current) => (current < TOTAL_STEPS ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
 
+  const { data: session } = useSession();
+
   const addPropertyButtonRef = useRef(null);
 
   const { control, handleSubmit, reset, resetField } = useForm<FormSchemaType>({
@@ -137,6 +144,43 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     setSelectedBlueprints([]);
     setSelectedVideos([]);
   };
+
+  const addPropertyMutation = async (data: FormSchemaType) => {
+    const API_URL = env.NEXT_PUBLIC_API_URL;
+    const url = `${API_URL}/api/me/properties`;
+    const formData = new FormData();
+
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+
+    if (!session) {
+      throw new Error("Session is null");
+    }
+
+    const headers = {
+      Accept: "*/*",
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${session.user.access_token}`,
+    };
+
+    try {
+      // TODO: Tentei com o makeRequest mas também dá erro 419
+      /* const response = await makeRequest("me/properties", "POST", session?.user.access_token); */
+
+      const res = await axios.post(url, formData, { headers });
+
+      console.log(res.data);
+      return res.data;
+
+      console.log({ response });
+
+      /* return response.json(); */
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+
+  const mutation = useMutation(addPropertyMutation);
 
   const addProperty = (data: FormSchemaType) => {
     if (addPropertyButtonRef.current === null) {
@@ -156,7 +200,8 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
         return;
       }
 
-      console.log({ data });
+      /* console.log({ data }); */
+      mutation.mutate(data);
       resetForm();
       close();
 
