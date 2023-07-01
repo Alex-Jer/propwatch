@@ -3,7 +3,7 @@ import { useInputState } from "@mantine/hooks";
 import { IconBathFilled } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { type Control } from "react-hook-form";
-import { TextInput, Select, MultiSelect, NumberInput, Rating } from "react-hook-form-mantine";
+import { TextInput, Select, MultiSelect, NumberInput, Rating, Textarea } from "react-hook-form-mantine";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
 import { type SelectOption } from "~/types";
 import { type FormSchemaType } from "./AddPropertyDrawer";
@@ -78,6 +78,14 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
         control={control}
         withAsterisk
         data-autofocus
+        disabled={disabled}
+      />
+      <Textarea
+        className="mb-3"
+        name="Description"
+        label="Description"
+        placeholder="Description"
+        control={control}
         disabled={disabled}
       />
       <Group className="mb-3" position="apart" grow>

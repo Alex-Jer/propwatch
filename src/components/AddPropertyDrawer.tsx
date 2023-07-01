@@ -258,6 +258,8 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                       control={control}
                       icon={<IconCurrencyEuro size="1rem" />}
                       min={0}
+                      stepHoldDelay={500}
+                      stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
                       disabled={selectedListingType === "rent"}
                     />
                     <NumberInput
@@ -267,6 +269,8 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                       control={control}
                       icon={<IconCurrencyEuro size="1rem" />}
                       min={0}
+                      stepHoldDelay={500}
+                      stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
                       disabled={selectedListingType === "sale"}
                     />
                   </Group>
