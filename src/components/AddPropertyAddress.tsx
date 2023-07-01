@@ -11,9 +11,10 @@ import { IconTag, IconWorldLatitude, IconWorldLongitude } from "@tabler/icons-re
 type AddPropertyAddressProps = {
   control: Control<FormSchemaType>;
   resetField: UseFormResetField<FormSchemaType>;
+  disabled?: boolean;
 };
 
-export function AddPropertyAddress({ control, resetField }: AddPropertyAddressProps) {
+export function AddPropertyAddress({ control, resetField, disabled }: AddPropertyAddressProps) {
   const { data: session, status } = useSession();
 
   const [selectedAdm1, setSelectedAdm1] = useInputState("");
@@ -58,54 +59,58 @@ export function AddPropertyAddress({ control, resetField }: AddPropertyAddressPr
         placeholder="123, Ai Hoshino Street"
         control={control}
         withAsterisk
+        disabled={disabled}
       />
-      <Group className="mb-3" position="apart" grow>
-        <Select
-          data={adm1}
-          name="Adm1"
-          label="Distrito"
-          placeholder="Distrito"
-          icon={adm1IsLoading && <Loader size="1rem" />}
-          control={control}
-          searchable
-          clearable
-          nothingFound="No options"
-          onChange={(value) => {
-            setSelectedAdm1(value);
-            setSelectedAdm2(null); // required so Adm3 is disabled
-            resetField("Adm2", { defaultValue: "" });
-            resetField("Adm3", { defaultValue: "" });
-          }}
-        />
-        <Select
-          data={adm2}
-          name="Adm2"
-          label="Concelho"
-          placeholder="Concelho"
-          icon={adm2IsLoading && <Loader size="1rem" />}
-          control={control}
-          searchable
-          clearable
-          nothingFound="No options"
-          onChange={(value) => {
-            setSelectedAdm2(value);
-            resetField("Adm3", { defaultValue: "" });
-          }}
-          disabled={!selectedAdm1}
-        />
-        <Select
-          data={adm3}
-          name="Adm3"
-          label="Freguesia"
-          placeholder="Freguesia"
-          icon={adm3IsLoading && <Loader size="1rem" />}
-          control={control}
-          searchable
-          clearable
-          nothingFound="No options"
-          disabled={!selectedAdm2}
-        />
-      </Group>
+      {!disabled && (
+        <Group className="mb-3" position="apart" grow>
+          <Select
+            data={adm1}
+            name="Adm1"
+            label="Distrito"
+            placeholder="Distrito"
+            icon={adm1IsLoading && <Loader size="1rem" />}
+            control={control}
+            searchable
+            clearable
+            nothingFound="No options"
+            onChange={(value) => {
+              setSelectedAdm1(value);
+              setSelectedAdm2(null); // required so Adm3 is disabled
+              resetField("Adm2", { defaultValue: "" });
+              resetField("Adm3", { defaultValue: "" });
+            }}
+            disabled={disabled}
+          />
+          <Select
+            data={adm2}
+            name="Adm2"
+            label="Concelho"
+            placeholder="Concelho"
+            icon={adm2IsLoading && <Loader size="1rem" />}
+            control={control}
+            searchable
+            clearable
+            nothingFound="No options"
+            onChange={(value) => {
+              setSelectedAdm2(value);
+              resetField("Adm3", { defaultValue: "" });
+            }}
+            disabled={!selectedAdm1 || disabled}
+          />
+          <Select
+            data={adm3}
+            name="Adm3"
+            label="Freguesia"
+            placeholder="Freguesia"
+            icon={adm3IsLoading && <Loader size="1rem" />}
+            control={control}
+            searchable
+            clearable
+            nothingFound="No options"
+            disabled={!selectedAdm2 || disabled}
+          />
+        </Group>
+      )}
 
       <Group className="mb-3" position="apart" grow>
         <TextInput
@@ -114,6 +119,7 @@ export function AddPropertyAddress({ control, resetField }: AddPropertyAddressPr
           placeholder="Postal Code"
           control={control}
           icon={<IconTag size="1rem" />}
+          disabled={disabled}
         />
         <NumberInput
           name="Latitude"
@@ -126,6 +132,7 @@ export function AddPropertyAddress({ control, resetField }: AddPropertyAddressPr
           icon={<IconWorldLatitude size="1rem" />}
           min={-90}
           max={90}
+          disabled={disabled}
         />
         <NumberInput
           name="Longitude"
@@ -138,6 +145,7 @@ export function AddPropertyAddress({ control, resetField }: AddPropertyAddressPr
           icon={<IconWorldLongitude size="1rem" />}
           min={-180}
           max={180}
+          disabled={disabled}
         />
       </Group>
       {/* TODO: Map & get address from point */}

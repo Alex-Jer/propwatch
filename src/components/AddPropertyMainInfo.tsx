@@ -1,9 +1,9 @@
-import { Group, Loader, Rating } from "@mantine/core";
+import { Group, Loader } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import { IconBathFilled } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { type Control } from "react-hook-form";
-import { TextInput, Select, MultiSelect, NumberInput } from "react-hook-form-mantine";
+import { TextInput, Select, MultiSelect, NumberInput, Rating } from "react-hook-form-mantine";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
 import { type SelectOption } from "~/types";
 import { type FormSchemaType } from "./AddPropertyDrawer";
@@ -39,7 +39,12 @@ const currentStatuses = [
   { value: "unknown", label: "Unknown" },
 ];
 
-export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaType> }) {
+type AddPropertyMainInfoProps = {
+  control: Control<FormSchemaType>;
+  disabled?: boolean;
+};
+
+export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoProps) {
   const { data: session, status } = useSession();
   const { data: tagsData, isLoading: tagsIsLoading } = useTags({ session, status });
   const { data: collectionsData, isLoading: collectionsIsLoading } = useAllCollections({ session, status });
@@ -65,7 +70,16 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
 
   return (
     <div>
-      <TextInput className="mb-3" name="Title" label="Title" placeholder="Title" control={control} withAsterisk />
+      <TextInput
+        className="mb-3"
+        name="Title"
+        label="Title"
+        placeholder="Title"
+        control={control}
+        withAsterisk
+        data-autofocus
+        disabled={disabled}
+      />
       <Group className="mb-3" position="apart" grow>
         <Select
           data={propertyTypes}
@@ -76,6 +90,7 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
           searchable
           nothingFound="No options"
           onChange={setSelectedPropertyType}
+          disabled={disabled}
         />
         <Select
           data={currentStatuses}
@@ -83,6 +98,7 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
           placeholder="Current Status"
           label="Current Status"
           control={control}
+          disabled={disabled}
         />
         <Select
           data={typologies}
@@ -99,7 +115,7 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
             typologies.sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
             return newTypology;
           }}
-          disabled={selectedPropertyType === "land"}
+          disabled={selectedPropertyType === "land" || disabled}
         />
       </Group>
 
@@ -115,6 +131,7 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
           stepHoldDelay={500}
           stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
           styles={{ icon: { fontSize: "16px" } }}
+          disabled={disabled}
         />
         <NumberInput
           name="Net Area"
@@ -127,6 +144,7 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
           stepHoldDelay={500}
           stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
           styles={{ icon: { fontSize: "16px" } }}
+          disabled={disabled}
         />
         <NumberInput
           name="Number of Bathrooms"
@@ -135,6 +153,7 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
           control={control}
           icon={<IconBathFilled size="1rem" />}
           min={0}
+          disabled={disabled}
         />
       </Group>
 
@@ -157,6 +176,7 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
             tags.sort((a, b) => a.label.localeCompare(b.label));
             return newTag;
           }}
+          disabled={disabled}
         />
         <MultiSelect
           data={collections}
@@ -167,12 +187,15 @@ export function AddPropertyMainInfo({ control }: { control: Control<FormSchemaTy
           icon={collectionsIsLoading && <Loader size="1rem" />}
           searchable
           clearable
+          disabled={disabled}
         />
       </Group>
       <Group>
         {/*TODO: style the label */}
-        <div> Rating: </div>
-        <Rating name="Rating" fractions={2} defaultValue={1.5} />
+        <div className="mb-2 flex items-center space-x-2">
+          <span> Rating: </span>
+          <Rating name="Rating" fractions={2} control={control} readOnly={disabled} />
+        </div>
       </Group>
     </div>
   );

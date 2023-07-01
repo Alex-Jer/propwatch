@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Select, NumberInput } from "react-hook-form-mantine";
 import { useInputState } from "@mantine/hooks";
-import { Button, Drawer, Stepper, Group } from "@mantine/core";
+import { Button, Drawer, Stepper, Group, Paper } from "@mantine/core";
 import { IconCheck, IconCurrencyEuro } from "@tabler/icons-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,15 +31,33 @@ const schema = z.object({
     .nonempty({ message: "A title is required" })
     .min(5, { message: "Title must be at least 5 characters long" }),
   Description: z.string().max(5000, { message: "Description must be at most 5000 characters long" }),
-  "Property Type": z.enum(["house", "apartment", "office", "shop", "warehouse", "garage", "land", "other"]).optional(),
+  "Property Type": z
+    .enum(["house", "apartment", "office", "shop", "warehouse", "garage", "land", "other"])
+    .optional()
+    .nullable(),
   Typology: z.string().max(12, { message: "Typology must be at most 12 characters long" }),
-  "Current Status": z.enum(["available", "unavailable", "unknown"]).optional(),
-  "Gross Area": z.number().int().nonnegative().optional(),
-  "Net Area": z.number().int().nonnegative().optional(),
-  "Number of Bathrooms": z.number().int().nonnegative().optional(),
-  "Listing Type": z.enum(["sale", "rent", "both", "none"]).optional(),
-  "Current Sale Price": z.number().nonnegative().optional(),
-  "Current Rent Price": z.number().nonnegative().optional(),
+  "Current Status": z.enum(["available", "unavailable", "unknown"]).optional().nullable(),
+  "Gross Area": z
+    .union([z.number().int().nonnegative().optional().nullable(), z.string().max(16)])
+    .optional()
+    .nullable(),
+  "Net Area": z
+    .union([z.number().int().nonnegative().optional().nullable(), z.string().max(16)])
+    .optional()
+    .nullable(),
+  "Number of Bathrooms": z
+    .union([z.number().int().nonnegative().optional().nullable(), z.string().max(16)])
+    .optional()
+    .nullable(),
+  "Listing Type": z.enum(["sale", "rent", "both", "none"]).optional().nullable(),
+  "Current Sale Price": z
+    .union([z.number().nonnegative().optional().nullable(), z.string().max(16)])
+    .optional()
+    .nullable(),
+  "Current Rent Price": z
+    .union([z.number().nonnegative().optional().nullable(), z.string().max(16)])
+    .optional()
+    .nullable(),
   Tags: z.array(z.string().max(32, { message: "Tag must be at most 32 characters long" })),
   Collections: z.array(z.string()),
   Images: z.array(z.any()),
@@ -53,9 +71,16 @@ const schema = z.object({
     .refine((value) => value === "" || value.length >= 4, {
       message: "Postal Code must be at least 4 characters long",
     })
-    .optional(),
-  Latitude: z.number().optional(),
-  Longitude: z.number().optional(),
+    .optional()
+    .nullable(),
+  Latitude: z
+    .union([z.number().optional().nullable(), z.string().max(16)])
+    .optional()
+    .nullable(),
+  Longitude: z
+    .union([z.number().optional().nullable(), z.string().max(16)])
+    .optional()
+    .nullable(),
   Adm1: z.string().optional().nullable(),
   Adm2: z.string().optional().nullable(),
   Adm3: z.string().optional().nullable(),
@@ -65,15 +90,15 @@ const schema = z.object({
 const defaultValues: FormSchemaType = {
   Title: "",
   Description: "",
-  "Property Type": undefined,
+  "Property Type": null,
   Typology: "",
-  "Current Status": undefined,
-  "Gross Area": undefined,
-  "Net Area": undefined,
-  "Number of Bathrooms": undefined,
-  "Listing Type": undefined,
-  "Current Sale Price": undefined,
-  "Current Rent Price": undefined,
+  "Current Status": null,
+  "Gross Area": "",
+  "Net Area": "",
+  "Number of Bathrooms": "",
+  "Listing Type": null,
+  "Current Sale Price": "",
+  "Current Rent Price": "",
   Tags: [],
   Collections: [],
   Images: [],
@@ -81,11 +106,11 @@ const defaultValues: FormSchemaType = {
   Videos: [],
   "Full Address": "",
   "Postal Code": "",
-  Latitude: undefined,
-  Longitude: undefined,
-  Adm1: undefined,
-  Adm2: undefined,
-  Adm3: undefined,
+  Latitude: "",
+  Longitude: "",
+  Adm1: null,
+  Adm2: null,
+  Adm3: null,
   Rating: 0,
 };
 
@@ -107,12 +132,13 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
   const addPropertyButtonRef = useRef(null);
 
-  const { control, handleSubmit, reset, resetField } = useForm<FormSchemaType>({
+  const { control, handleSubmit, reset, resetField, setValue } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
   });
 
   const resetForm = () => {
+    setValue("Gross Area", 0);
     setAddPropertyCounter(0);
     reset(defaultValues);
     setStepperActive(0);
@@ -159,7 +185,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
         opened={opened}
         onClose={close}
         position="right"
-        size="65%"
+        size="75%"
         overlayProps={{ opacity: 0.5, blur: 4 }}
         keepMounted
         styles={{
@@ -247,16 +273,12 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 </Stepper.Step>
 
                 <Stepper.Completed>
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    Lorem ipsum dolor sit amet, officia excepteur ex fugiat reprehenderit enim labore culpa sint ad nisi
-                    Lorem pariatur mollit ex esse exercitation amet. Nisi anim cupidatat excepteur officia.
-                    Reprehenderit nostrud nostrud ipsum Lorem est aliquip amet voluptate voluptate dolor minim nulla est
-                    proident. Nostrud officia pariatur ut officia. Sit irure elit esse ea nulla sunt ex occaecat
-                    reprehenderit commodo officia dolor Lorem duis laboris cupidatat officia voluptate. Culpa proident
-                    adipisicing id nulla nisi laboris ex in Lorem sunt duis officia eiusmod. Aliqua reprehenderit
-                    commodo ex non excepteur duis sunt velit enim. Voluptate laboris sint cupidatat ullamco ut ea
-                    consectetur et est culpa et culpa duis.
-                  </div>
+                  {/* make a centered header saying "Summary" */}
+                  <h1 className="mb-2 text-2xl font-semibold">Summary</h1>
+                  <Paper className="mb-4" shadow="xs" p="md" withBorder>
+                    <AddPropertyMainInfo control={control} disabled />
+                    <AddPropertyAddress control={control} resetField={resetField} disabled />
+                  </Paper>
                 </Stepper.Completed>
               </Stepper>
 
