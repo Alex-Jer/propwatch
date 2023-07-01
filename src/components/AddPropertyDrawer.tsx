@@ -26,46 +26,39 @@ const listingType = [
 ];
 
 const schema = z.object({
-  Title: z
+  title: z
     .string()
     .nonempty({ message: "A title is required" })
     .min(5, { message: "Title must be at least 5 characters long" }),
-  Description: z.string().max(5000, { message: "Description must be at most 5000 characters long" }),
-  "Property Type": z
-    .enum(["house", "apartment", "office", "shop", "warehouse", "garage", "land", "other"])
-    .optional()
-    .nullable(),
-  Typology: z.string().max(12, { message: "Typology must be at most 12 characters long" }),
-  "Current Status": z.enum(["available", "unavailable", "unknown"]).optional().nullable(),
-  "Gross Area": z
+  description: z.string().max(5000, { message: "Description must be at most 5000 characters long" }),
+  type: z.enum(["house", "apartment", "office", "shop", "warehouse", "garage", "land", "other"]).optional().nullable(),
+  typology: z.string().max(12, { message: "Typology must be at most 12 characters long" }),
+  status: z.enum(["available", "unavailable", "unknown"]).optional().nullable(),
+  gross_area: z
     .union([z.number().int().nonnegative().optional().nullable(), z.string().max(16)])
     .optional()
     .nullable(),
-  "Net Area": z
+  useful_area: z
     .union([z.number().int().nonnegative().optional().nullable(), z.string().max(16)])
     .optional()
     .nullable(),
-  "Number of Bathrooms": z
+  wc: z
     .union([z.number().int().nonnegative().optional().nullable(), z.string().max(16)])
     .optional()
     .nullable(),
-  "Listing Type": z.enum(["sale", "rent", "both", "none"]).optional().nullable(),
-  "Current Sale Price": z
+  listing_type: z.enum(["sale", "rent", "both", "none"]).optional().nullable(),
+  current_price: z
     .union([z.number().nonnegative().optional().nullable(), z.string().max(16)])
     .optional()
     .nullable(),
-  "Current Rent Price": z
-    .union([z.number().nonnegative().optional().nullable(), z.string().max(16)])
-    .optional()
-    .nullable(),
-  Tags: z.array(z.string().max(32, { message: "Tag must be at most 32 characters long" })),
-  Collections: z.array(z.string()),
-  Images: z.array(z.any()),
-  Blueprints: z.array(z.any()),
-  Videos: z.array(z.any()),
+  tags: z.array(z.string().max(32, { message: "Tag must be at most 32 characters long" })),
+  lists: z.array(z.string()),
+  images: z.array(z.any()),
+  blueprints: z.array(z.any()),
+  videos: z.array(z.any()),
   /* ADDRESS */
-  "Full Address": z.string().max(200, { message: "Address must be at most 200 characters long" }),
-  "Postal Code": z
+  full_address: z.string().max(200, { message: "Address must be at most 200 characters long" }),
+  postal_code: z
     .string()
     .max(10, { message: "Postal Code must be at most 20 characters long" })
     .refine((value) => value === "" || value.length >= 4, {
@@ -73,45 +66,44 @@ const schema = z.object({
     })
     .optional()
     .nullable(),
-  Latitude: z
-    .union([z.number().optional().nullable(), z.string().max(16)])
+  latitude: z
+    .union([z.number().optional().nullable(), z.string().max(24)])
     .optional()
     .nullable(),
-  Longitude: z
-    .union([z.number().optional().nullable(), z.string().max(16)])
+  longitude: z
+    .union([z.number().optional().nullable(), z.string().max(24)])
     .optional()
     .nullable(),
-  Adm1: z.string().optional().nullable(),
-  Adm2: z.string().optional().nullable(),
-  Adm3: z.string().optional().nullable(),
-  Rating: z.number().optional().nullable(),
+  adm1_id: z.string().optional().nullable(),
+  adm2_id: z.string().optional().nullable(),
+  adm3_id: z.string().optional().nullable(),
+  rating: z.number().optional().nullable(),
 });
 
 const defaultValues: FormSchemaType = {
-  Title: "",
-  Description: "",
-  "Property Type": null,
-  Typology: "",
-  "Current Status": null,
-  "Gross Area": "",
-  "Net Area": "",
-  "Number of Bathrooms": "",
-  "Listing Type": null,
-  "Current Sale Price": "",
-  "Current Rent Price": "",
-  Tags: [],
-  Collections: [],
-  Images: [],
-  Blueprints: [],
-  Videos: [],
-  "Full Address": "",
-  "Postal Code": "",
-  Latitude: "",
-  Longitude: "",
-  Adm1: null,
-  Adm2: null,
-  Adm3: null,
-  Rating: 0,
+  title: "",
+  description: "",
+  type: null,
+  typology: "",
+  status: null,
+  gross_area: "",
+  useful_area: "",
+  wc: "",
+  listing_type: null,
+  current_price: "",
+  tags: [],
+  lists: [],
+  images: [],
+  blueprints: [],
+  videos: [],
+  full_address: "",
+  postal_code: "",
+  latitude: "",
+  longitude: "",
+  adm1_id: null,
+  adm2_id: null,
+  adm3_id: null,
+  rating: 0,
 };
 
 export type FormSchemaType = z.infer<typeof schema>;
@@ -132,13 +124,12 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
   const addPropertyButtonRef = useRef(null);
 
-  const { control, handleSubmit, reset, resetField, setValue } = useForm<FormSchemaType>({
+  const { control, handleSubmit, reset, resetField } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
   });
 
   const resetForm = () => {
-    setValue("Gross Area", 0);
     setAddPropertyCounter(0);
     reset(defaultValues);
     setStepperActive(0);
@@ -243,7 +234,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   <Group className="mb-3" position="apart" grow>
                     <Select
                       data={listingType}
-                      name="Listing Type"
+                      name="listing_type"
                       label="Listing Type"
                       placeholder="Listing Type"
                       control={control}
@@ -252,7 +243,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                       onChange={setSelectedListingType}
                     />
                     <NumberInput
-                      name="Current Sale Price"
+                      name="current_price"
                       label="Current Sale Price"
                       placeholder="Current Sale Price"
                       control={control}
@@ -261,17 +252,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                       stepHoldDelay={500}
                       stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
                       disabled={selectedListingType === "rent"}
-                    />
-                    <NumberInput
-                      name="Current Rent Price"
-                      label="Current Rent Price"
-                      placeholder="Current Rent Price"
-                      control={control}
-                      icon={<IconCurrencyEuro size="1rem" />}
-                      min={0}
-                      stepHoldDelay={500}
-                      stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
-                      disabled={selectedListingType === "sale"}
                     />
                   </Group>
                 </Stepper.Step>

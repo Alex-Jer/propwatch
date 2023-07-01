@@ -36,7 +36,7 @@ export function AddPropertyMedia({
       <div className="mb-8">
         <Divider my="xs" label="Images" labelPosition="center" />
         <Controller
-          name="Images"
+          name="images"
           control={control}
           defaultValue={[]}
           render={({ field: { onChange } }) => (
@@ -59,7 +59,7 @@ export function AddPropertyMedia({
       <div className="mb-8">
         <Divider my="xs" label="Blueprints" labelPosition="center" />
         <Controller
-          name="Blueprints"
+          name="blueprints"
           control={control}
           render={({ field: { onChange } }) => (
             <FilePond
@@ -81,7 +81,7 @@ export function AddPropertyMedia({
       <div className="mb-6">
         <Divider my="xs" label="Videos" labelPosition="center" />
         <Controller
-          name="Videos"
+          name="videos"
           control={control}
           render={({ field: { onChange } }) => (
             <FilePond

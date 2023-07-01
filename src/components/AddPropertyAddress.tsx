@@ -54,7 +54,7 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
     <div>
       <TextInput
         className="mb-3"
-        name="Full Address"
+        name="full_address"
         label="Address"
         placeholder="123, Ai Hoshino Street"
         control={control}
@@ -65,7 +65,7 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
         <Group className="mb-3" position="apart" grow>
           <Select
             data={adm1}
-            name="Adm1"
+            name="adm1_id"
             label="Distrito"
             placeholder="Distrito"
             icon={adm1IsLoading && <Loader size="1rem" />}
@@ -76,14 +76,14 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
             onChange={(value) => {
               setSelectedAdm1(value);
               setSelectedAdm2(null); // required so Adm3 is disabled
-              resetField("Adm2", { defaultValue: "" });
-              resetField("Adm3", { defaultValue: "" });
+              resetField("adm2_id", { defaultValue: "" });
+              resetField("adm3_id", { defaultValue: "" });
             }}
             disabled={disabled}
           />
           <Select
             data={adm2}
-            name="Adm2"
+            name="adm2_id"
             label="Concelho"
             placeholder="Concelho"
             icon={adm2IsLoading && <Loader size="1rem" />}
@@ -93,13 +93,13 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
             nothingFound="No options"
             onChange={(value) => {
               setSelectedAdm2(value);
-              resetField("Adm3", { defaultValue: "" });
+              resetField("adm3_id", { defaultValue: "" });
             }}
             disabled={!selectedAdm1 || disabled}
           />
           <Select
             data={adm3}
-            name="Adm3"
+            name="adm3_id"
             label="Freguesia"
             placeholder="Freguesia"
             icon={adm3IsLoading && <Loader size="1rem" />}
@@ -114,7 +114,7 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
 
       <Group className="mb-3" position="apart" grow>
         <TextInput
-          name="Postal Code"
+          name="postal_code"
           label="Postal Code"
           placeholder="Postal Code"
           control={control}
@@ -122,7 +122,7 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
           disabled={disabled}
         />
         <NumberInput
-          name="Latitude"
+          name="latitude"
           label="Latitude"
           placeholder="Latitude"
           precision={6}
@@ -135,7 +135,7 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
           disabled={disabled}
         />
         <NumberInput
-          name="Longitude"
+          name="longitude"
           label="Longitude"
           placeholder="Longitude"
           precision={6}

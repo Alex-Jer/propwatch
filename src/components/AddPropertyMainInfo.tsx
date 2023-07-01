@@ -72,7 +72,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
     <div>
       <TextInput
         className="mb-3"
-        name="Title"
+        name="title"
         label="Title"
         placeholder="Title"
         control={control}
@@ -82,7 +82,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
       />
       <Textarea
         className="mb-3"
-        name="Description"
+        name="description"
         label="Description"
         placeholder="Description"
         control={control}
@@ -91,7 +91,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
       <Group className="mb-3" position="apart" grow>
         <Select
           data={propertyTypes}
-          name="Property Type"
+          name="type"
           label="Property Type"
           placeholder="Property Type"
           control={control}
@@ -102,7 +102,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
         />
         <Select
           data={currentStatuses}
-          name="Current Status"
+          name="status"
           placeholder="Current Status"
           label="Current Status"
           control={control}
@@ -110,7 +110,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
         />
         <Select
           data={typologies}
-          name="Typology"
+          name="typology"
           label="Typology"
           placeholder="Typology"
           control={control}
@@ -129,7 +129,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
 
       <Group className="mb-3" position="apart" grow>
         <NumberInput
-          name="Gross Area"
+          name="gross_area"
           label="Gross Area"
           placeholder="Gross Area"
           control={control}
@@ -142,7 +142,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
           disabled={disabled}
         />
         <NumberInput
-          name="Net Area"
+          name="useful_area"
           label="Net Area"
           placeholder="Net Area"
           control={control}
@@ -155,7 +155,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
           disabled={disabled}
         />
         <NumberInput
-          name="Number of Bathrooms"
+          name="wc"
           label="Number of Bathrooms"
           placeholder="Bathrooms"
           control={control}
@@ -168,7 +168,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
       <Group className="mb-3" position="apart" grow>
         <MultiSelect
           data={tags}
-          name="Tags"
+          name="tags"
           label="Tags"
           placeholder="Tags"
           control={control}
@@ -188,7 +188,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
         />
         <MultiSelect
           data={collections}
-          name="Collections"
+          name="lists"
           label="Collections"
           placeholder="Collections"
           control={control}
@@ -202,7 +202,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
         {/*TODO: style the label */}
         <div className="mb-2 flex items-center space-x-2">
           <span> Rating: </span>
-          <Rating name="Rating" fractions={2} control={control} readOnly={disabled} />
+          <Rating name="rating" fractions={2} control={control} readOnly={disabled} />
         </div>
       </Group>
     </div>
