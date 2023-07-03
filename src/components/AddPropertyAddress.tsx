@@ -66,8 +66,8 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
           <Select
             data={adm1}
             name="adm1_id"
-            label="Distrito"
-            placeholder="Distrito"
+            label="District"
+            placeholder="District"
             icon={adm1IsLoading && <Loader size="1rem" />}
             control={control}
             searchable
@@ -84,8 +84,8 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
           <Select
             data={adm2}
             name="adm2_id"
-            label="Concelho"
-            placeholder="Concelho"
+            label="Municipality"
+            placeholder="Municipality"
             icon={adm2IsLoading && <Loader size="1rem" />}
             control={control}
             searchable
@@ -100,8 +100,8 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
           <Select
             data={adm3}
             name="adm3_id"
-            label="Freguesia"
-            placeholder="Freguesia"
+            label="Parish"
+            placeholder="Parish"
             icon={adm3IsLoading && <Loader size="1rem" />}
             control={control}
             searchable
