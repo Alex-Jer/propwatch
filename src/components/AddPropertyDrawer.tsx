@@ -161,13 +161,17 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
       Accept: "*/*",
       "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${session.user.access_token}`,
+      "X-Requested-With": "XMLHttpRequest",
+      "X-CSRF-TOKEN": session.user.csrf_token,
     };
 
     try {
       // TODO: Tentei com o makeRequest mas também dá erro 419
       /* const response = await makeRequest("me/properties", "POST", session?.user.access_token); */
+      console.log("csrf: ", session.user.csrf_token);
 
-      const res = await axios.post(url, formData, { headers });
+      /* const res = await axios.post(url, formData, { headers }); */
+      const res = await axios.post(url, formData, { headers, withCredentials: true });
 
       console.log(res.data);
       return res.data;

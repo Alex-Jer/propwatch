@@ -102,6 +102,7 @@ export function LoginForm() {
           <p>email: {session?.user?.email}</p>
           <p>photo_url: {session?.user?.photo_url || "none"}</p>
           <p>access_token: {session?.user.access_token}</p>
+          <p>csrf_token: {session?.user.csrf_token}</p>
         </div>
       </Text>
     </Container>

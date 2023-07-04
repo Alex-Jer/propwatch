@@ -17,6 +17,7 @@ declare module "next-auth" {
     email: string;
     photo_url: string;
     access_token: string;
+    csrf_token: string;
   }
 
   interface Session extends DefaultSession {
@@ -27,6 +28,7 @@ declare module "next-auth" {
     message: string;
     user: User;
     access_token: string;
+    csrf_token: string;
   };
 }
 
@@ -40,6 +42,7 @@ export const authOptions: NextAuthOptions = {
     jwt({ token, user }) {
       if (user) {
         token.id = user.access_token;
+        token.csrf_token = user.csrf_token;
         token.photo_url = user.photo_url;
       }
       return token;
@@ -47,6 +50,7 @@ export const authOptions: NextAuthOptions = {
 
     session({ session, token }) {
       session.user.access_token = token.id as string;
+      session.user.csrf_token = token.csrf_token as string;
       session.user.photo_url = token.photo_url as string;
       return session;
     },
@@ -65,10 +69,12 @@ export const authOptions: NextAuthOptions = {
         }
 
         const res = await login(credentials.email, credentials.password, "web");
+        console.log(res.headers);
 
-        const user = res && {
-          ...res.user,
-          access_token: res.access_token,
+        const user = res.data && {
+          ...res.data.user,
+          access_token: res.data.access_token,
+          csrf_token: res.data.csrf_token,
         };
 
         return user;

@@ -18,6 +18,7 @@ type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 type LoginResponseData = {
   user: User;
   access_token: string;
+  csrf_token: string;
 };
 
 type LogoutResponseData = {
@@ -102,7 +103,8 @@ export const login = async (email: string, password: string, deviceName: string)
 
   const res = await axios.post(url, formData, { headers });
 
-  return res.data as LoginResponseData;
+  /* return res.data as LoginResponseData; */
+  return res;
 };
 
 export const logout = async (accessToken: string) => {
