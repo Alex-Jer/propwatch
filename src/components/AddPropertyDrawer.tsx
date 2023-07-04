@@ -13,8 +13,6 @@ import { AddPropertyAddress } from "./AddPropertyAddress";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { env } from "~/env.mjs";
-import axios from "axios";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -62,7 +60,10 @@ const schema = z.object({
   blueprints: z.array(z.any()),
   videos: z.array(z.any()),
   /* ADDRESS */
-  full_address: z.string().max(200, { message: "Address must be at most 200 characters long" }),
+  full_address: z
+    .string()
+    .nonempty({ message: "Address is required" })
+    .max(200, { message: "Address must be at most 200 characters long" }),
   postal_code: z
     .string()
     .max(10, { message: "Postal Code must be at most 20 characters long" })
@@ -148,22 +149,54 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const addPropertyMutation = async (data: FormSchemaType) => {
     const formData = new FormData();
 
-    formData.append("title", data.title);
-    formData.append("description", data.description);
-
-    if (!session) {
-      throw new Error("Session is null");
+    function appendIfNotNull(key: string, value: unknown) {
+      if (value !== null && value !== undefined && value !== "") {
+        formData.append(key, value as string);
+      }
     }
 
+    appendIfNotNull("title", data.title);
+    appendIfNotNull("description", data.description);
+    appendIfNotNull("type", data.type);
+    appendIfNotNull("typology", data.typology);
+    appendIfNotNull("status", data.status);
+    appendIfNotNull("gross_area", data.gross_area);
+    appendIfNotNull("useful_area", data.useful_area);
+    appendIfNotNull("wc", data.wc);
+    appendIfNotNull("listing_type", data.listing_type);
+    appendIfNotNull("current_price", data.current_price);
+    appendIfNotNull("rating", data.rating);
+    appendIfNotNull("address[full_address]", data.full_address);
+    appendIfNotNull("address[adm1_id]", data.adm1_id);
+    appendIfNotNull("address[adm2_id]", data.adm2_id);
+    appendIfNotNull("address[adm3_id]", data.adm3_id);
+    appendIfNotNull("address[postal_code]", data.postal_code);
+    appendIfNotNull("address[latitude]", data.latitude);
+    appendIfNotNull("address[longitude]", data.longitude);
+
+    data.tags.forEach((tag, index) => {
+      appendIfNotNull(`tags[${index}]`, tag);
+    });
+
+    data.lists.forEach((list, index) => {
+      appendIfNotNull(`lists[${index}]`, list);
+    });
+
+    data.images.forEach((image, index) => {
+      appendIfNotNull(`media[images][${index}]`, image);
+    });
+
+    data.blueprints.forEach((blueprint, index) => {
+      appendIfNotNull(`media[blueprints][${index}]`, blueprint);
+    });
+
+    data.videos.forEach((video, index) => {
+      appendIfNotNull(`media[videos][${index}]`, video);
+    });
+
     try {
-      const response = await makeRequest("me/properties", "POST", session?.user.access_token);
-
-      /* console.log(response); */
-      /* return response; */
-
+      const response = await makeRequest("me/properties", "POST", session?.user.access_token, formData);
       console.log({ response });
-
-      /* return response.json(); */
     } catch (error) {
       throw new Error(error.message);
     }

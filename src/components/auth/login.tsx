@@ -97,6 +97,7 @@ export function LoginForm() {
           </Button>
         </Paper>
       </form>
+      {/* TODO: Debug variables */}
       <Text color="dimmed" size="sm" align="left" mt={5}>
         <div>
           <p>email: {session?.user?.email}</p>

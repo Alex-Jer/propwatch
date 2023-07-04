@@ -56,7 +56,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
 
   if (tagsData) {
     tags = tagsData.map((tag) => ({
-      value: tag.id.toString(),
+      value: tag.name,
       label: tag.name,
     }));
   }
@@ -78,6 +78,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
         control={control}
         withAsterisk
         data-autofocus
+        required
         disabled={disabled}
       />
       <Textarea
