@@ -18,7 +18,6 @@ type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 type LoginResponseData = {
   user: User;
   access_token: string;
-  csrf_token: string;
 };
 
 type LogoutResponseData = {
