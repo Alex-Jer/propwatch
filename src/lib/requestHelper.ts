@@ -34,8 +34,8 @@ export const makeRequest = async (
   const headers = {
     Accept: "application/json",
     "Content-Type": hasFiles ? "multipart/form-data" : "application/x-www-form-urlencoded",
-    Authorization: "",
     "X-Requested-With": "XMLHttpRequest",
+    Authorization: "",
   };
 
   if (accessToken) {
