@@ -155,3 +155,8 @@ export type SearchOptions = {
   list?: string;
   adm?: string;
 };
+
+export type DisplayPropertiesProps = {
+  search: SearchOptions;
+  setSearch: (search: SearchOptions) => void;
+};
