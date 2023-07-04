@@ -65,11 +65,10 @@ export const authOptions: NextAuthOptions = {
         }
 
         const res = await login(credentials.email, credentials.password, "web");
-        console.log(res.headers);
 
-        const user = res.data && {
-          ...res.data.user,
-          access_token: res.data.access_token,
+        const user = res && {
+          ...res.user,
+          access_token: res.access_token,
         };
 
         return user;

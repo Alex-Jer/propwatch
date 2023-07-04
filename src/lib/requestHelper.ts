@@ -102,8 +102,7 @@ export const login = async (email: string, password: string, deviceName: string)
 
   const res = await axios.post(url, formData, { headers });
 
-  /* return res.data as LoginResponseData; */
-  return res;
+  return res.data as LoginResponseData;
 };
 
 export const logout = async (accessToken: string) => {
