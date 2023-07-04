@@ -35,6 +35,7 @@ export const makeRequest = async (
     Accept: "application/json",
     "Content-Type": hasFiles ? "multipart/form-data" : "application/x-www-form-urlencoded",
     Authorization: "",
+    "X-Requested-With": "XMLHttpRequest",
   };
 
   if (accessToken) {
@@ -47,7 +48,7 @@ export const makeRequest = async (
 
   switch (method) {
     case "POST":
-      res = await axios.post(url, formData, { headers });
+      res = await axios.post(url, formData, { headers, withCredentials: true });
       break;
     case "PUT":
       if (!formData) {

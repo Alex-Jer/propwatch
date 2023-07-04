@@ -146,8 +146,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   };
 
   const addPropertyMutation = async (data: FormSchemaType) => {
-    const API_URL = env.NEXT_PUBLIC_API_URL;
-    const url = `${API_URL}/api/me/properties`;
     const formData = new FormData();
 
     formData.append("title", data.title);
@@ -157,21 +155,11 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
       throw new Error("Session is null");
     }
 
-    const headers = {
-      Accept: "*/*",
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${session.user.access_token}`,
-      "X-Requested-With": "XMLHttpRequest",
-    };
-
     try {
-      /* const response = await makeRequest("me/properties", "POST", session?.user.access_token); */
+      const response = await makeRequest("me/properties", "POST", session?.user.access_token);
 
-      /* const res = await axios.post(url, formData, { headers }); */
-      const res = await axios.post(url, formData, { headers, withCredentials: true });
-
-      console.log(res.data);
-      return res.data;
+      /* console.log(response); */
+      /* return response; */
 
       console.log({ response });
 
