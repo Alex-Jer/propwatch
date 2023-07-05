@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useInputState } from "@mantine/hooks";
 import { Button, Drawer, Stepper, Paper } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { z } from "zod";
@@ -12,7 +11,7 @@ import { AddPropertyAddress } from "./AddPropertyAddress";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { type Property } from "~/types";
+import { type Offer, type Property } from "~/types";
 import { AddPropertyOffers } from "./AddPropertyOffers";
 
 interface AddPropertyDrawerProps {
@@ -48,7 +47,6 @@ const schema = z.object({
     .union([z.number().int().nonnegative().optional().nullable(), z.string().max(16)])
     .optional()
     .nullable(),
-  listing_type: z.enum(["sale", "rent", "both", "none"]).optional().nullable(),
   current_price: z
     .union([z.number().nonnegative().optional().nullable(), z.string().max(16)])
     .optional()
@@ -94,7 +92,6 @@ const defaultValues: FormSchemaType = {
   gross_area: "",
   useful_area: "",
   wc: "",
-  listing_type: null,
   current_price: "",
   tags: [],
   lists: [],
@@ -114,7 +111,6 @@ const defaultValues: FormSchemaType = {
 export type FormSchemaType = z.infer<typeof schema>;
 
 export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
-  const [selectedListingType, setSelectedListingType] = useInputState("");
   const [stepperActive, setStepperActive] = useState(0);
   const [addPropertyCounter, setAddPropertyCounter] = useState(0);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -123,6 +119,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
+  const [offers, setOffers] = useState<Offer[]>([]);
 
   const nextStep = () => setStepperActive((current) => (current < TOTAL_STEPS ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
@@ -162,7 +159,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     appendIfNotNull("gross_area", data.gross_area);
     appendIfNotNull("useful_area", data.useful_area);
     appendIfNotNull("wc", data.wc);
-    appendIfNotNull("listing_type", data.listing_type);
     appendIfNotNull("current_price", data.current_price);
     appendIfNotNull("rating", data.rating);
     appendIfNotNull("address[full_address]", data.full_address);
@@ -311,7 +307,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 </Stepper.Step>
 
                 <Stepper.Step label="Offers & Prices">
-                  <AddPropertyOffers control={control} />
+                  <AddPropertyOffers offers={offers} setOffers={setOffers} />
                 </Stepper.Step>
 
                 <Stepper.Completed>

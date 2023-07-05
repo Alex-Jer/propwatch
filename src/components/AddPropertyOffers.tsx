@@ -1,12 +1,12 @@
 import { Button, NumberInput, SegmentedControl, TextInput } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
-import { useState } from "react";
-import { type Control } from "react-hook-form";
+import { type ChangeEventHandler, useState } from "react";
+import { DataTable } from "mantine-datatable";
 import { type Offer } from "~/types";
-import { type FormSchemaType } from "./AddPropertyDrawer";
 
 type AddPropertyOffersProps = {
-  control: Control<FormSchemaType>;
+  offers: Offer[];
+  setOffers: (offers: Offer[]) => void;
 };
 
 const listingTypes = [
@@ -14,36 +14,154 @@ const listingTypes = [
   { label: "Rent", value: "rent" },
 ];
 
-const offers: Offer[] = [];
+const columns = [
+  {
+    accessor: "listing_type",
+    title: "Listing Type",
+  },
+  {
+    accessor: "price",
+    title: "Price",
+  },
+  {
+    accessor: "url",
+    title: "URL",
+  },
+  {
+    accessor: "description",
+    title: "Description",
+  },
+];
 
-export function AddPropertyOffers({ control }: AddPropertyOffersProps) {
+export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps) {
   const [listingType, setListingType] = useState("sale");
   const [price, setPrice] = useInputState<number | "">("");
+  const [priceError, setPriceError] = useState("");
   const [url, setUrl] = useInputState("");
+  const [urlError, setUrlError] = useState("");
   const [description, setDescription] = useInputState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [isAddDisabled, setIsAddDisabled] = useState(true);
+
+  const validatePrice = (price: number | "") => {
+    if (price === "") {
+      setPriceError("Price is required");
+      setIsAddDisabled(true);
+      return false;
+    } else if (price < 0) {
+      setPriceError("Price must be greater than 0");
+      setIsAddDisabled(true);
+      return false;
+    }
+
+    setPriceError("");
+
+    if (priceError === "" && urlError === "" && descriptionError === "") {
+      if (url !== "" && description !== "") {
+        setIsAddDisabled(false);
+      }
+    }
+
+    return true;
+  };
+
+  const validateUrl = (url: string) => {
+    if (url === "") {
+      setUrlError("URL is required");
+      setIsAddDisabled(true);
+      return false;
+    }
+
+    setUrlError("");
+
+    if (priceError === "" && urlError === "" && descriptionError === "") {
+      if (price !== "" && description !== "") {
+        setIsAddDisabled(false);
+      }
+    }
+
+    return true;
+  };
+
+  const validateDescription = (description: string) => {
+    if (description === "") {
+      setDescriptionError("Designation is required");
+      setIsAddDisabled(true);
+      return false;
+    }
+
+    setDescriptionError("");
+
+    if (priceError === "" && urlError === "" && descriptionError === "") {
+      if (price !== "" && url !== "") {
+        setIsAddDisabled(false);
+      }
+    }
+
+    return true;
+  };
+
+  const handlePriceChange = (price: number | "") => {
+    setPrice(price);
+    validatePrice(price);
+  };
+
+  const handleUrlChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const url = event.target.value;
+    setUrl(url);
+    validateUrl(url);
+  };
+
+  const handleDescriptionChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const description = event.target.value;
+    setDescription(description);
+    validateDescription(description);
+  };
 
   const addOffer = () => {
+    if (!validatePrice(price) || !validateUrl(url) || !validateDescription(description)) {
+      return;
+    }
+
     const newOffer: Offer = {
+      id: offers.length + 1,
       listing_type: listingType,
-      price: price === "" ? undefined : price,
+      price: Number(price),
       url,
       description,
     };
 
-    offers.push(newOffer);
+    setOffers([...offers, newOffer]);
 
-    console.log(offers);
+    setPrice("");
+    setUrl("");
+    setDescription("");
   };
 
   return (
-    <div className="my-4 grid grid-cols-12 gap-4">
-      <SegmentedControl className="col-span-2" data={listingTypes} value={listingType} onChange={setListingType} />
-      <NumberInput className="col-span-2" placeholder="Price" value={price} onChange={setPrice} />
-      <TextInput className="col-span-4" placeholder="URL" value={url} onChange={setUrl} />
-      <TextInput className="col-span-3" placeholder="Designation" value={description} onChange={setDescription} />
-      <Button styles={() => ({ root: { padding: "0" } })} onClick={addOffer}>
-        Add
-      </Button>
-    </div>
+    <>
+      <div className="my-4 grid grid-cols-12 gap-4">
+        <SegmentedControl className="col-span-2" data={listingTypes} value={listingType} onChange={setListingType} />
+        <NumberInput
+          className="col-span-2"
+          placeholder="Price"
+          value={price}
+          onChange={handlePriceChange}
+          error={priceError}
+        />
+        <TextInput className="col-span-4" placeholder="URL" value={url} onChange={handleUrlChange} error={urlError} />
+        <TextInput
+          className="col-span-3"
+          placeholder="Designation"
+          value={description}
+          onChange={handleDescriptionChange}
+          error={descriptionError}
+        />
+        <Button styles={() => ({ root: { padding: "0" } })} onClick={addOffer} disabled={isAddDisabled}>
+          Add
+        </Button>
+      </div>
+      <DataTable columns={columns} records={offers} />
+    </>
   );
 }

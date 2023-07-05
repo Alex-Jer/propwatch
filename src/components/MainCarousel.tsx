@@ -49,7 +49,7 @@ type CarouselProps = {
 export function MainCarousel({ images }: CarouselProps) {
   const { classes } = useStyles();
 
-  const slides = images.map((image) => (
+  const slides = images?.map((image) => (
     <Carousel.Slide key={image.url}>
       <Image src={image.url} height={440} alt="..." />
     </Carousel.Slide>
