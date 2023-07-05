@@ -117,14 +117,18 @@ const fetchProperty = async (session: Session | null, id: string) => {
   return response.data;
 };
 
-const fetchProperties = async (session: Session | null, search: SearchOptions = {}, page = 1) => {
+const processSearch = (search: SearchOptions) => {
   let extraFields = "";
-
   if (search.query) extraFields += `&query=${encodeURIComponent(search.query)}`;
   if (search.list) extraFields += `&list_id=${encodeURIComponent(search.list)}`;
   if (search.adm) extraFields += `&adm_id=${encodeURIComponent(search.adm)}`;
   if (search.include_tags) extraFields += `&include_tags=${encodeURIComponent(JSON.stringify(search.include_tags))}`;
   if (search.exclude_tags) extraFields += `&exclude_tags=${encodeURIComponent(JSON.stringify(search.exclude_tags))}`;
+  return extraFields;
+};
+
+const fetchProperties = async (session: Session | null, search: SearchOptions = {}, page = 1) => {
+  const extraFields = processSearch(search);
 
   const response = (await makeRequest(
     `me/properties?page=${page}${extraFields}`,
@@ -160,13 +164,8 @@ const fetchPropertiesInPolygon = async (
   polygon: DrawPolygon | null,
   page = 1
 ) => {
-  let extraFields = "";
+  let extraFields = processSearch(search);
 
-  /*if (search.query) extraFields += `&query=${encodeURIComponent(search.query)}`;
-  if (search.list) extraFields += `&list_id=${encodeURIComponent(search.list)}`;
-  if (search.adm) extraFields += `&adm_id=${encodeURIComponent(search.adm)}`;
-  if (search.include_tags) extraFields += `&include_tags=${encodeURIComponent(JSON.stringify(search.include_tags))}`;
-  if (search.exclude_tags) extraFields += `&exclude_tags=${encodeURIComponent(JSON.stringify(search.exclude_tags))}`;*/
   if (polygon && polygon.coordinates.length > 0) {
     polygon.coordinates[0]?.forEach((coord, index) => {
       if (coord && coord[0] && coord[1]) extraFields += `&p[${index}][x]=${coord[1]}&p[${index}][y]=${coord[0]}`;
