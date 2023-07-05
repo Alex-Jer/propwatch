@@ -12,7 +12,7 @@ import { AddPropertyAddress } from "./AddPropertyAddress";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { type Property } from "~/types";
+import { Offer, type Property } from "~/types";
 import { AddPropertyOffers } from "./AddPropertyOffers";
 
 interface AddPropertyDrawerProps {
@@ -123,6 +123,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
+  const [offers, setOffers] = useState<Offer[]>([]);
 
   const nextStep = () => setStepperActive((current) => (current < TOTAL_STEPS ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
@@ -311,7 +312,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 </Stepper.Step>
 
                 <Stepper.Step label="Offers & Prices">
-                  <AddPropertyOffers control={control} />
+                  <AddPropertyOffers control={control} offers={offers} setOffers={setOffers} />
                 </Stepper.Step>
 
                 <Stepper.Completed>

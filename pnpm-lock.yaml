@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@emotion/react':
     specifier: ^11.11.1
@@ -85,6 +89,9 @@ dependencies:
   filepond-plugin-image-preview:
     specifier: ^4.6.11
     version: 4.6.11(filepond@4.30.4)
+  mantine-datatable:
+    specifier: ^2.8.2
+    version: 2.8.2(@mantine/core@6.0.15)(@mantine/hooks@6.0.15)(react@18.2.0)
   mapbox-gl:
     specifier: ^2.15.0
     version: 2.15.0
@@ -3685,6 +3692,18 @@ packages:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
     dev: false
 
+  /mantine-datatable@2.8.2(@mantine/core@6.0.15)(@mantine/hooks@6.0.15)(react@18.2.0):
+    resolution: {integrity: sha512-pw9gO07e7x6h1WxMygU5AYTLWyKtTQqld7yZGaRuR6JKJTXLmuJUsPGN2BbNwY93i1wCed7GkKwXtFcv3an1Nw==}
+    peerDependencies:
+      '@mantine/core': '>=6'
+      '@mantine/hooks': '>=6'
+      react: '>=18'
+    dependencies:
+      '@mantine/core': 6.0.15(@emotion/react@11.11.1)(@mantine/hooks@6.0.15)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': 6.0.15(react@18.2.0)
+      react: 18.2.0
+    dev: false
+
   /mapbox-gl@2.15.0:
     resolution: {integrity: sha512-fjv+aYrd5TIHiL7wRa+W7KjtUqKWziJMZUkK5hm8TvJ3OLeNPx4NmW/DgfYhd/jHej8wWL+QJBDbdMMAKvNC0A==}
     dependencies:
@@ -5445,7 +5464,3 @@ packages:
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
     dev: false
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
