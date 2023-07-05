@@ -13,7 +13,7 @@ import { AddPropertyAddress } from "./AddPropertyAddress";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { Property } from "~/types";
+import { type Property } from "~/types";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -201,7 +201,12 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     });
 
     try {
-      const response = (await makeRequest("me/properties", "POST", session?.user.access_token, formData)) as Property;
+      const response = (await makeRequest(
+        "me/properties",
+        "POST",
+        session?.user.access_token,
+        formData
+      )) as PropertyResponse;
       console.log({ response });
     } catch (error: unknown) {
       if (error instanceof Error) {
