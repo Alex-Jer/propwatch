@@ -68,11 +68,13 @@ type PriceHistory = {
   latest: boolean;
 };
 
-type Offer = {
-  id: number;
+export type Offer = {
+  id?: number;
+  listing_type?: string;
   url: string;
   description: string;
-  price_history: PriceHistory[];
+  price_history?: PriceHistory[];
+  price?: number;
 };
 
 export type Property = {

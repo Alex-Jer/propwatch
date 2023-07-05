@@ -1,9 +1,8 @@
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Select, NumberInput } from "react-hook-form-mantine";
 import { useInputState } from "@mantine/hooks";
-import { Button, Drawer, Stepper, Group, Paper } from "@mantine/core";
-import { IconCheck, IconCurrencyEuro, IconX } from "@tabler/icons-react";
+import { Button, Drawer, Stepper, Paper } from "@mantine/core";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddPropertyMainInfo } from "./AddPropertyMainInfo";
@@ -14,6 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
 import { type Property } from "~/types";
+import { AddPropertyOffers } from "./AddPropertyOffers";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -26,13 +26,6 @@ type PropertyResponse = {
 };
 
 const TOTAL_STEPS = 5;
-
-const listingType = [
-  { value: "sale", label: "Sale" },
-  { value: "rent", label: "Rent" },
-  { value: "both", label: "Both" },
-  { value: "none", label: "None" },
-];
 
 const schema = z.object({
   title: z
@@ -318,29 +311,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 </Stepper.Step>
 
                 <Stepper.Step label="Offers & Prices">
-                  <Group className="mb-3" position="apart" grow>
-                    <Select
-                      data={listingType}
-                      name="listing_type"
-                      label="Listing Type"
-                      placeholder="Listing Type"
-                      control={control}
-                      nothingFound="No options"
-                      clearable
-                      onChange={setSelectedListingType}
-                    />
-                    <NumberInput
-                      name="current_price"
-                      label="Current Sale Price"
-                      placeholder="Current Sale Price"
-                      control={control}
-                      icon={<IconCurrencyEuro size="1rem" />}
-                      min={0}
-                      stepHoldDelay={500}
-                      stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
-                      disabled={selectedListingType === "rent"}
-                    />
-                  </Group>
+                  <AddPropertyOffers control={control} />
                 </Stepper.Step>
 
                 <Stepper.Completed>
