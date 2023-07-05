@@ -1,6 +1,6 @@
 import { Button, NumberInput, SegmentedControl, TextInput } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
-import { ChangeEventHandler, useState } from "react";
+import { type ChangeEventHandler, useState } from "react";
 import { DataTable } from "mantine-datatable";
 import { type Offer } from "~/types";
 
@@ -43,85 +43,83 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
   const [descriptionError, setDescriptionError] = useState("");
   const [isAddDisabled, setIsAddDisabled] = useState(true);
 
-  const handlePriceChange = (value: number | "") => {
-    setPrice(value);
-
-    if (value < 0) {
-      setPriceError("Price must be positive");
+  const validatePrice = (price: number | "") => {
+    if (price === "") {
+      setPriceError("Price is required");
       setIsAddDisabled(true);
-    } else {
-      setPriceError("");
-    }
-
-    if (value === "") {
+      return false;
+    } else if (price < 0) {
+      setPriceError("Price must be greater than 0");
       setIsAddDisabled(true);
+      return false;
     }
 
-    if (value >= 0 && url !== "" && description !== "") {
-      setIsAddDisabled(false);
+    setPriceError("");
+
+    if (priceError === "" && urlError === "" && descriptionError === "") {
+      if (url !== "" && description !== "") {
+        setIsAddDisabled(false);
+      }
     }
+
+    return true;
+  };
+
+  const validateUrl = (url: string) => {
+    if (url === "") {
+      setUrlError("URL is required");
+      setIsAddDisabled(true);
+      return false;
+    }
+
+    setUrlError("");
+
+    if (priceError === "" && urlError === "" && descriptionError === "") {
+      if (price !== "" && description !== "") {
+        setIsAddDisabled(false);
+      }
+    }
+
+    return true;
+  };
+
+  const validateDescription = (description: string) => {
+    if (description === "") {
+      setDescriptionError("Designation is required");
+      setIsAddDisabled(true);
+      return false;
+    }
+
+    setDescriptionError("");
+
+    if (priceError === "" && urlError === "" && descriptionError === "") {
+      if (price !== "" && url !== "") {
+        setIsAddDisabled(false);
+      }
+    }
+
+    return true;
+  };
+
+  const handlePriceChange = (price: number | "") => {
+    setPrice(price);
+    validatePrice(price);
   };
 
   const handleUrlChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    const value = event.target.value;
-    setUrl(value);
-
-    if (value === "") {
-      setUrlError("URL is required");
-      setIsAddDisabled(true);
-    } else {
-      setUrlError("");
-    }
-
-    if (value !== "" && price !== "" && description !== "") {
-      setIsAddDisabled(false);
-    }
+    const url = event.target.value;
+    setUrl(url);
+    validateUrl(url);
   };
 
   const handleDescriptionChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    const value = event.target.value;
-    setDescription(value);
-
-    if (value === "") {
-      setDescriptionError("Description is required");
-      setIsAddDisabled(true);
-    } else {
-      setDescriptionError("");
-    }
-
-    if (value !== "" && price !== "" && url !== "") {
-      setIsAddDisabled(false);
-    }
+    const description = event.target.value;
+    setDescription(description);
+    validateDescription(description);
   };
 
   const addOffer = () => {
-    let isValid = true;
-
-    if (price === "") {
-      setPriceError("Price is required");
-      isValid = false;
-    } else if (price < 0) {
-      setPriceError("Price must be positive");
-      isValid = false;
-    } else {
-      setPriceError("");
-    }
-
-    if (url === "") {
-      setUrlError("URL is required");
-      isValid = false;
-    } else {
-      setUrlError("");
-    }
-
-    if (description === "") {
-      setDescriptionError("Description is required");
-      isValid = false;
-    } else {
-      setDescriptionError("");
-    }
-
-    if (!isValid) {
+    if (!validatePrice(price) || !validateUrl(url) || !validateDescription(description)) {
       return;
     }
 
@@ -134,6 +132,10 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
     };
 
     setOffers([...offers, newOffer]);
+
+    setPrice("");
+    setUrl("");
+    setDescription("");
   };
 
   return (
