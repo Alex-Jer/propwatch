@@ -1,3 +1,4 @@
+import { DrawPolygon } from "@mapbox/mapbox-gl-draw";
 import { useQuery } from "@tanstack/react-query";
 import { type Session } from "next-auth";
 import { makeRequest } from "~/lib/requestHelper";
@@ -68,6 +69,10 @@ type UseProperties = {
   status: string;
   search: SearchOptions;
   page: number;
+};
+
+type UsePolygonProperties = UseProperties & {
+  polygon: DrawPolygon | null;
 };
 
 type UseAdms = {
@@ -149,6 +154,33 @@ const fetchAdms = async (session: Session | null, level: number, parentId: strin
   return response.data;
 };
 
+const fetchPropertiesInPolygon = async (
+  session: Session | null,
+  search: SearchOptions = {},
+  polygon: DrawPolygon | null,
+  page = 1
+) => {
+  let extraFields = "";
+
+  /*if (search.query) extraFields += `&query=${encodeURIComponent(search.query)}`;
+  if (search.list) extraFields += `&list_id=${encodeURIComponent(search.list)}`;
+  if (search.adm) extraFields += `&adm_id=${encodeURIComponent(search.adm)}`;
+  if (search.include_tags) extraFields += `&include_tags=${encodeURIComponent(JSON.stringify(search.include_tags))}`;
+  if (search.exclude_tags) extraFields += `&exclude_tags=${encodeURIComponent(JSON.stringify(search.exclude_tags))}`;*/
+  if (polygon && polygon.coordinates.length > 0) {
+    polygon.coordinates[0]?.forEach((coord, index) => {
+      if (coord && coord[0] && coord[1]) extraFields += `&p[${index}][x]=${coord[1]}&p[${index}][y]=${coord[0]}`;
+    });
+  }
+  const response = (await makeRequest(
+    `me/properties/polygon?page=${page}${extraFields}`,
+    "GET",
+    session?.user.access_token
+  )) as PropertiesResponse;
+
+  return response;
+};
+
 export const useCollection = ({ session, status, elementId: collectionId }: UseElementWithElementId) => {
   return useQuery({
     queryKey: ["collection", collectionId],
@@ -193,6 +225,14 @@ export const useProperties = ({ session, status, search, page }: UseProperties) 
   return useQuery({
     queryKey: ["properties", search, page] /* TODO: Is this worth it ? */,
     queryFn: () => fetchProperties(session, search, page),
+    enabled: status === "authenticated",
+  });
+};
+
+export const usePolygonProperties = ({ session, status, search, polygon, page }: UsePolygonProperties) => {
+  return useQuery({
+    queryKey: ["properties", polygon, search, page] /* TODO: Is this worth it ? */,
+    queryFn: () => fetchPropertiesInPolygon(session, search, polygon, page),
     enabled: status === "authenticated",
   });
 };

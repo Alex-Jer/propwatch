@@ -13,7 +13,7 @@ import DrawControl from "~/components/map/DrawControl";
 import type { DrawPolygon, DrawCreateEvent, DrawUpdateEvent } from "@mapbox/mapbox-gl-draw";
 import type MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useSession } from "next-auth/react";
-import { useProperties } from "~/hooks/useQueries";
+import { usePolygonProperties, useProperties } from "~/hooks/useQueries";
 
 const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, setSearch }) => {
   const { data: session, status } = useSession();
@@ -23,20 +23,21 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, setSea
     setPage(1);
   }, [search]);
 
+  const [drwCtrl, setDrwCtrl] = useState<MapboxDraw | null>(null);
+  const [polygon, setPolygon] = useState<DrawPolygon | null>(null);
+  const drwCtrlRef = useRef<MapboxDraw | null>(null);
+
   const {
     data: propData,
     isLoading,
     isError,
-  } = useProperties({
+  } = usePolygonProperties({
     session,
     status,
     search,
+    polygon,
     page: activePage,
   });
-
-  const [drwCtrl, setDrwCtrl] = useState<MapboxDraw | null>(null);
-  const [polygon, setPolygon] = useState<DrawPolygon | null>(null);
-  const drwCtrlRef = useRef<MapboxDraw | null>(null);
 
   const onUpdate = useCallback(
     (e: DrawCreateEvent | DrawUpdateEvent) => {
