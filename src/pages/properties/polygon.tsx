@@ -3,38 +3,39 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { DisplayProperties } from "~/components/DisplayProperties";
 import type { DisplayPropertiesProps } from "~/types";
-import Map from "react-map-gl";
+import Map, { Layer, Source } from "react-map-gl";
 import { env } from "~/env.mjs";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import { Grid } from "@mantine/core";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import DrawControl from "~/components/map/DrawControl";
-import type { DrawPolygon, DrawCreateEvent, DrawUpdateEvent, DrawDeleteEvent } from "@mapbox/mapbox-gl-draw";
+import type { DrawPolygon, DrawCreateEvent, DrawUpdateEvent } from "@mapbox/mapbox-gl-draw";
+import type MapboxDraw from "@mapbox/mapbox-gl-draw";
 
 const Properties: NextPage<DisplayPropertiesProps> = ({ search, setSearch }) => {
-  const [features, setFeatures] = useState<{ [key: string]: DrawPolygon }>({});
+  const [drwCtrl, setDrwCtrl] = useState<MapboxDraw | null>(null);
+  const [polygon, setPolygon] = useState<DrawPolygon | null>(null);
+  const drwCtrlRef = useRef<MapboxDraw | null>(null);
 
-  console.log(features);
-
-  const onUpdate = useCallback((e: DrawCreateEvent | DrawUpdateEvent) => {
-    setFeatures((currFeatures) => {
-      const newFeatures: { [key: string]: DrawPolygon } = { ...currFeatures };
-      for (const f of e.features) {
-        if (f.id) newFeatures[f.id] = f.geometry as DrawPolygon;
+  const onUpdate = useCallback(
+    (e: DrawCreateEvent | DrawUpdateEvent) => {
+      if (e.features.length > 0) {
+        const newPolygon = e.features[0]?.geometry as DrawPolygon;
+        setPolygon(newPolygon);
+        drwCtrlRef.current?.deleteAll();
+        drwCtrlRef.current?.add(newPolygon);
       }
-      return newFeatures;
-    });
-  }, []);
+    },
+    [drwCtrlRef, setPolygon]
+  );
 
-  const onDelete = useCallback((e: DrawDeleteEvent) => {
-    setFeatures((currFeatures) => {
-      const newFeatures: { [key: string]: DrawPolygon } = { ...currFeatures };
-      for (const f of e.features) {
-        if (f.id) delete newFeatures[f.id];
-      }
-      return newFeatures;
-    });
+  useEffect(() => {
+    drwCtrlRef.current = drwCtrl;
+  }, [drwCtrl]);
+
+  const onDelete = useCallback(() => {
+    setPolygon(null);
   }, []);
 
   const renderMap = () => {
@@ -64,7 +65,20 @@ const Properties: NextPage<DisplayPropertiesProps> = ({ search, setSearch }) => 
               onCreate={onUpdate}
               onUpdate={onUpdate}
               onDelete={onDelete}
+              setControlRef={setDrwCtrl}
             />
+            {polygon && (
+              <Source id="polygon" type="geojson" data={polygon}>
+                <Layer
+                  id="polygon"
+                  type="fill"
+                  paint={{
+                    "fill-color": "#f00",
+                    "fill-opacity": 0.5,
+                  }}
+                />
+              </Source>
+            )}
           </Map>
         </div>
       </>

@@ -8,11 +8,18 @@ type DrawControlProps = ConstructorParameters<typeof MapboxDraw>[0] & {
   onCreate?: (evt: MapboxDraw.DrawCreateEvent) => void;
   onUpdate?: (evt: MapboxDraw.DrawUpdateEvent) => void;
   onDelete?: (evt: MapboxDraw.DrawDeleteEvent) => void;
+  setControlRef?: (ref: MapboxDraw) => void;
 };
 
 const DrawControl: React.FC<DrawControlProps> = (props: DrawControlProps) => {
   useControl(
-    () => new MapboxDraw(props),
+    () => {
+      const controlInstance = new MapboxDraw(props);
+      if (props.setControlRef) props.setControlRef(controlInstance);
+      console.log("aa");
+      console.log(controlInstance);
+      return controlInstance;
+    },
     ({ map }: { map: MapRef }) => {
       map.on("draw.create", (e) => props.onCreate && props.onCreate(e));
       map.on("draw.update", (e) => props.onUpdate && props.onUpdate(e));
@@ -27,7 +34,6 @@ const DrawControl: React.FC<DrawControlProps> = (props: DrawControlProps) => {
       position: props.position,
     }
   );
-
   return null;
 };
 
