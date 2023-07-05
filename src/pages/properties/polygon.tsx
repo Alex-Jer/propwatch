@@ -70,7 +70,7 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, setSea
             initialViewState={{
               latitude,
               longitude,
-              zoom: 7,
+              zoom: 8,
             }}
             style={{ width: "100%", height: "400px", borderRadius: "12px" }}
             mapStyle="mapbox://styles/mapbox/streets-v11"
@@ -88,13 +88,14 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, setSea
               onDelete={onDelete}
               setControlRef={setDrwCtrl}
             />
+            {/* TODO: Color here, should be the primary color */}
             {polygon && (
               <Source id="polygon" type="geojson" data={polygon}>
                 <Layer
                   id="polygon"
                   type="fill"
                   paint={{
-                    "fill-color": "#f00",
+                    "fill-color": "#1971c2",
                     "fill-opacity": 0.5,
                   }}
                 />
