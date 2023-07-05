@@ -19,13 +19,13 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, setSea
   const { data: session, status } = useSession();
   const [activePage, setPage] = useState(1);
 
-  useEffect(() => {
-    setPage(1);
-  }, [search]);
-
   const [drwCtrl, setDrwCtrl] = useState<MapboxDraw | null>(null);
   const [polygon, setPolygon] = useState<DrawPolygon | null>(null);
   const drwCtrlRef = useRef<MapboxDraw | null>(null);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, polygon]);
 
   const {
     data: propData,
