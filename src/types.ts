@@ -1,5 +1,6 @@
 import { type UnstyledButtonProps } from "@mantine/core";
 import { type ReactNode } from "react";
+import { type PropertiesResponse } from "./hooks/useQueries";
 
 export type User = {
   id: string;
@@ -156,7 +157,15 @@ export type SearchOptions = {
   adm?: string;
 };
 
-export type DisplayPropertiesProps = {
+export type SearchPropertyProps = {
   search: SearchOptions;
   setSearch: (search: SearchOptions) => void;
+};
+
+export type DisplayPropertiesProps = {
+  propData: PropertiesResponse | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  activePage: number;
+  setPage: (page: number) => void;
 };

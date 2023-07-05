@@ -32,7 +32,7 @@ type PropertyResponse = {
   data: Property;
 };
 
-type PropertiesResponse = {
+export type PropertiesResponse = {
   data: CollectionProperty[];
   links: Links;
   meta: Meta;

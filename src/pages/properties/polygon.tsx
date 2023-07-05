@@ -2,7 +2,7 @@ import { IconMapSearch } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { DisplayProperties } from "~/components/DisplayProperties";
-import type { DisplayPropertiesProps } from "~/types";
+import type { SearchPropertyProps } from "~/types";
 import Map, { Layer, Source } from "react-map-gl";
 import { env } from "~/env.mjs";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -12,8 +12,28 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import DrawControl from "~/components/map/DrawControl";
 import type { DrawPolygon, DrawCreateEvent, DrawUpdateEvent } from "@mapbox/mapbox-gl-draw";
 import type MapboxDraw from "@mapbox/mapbox-gl-draw";
+import { useSession } from "next-auth/react";
+import { useProperties } from "~/hooks/useQueries";
 
-const SearchPolygonProperties: NextPage<DisplayPropertiesProps> = ({ search, setSearch }) => {
+const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, setSearch }) => {
+  const { data: session, status } = useSession();
+  const [activePage, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
+
+  const {
+    data: propData,
+    isLoading,
+    isError,
+  } = useProperties({
+    session,
+    status,
+    search,
+    page: activePage,
+  });
+
   const [drwCtrl, setDrwCtrl] = useState<MapboxDraw | null>(null);
   const [polygon, setPolygon] = useState<DrawPolygon | null>(null);
   const drwCtrlRef = useRef<MapboxDraw | null>(null);
@@ -109,7 +129,13 @@ const SearchPolygonProperties: NextPage<DisplayPropertiesProps> = ({ search, set
 
       <div className="-mx-4 mb-4 mt-4 border-b border-shark-700" />
 
-      <DisplayProperties search={search} setSearch={setSearch} />
+      <DisplayProperties
+        propData={propData}
+        isLoading={isLoading}
+        isError={isError}
+        activePage={activePage}
+        setPage={setPage}
+      />
     </>
   );
 };

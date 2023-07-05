@@ -1,10 +1,31 @@
 import { IconBuildingEstate } from "@tabler/icons-react";
 import { type NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import { DisplayProperties } from "~/components/DisplayProperties";
-import type { DisplayPropertiesProps } from "~/types";
+import { useProperties } from "~/hooks/useQueries";
+import type { SearchPropertyProps } from "~/types";
 
-const Properties: NextPage<DisplayPropertiesProps> = ({ search, setSearch }) => {
+const Properties: NextPage<SearchPropertyProps> = ({ search, setSearch }) => {
+  const { data: session, status } = useSession();
+  const [activePage, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
+
+  const {
+    data: propData,
+    isLoading,
+    isError,
+  } = useProperties({
+    session,
+    status,
+    search,
+    page: activePage,
+  });
+
   return (
     <>
       <Head>
@@ -19,7 +40,13 @@ const Properties: NextPage<DisplayPropertiesProps> = ({ search, setSearch }) => 
 
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
-      <DisplayProperties search={search} setSearch={setSearch} />
+      <DisplayProperties
+        propData={propData}
+        isLoading={isLoading}
+        isError={isError}
+        activePage={activePage}
+        setPage={setPage}
+      />
     </>
   );
 };
