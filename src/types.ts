@@ -26,6 +26,11 @@ export type CollectionWithProperties = {
   properties: CollectionProperties;
 };
 
+export type SelectOption = {
+  value: string;
+  label: string;
+};
+
 type Address = {
   adm1_id: number;
   adm1: string;
@@ -51,15 +56,23 @@ export type Tag = {
   name: string;
 };
 
-export type SelectOption = {
-  value: string;
-  label: string;
-};
-
 type Media = {
   photos: { url: string }[];
   videos: { url: string }[];
   blueprints: { url: string }[];
+};
+
+type PriceHistory = {
+  price: string | null;
+  datetime: string;
+  latest: boolean;
+};
+
+type Offer = {
+  id: number;
+  url: string;
+  description: string;
+  price_history: PriceHistory[];
 };
 
 export type Property = {
@@ -82,6 +95,10 @@ export type Property = {
   characteristics: Characteristic[];
   tags: Tag[];
   media: Media;
+  offers: {
+    sale: Offer[];
+    rent: Offer[];
+  };
 };
 
 export type Links = {
