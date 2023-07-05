@@ -22,6 +22,7 @@ import {
   IconTrash,
   IconFolder,
   IconBuildingEstate,
+  IconMapSearch,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -61,6 +62,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
       notifications: colData?.total ?? 0,
     },
     { icon: IconTrash, url: "", label: "Trash" },
+    { icon: IconMapSearch, url: "/properties/polygon", label: "Map search" },
   ];
 
   const mainLinks = links.map((link) => (
