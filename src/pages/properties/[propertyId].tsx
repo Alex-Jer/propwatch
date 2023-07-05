@@ -51,10 +51,8 @@ const Property: NextPage = () => {
     return <div>Error loading property.</div>;
   }
 
-  const {
-    media: { photos },
-    address: { coordinates },
-  } = property;
+  const photos = property?.media?.photos;
+  const coordinates = property?.address?.coordinates;
 
   const renderHeader = () => {
     return (
@@ -103,7 +101,7 @@ const Property: NextPage = () => {
     );
   };
 
-  const markerType = property?.type.toLowerCase();
+  const markerType = property?.type?.toLowerCase();
   const MarkerIcon = (markerIcons[markerType] as MarkerIconComponent) || markerIcons.default;
 
   const renderMap = () => {
