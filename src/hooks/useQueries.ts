@@ -139,6 +139,16 @@ const fetchProperties = async (session: Session | null, search: SearchOptions = 
   return response;
 };
 
+const fetchTrashedProperties = async (session: Session | null, page = 1) => {
+  const response = (await makeRequest(
+    `me/properties/trashed?page=${page}`,
+    "GET",
+    session?.user.access_token
+  )) as PropertiesResponse;
+
+  return response;
+};
+
 const fetchTags = async (session: Session | null) => {
   const response = (await makeRequest("me/tags", "GET", session?.user.access_token)) as TagsResponse;
   return response.data;
@@ -224,6 +234,14 @@ export const useProperties = ({ session, status, search, page }: UseProperties) 
   return useQuery({
     queryKey: ["properties", search, page] /* TODO: Is this worth it ? */,
     queryFn: () => fetchProperties(session, search, page),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useTrashedProperties = ({ session, status, page }: UseElementWithPageNumber) => {
+  return useQuery({
+    queryKey: ["trashed_properties", page],
+    queryFn: () => fetchTrashedProperties(session, page),
     enabled: status === "authenticated",
   });
 };
