@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Select, NumberInput } from "react-hook-form-mantine";
 import { useInputState } from "@mantine/hooks";
 import { Button, Drawer, Stepper, Group, Paper } from "@mantine/core";
-import { IconCheck, IconCurrencyEuro } from "@tabler/icons-react";
+import { IconCheck, IconCurrencyEuro, IconX } from "@tabler/icons-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddPropertyMainInfo } from "./AddPropertyMainInfo";
@@ -200,21 +200,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
       appendIfNotNull(`media[videos][${index}]`, video);
     });
 
-    try {
-      const response = (await makeRequest(
-        "me/properties",
-        "POST",
-        session?.user.access_token,
-        formData
-      )) as PropertyResponse;
-      console.log({ response });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      } else {
-        throw new Error("An error occurred while adding the property");
-      }
-    }
+    return makeRequest("me/properties", "POST", session?.user.access_token, formData) as Promise<PropertyResponse>;
   };
 
   const mutation = useMutation(addPropertyMutation);
@@ -237,8 +223,27 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
         return;
       }
 
-      /* console.log({ data }); */
       mutation.mutate(data);
+
+      if (mutation.isLoading) {
+        notifications.show({
+          title: "Adding property",
+          message: "Please wait while we add your property...",
+          loading: true,
+        });
+      }
+
+      if (mutation.isError) {
+        notifications.show({
+          title: "Error",
+          message: "An unknown error occurred while adding your property.",
+          icon: <IconX size="1.1rem" />,
+          color: "red",
+          autoClose: false,
+        });
+        return;
+      }
+
       resetForm();
       close();
 
@@ -339,7 +344,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 </Stepper.Step>
 
                 <Stepper.Completed>
-                  {/* make a centered header saying "Summary" */}
                   <h1 className="mb-2 text-2xl font-semibold">Summary</h1>
                   <Paper className="mb-4" shadow="xs" p="md" withBorder>
                     <AddPropertyMainInfo control={control} disabled />
@@ -356,6 +360,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   ref={addPropertyButtonRef}
                   type={stepperActive === TOTAL_STEPS ? "submit" : "button"}
                   onClick={nextStep}
+                  loading={mutation.isLoading}
                 >
                   {stepperActive === TOTAL_STEPS ? "Add Property" : "Next"}
                 </Button>

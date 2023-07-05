@@ -59,6 +59,7 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
         placeholder="123, Ai Hoshino Street"
         control={control}
         withAsterisk
+        data-autofocus
         required
         disabled={disabled}
       />
