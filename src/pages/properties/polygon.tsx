@@ -13,7 +13,7 @@ import DrawControl from "~/components/map/DrawControl";
 import type { DrawPolygon, DrawCreateEvent, DrawUpdateEvent } from "@mapbox/mapbox-gl-draw";
 import type MapboxDraw from "@mapbox/mapbox-gl-draw";
 
-const Properties: NextPage<DisplayPropertiesProps> = ({ search, setSearch }) => {
+const SearchPolygonProperties: NextPage<DisplayPropertiesProps> = ({ search, setSearch }) => {
   const [drwCtrl, setDrwCtrl] = useState<MapboxDraw | null>(null);
   const [polygon, setPolygon] = useState<DrawPolygon | null>(null);
   const drwCtrlRef = useRef<MapboxDraw | null>(null);
@@ -114,4 +114,4 @@ const Properties: NextPage<DisplayPropertiesProps> = ({ search, setSearch }) => 
   );
 };
 
-export default Properties;
+export default SearchPolygonProperties;

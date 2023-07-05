@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import NextNProgress from "nextjs-progressbar";
 import Properties from "./properties";
+import SearchPolygonProperties from "./properties/polygon";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +28,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
   const isAppRoute = router.pathname !== "/" && !router.pathname.startsWith("/auth");
 
   const [search, setSearch] = useState({});
-  const isPropertySearch: boolean | undefined = Component == Properties;
+  const isPropertySearch: boolean | undefined = Component == Properties || Component == SearchPolygonProperties;
 
   return (
     <SessionProvider session={session}>
@@ -39,7 +40,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
             {isAppRoute ? (
               <Shell useNavbarSearch={isPropertySearch} search={search} setSearch={setSearch}>
                 {isPropertySearch ? (
-                  <Properties {...pageProps} search={search} setSearch={setSearch} />
+                  <Component {...pageProps} search={search} setSearch={setSearch} />
                 ) : (
                   <Component {...pageProps} />
                 )}
