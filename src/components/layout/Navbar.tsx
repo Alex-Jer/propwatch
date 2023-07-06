@@ -61,7 +61,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
       url: "/collections",
       notifications: colData?.total ?? 0,
     },
-    { icon: IconTrash, url: "", label: "Trash" },
+    { icon: IconTrash, url: "/properties/trash", label: "Trash" },
     { icon: IconMapSearch, url: "/properties/polygon", label: "Map search" },
   ];
 
