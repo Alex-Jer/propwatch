@@ -49,7 +49,8 @@
     "react-hook-form-mantine": "^1.0.10",
     "react-map-gl": "^7.1.0",
     "remeda": "^1.23.0",
-    "zod": "^3.21.4"
+    "zod": "^3.21.4",
+    "zustand": "^4.3.9"
   },
   "devDependencies": {
     "@types/eslint": "^8.40.2",

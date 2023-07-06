@@ -13,6 +13,7 @@ import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
 import { type Offer, type Property } from "~/types";
 import { AddPropertyOffers } from "./AddPropertyOffers";
+import useOffersStore from "~/hooks/useOffersStore";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -119,7 +120,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
-  const [offers, setOffers] = useState<Offer[]>([]);
 
   const nextStep = () => setStepperActive((current) => (current < TOTAL_STEPS ? current + 1 : current));
   const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
@@ -127,6 +127,8 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const { data: session } = useSession();
 
   const addPropertyButtonRef = useRef(null);
+
+  const offers2 = useOffersStore((state) => state.offers);
 
   const { control, handleSubmit, reset, resetField } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
@@ -140,6 +142,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     setSelectedImages([]);
     setSelectedBlueprints([]);
     setSelectedVideos([]);
+    /* TODO: setOffers([]); */
   };
 
   const addPropertyMutation = async (data: FormSchemaType) => {
@@ -189,6 +192,13 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
       appendIfNotNull(`media[videos][${index}]`, video);
     });
 
+    offers2.forEach((offer, index) => {
+      appendIfNotNull(`offers[${index}][listing_type]`, offer.listing_type);
+      appendIfNotNull(`offers[${index}][url]`, offer.url);
+      appendIfNotNull(`offers[${index}][description]`, offer.description);
+      appendIfNotNull(`offers[${index}][price]`, offer.price);
+    });
+
     return makeRequest("me/properties", "POST", session?.user.access_token, formData) as Promise<PropertyResponse>;
   };
 
@@ -233,8 +243,8 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
         return;
       }
 
-      resetForm();
-      close();
+      /* resetForm(); */
+      /* close(); */
 
       notifications.show({
         title: "Property added",
@@ -307,7 +317,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 </Stepper.Step>
 
                 <Stepper.Step label="Offers & Prices">
-                  <AddPropertyOffers offers={offers} setOffers={setOffers} />
+                  <AddPropertyOffers />
                 </Stepper.Step>
 
                 <Stepper.Completed>
@@ -332,6 +342,8 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   {stepperActive === TOTAL_STEPS ? "Add Property" : "Next"}
                 </Button>
               </div>
+
+              <div className="flex justify-end space-x-2">offers: {offers2.length}</div>
             </form>
           </div>
         </div>

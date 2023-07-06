@@ -5,18 +5,14 @@ import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { type Offer } from "~/types";
 import { IconTrash } from "@tabler/icons-react";
 import { sortBy } from "remeda";
-
-type AddPropertyOffersProps = {
-  offers: Offer[];
-  setOffers: (offers: Offer[]) => void;
-};
+import useOffersStore from "~/hooks/useOffersStore";
 
 const listingTypes = [
   { label: "Sale", value: "sale" },
   { label: "Rent", value: "rent" },
 ];
 
-export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps) {
+export function AddPropertyOffers() {
   const [listingType, setListingType] = useState("sale");
   const [price, setPrice] = useInputState<number | "">("");
   const [priceError, setPriceError] = useState("");
@@ -29,6 +25,13 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: "id", direction: "asc" });
   const [modalOpened, { open, close }] = useDisclosure(false);
   const [offerCounter, setOfferCounter] = useState(1);
+
+  // TODO: {usar chavetas}
+  const offers = useOffersStore((state) => state.offers);
+  const addOffer = useOffersStore((state) => state.addOffer);
+  const removeOffer = useOffersStore((state) => state.removeOffer);
+  const removeOffers = useOffersStore((state) => state.removeOffers);
+  const setOffers = useOffersStore((state) => state.setOffers);
 
   const columns = [
     {
@@ -70,16 +73,14 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
     },
   ];
 
-  useEffect(() => {
-    // @ts-expect-error sortBy is not typed
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-return
-    const data = sortBy(offers, (offer) => offer[sortStatus.columnAccessor]) as Offer[];
-    setOffers(sortStatus.direction === "asc" ? data : [...data].reverse());
-  }, [sortStatus, offers, setOffers]);
+  /**/
+  /* useEffect(() => { */
+  /*   const data = sort */
+  /* }, [sortStatus, offers, setOffers]); */
+  /**/
 
   const deleteOffer = (offer: Offer) => {
-    const newOffers = offers.filter((o) => o.id !== offer.id);
-    setOffers(newOffers);
+    removeOffer(offer);
   };
 
   const handleDelete = (offer: Offer) => {
@@ -92,8 +93,7 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
   };
 
   const deleteSelectedOffers = () => {
-    const newOffers = offers.filter((o) => !selectedOffers.find((s) => s.id === o.id));
-    setOffers(newOffers);
+    removeOffers(selectedOffers);
     setSelectedOffers([]);
     close();
   };
@@ -173,7 +173,7 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
     validateDescription(description);
   };
 
-  const addOffer = () => {
+  const addNewOffer = () => {
     if (!validatePrice(price) || !validateUrl(url) || !validateDescription(description)) {
       return;
     }
@@ -186,8 +186,8 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
       description,
     };
 
-    setOffers([...offers, newOffer]);
-    setOfferCounter(offerCounter + 1);
+    addOffer(newOffer);
+    setOfferCounter(offerCounter + 1); // TODO: move to store
 
     setPrice("");
     setUrl("");
@@ -232,7 +232,7 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
           onChange={handleDescriptionChange}
           error={descriptionError}
         />
-        <Button styles={() => ({ root: { padding: "0" } })} onClick={addOffer} disabled={isAddDisabled}>
+        <Button styles={() => ({ root: { padding: "0" } })} onClick={addNewOffer} disabled={isAddDisabled}>
           Add
         </Button>
       </div>
