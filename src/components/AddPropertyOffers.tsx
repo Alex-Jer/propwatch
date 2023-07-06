@@ -29,7 +29,7 @@ const columns = [
   },
   {
     accessor: "description",
-    title: "Description",
+    title: "Designation",
   },
 ];
 
@@ -140,8 +140,15 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
 
   return (
     <>
-      <div className="my-4 grid grid-cols-12 gap-4">
-        <SegmentedControl className="col-span-2" data={listingTypes} value={listingType} onChange={setListingType} />
+      <div className="mt-4 grid grid-cols-12 gap-4" style={{ minHeight: "60px" }}>
+        <div className="col-span-2">
+          <SegmentedControl
+            styles={() => ({ root: { width: "100%" } })}
+            data={listingTypes}
+            value={listingType}
+            onChange={setListingType}
+          />
+        </div>
         <NumberInput
           className="col-span-2"
           placeholder="Price"
@@ -161,7 +168,13 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
           Add
         </Button>
       </div>
-      <DataTable columns={columns} records={offers} />
+      {offers.length === 0 ? (
+        <div className="my-4 text-center text-gray-500">
+          No offers added yet. Click on the <strong>Add</strong> button to add a new offer.
+        </div>
+      ) : (
+        <DataTable className="mb-4" columns={columns} records={offers} />
+      )}
     </>
   );
 }
