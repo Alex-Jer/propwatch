@@ -4,7 +4,6 @@ import { type ChangeEventHandler, useState, useEffect } from "react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { type Offer } from "~/types";
 import { IconTrash } from "@tabler/icons-react";
-import { sortBy } from "remeda";
 import useOffersStore from "~/hooks/useOffersStore";
 
 const listingTypes = [
@@ -26,12 +25,7 @@ export function AddPropertyOffers() {
   const [modalOpened, { open, close }] = useDisclosure(false);
   const [offerCounter, setOfferCounter] = useState(1);
 
-  // TODO: {usar chavetas}
-  const offers = useOffersStore((state) => state.offers);
-  const addOffer = useOffersStore((state) => state.addOffer);
-  const removeOffer = useOffersStore((state) => state.removeOffer);
-  const removeOffers = useOffersStore((state) => state.removeOffers);
-  const setOffers = useOffersStore((state) => state.setOffers);
+  const { offers, addOffer, removeOffer, removeOffers, sortOffers } = useOffersStore();
 
   const columns = [
     {
@@ -73,11 +67,10 @@ export function AddPropertyOffers() {
     },
   ];
 
-  /**/
-  /* useEffect(() => { */
-  /*   const data = sort */
-  /* }, [sortStatus, offers, setOffers]); */
-  /**/
+  useEffect(() => {
+    sortOffers(offers, sortStatus);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [sortStatus]);
 
   const deleteOffer = (offer: Offer) => {
     removeOffer(offer);
