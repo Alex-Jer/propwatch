@@ -1,4 +1,4 @@
-import { Card, Text, Group, createStyles, getStylesRef, rem } from "@mantine/core";
+import { Card, Text, Group, createStyles, getStylesRef, rem, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconArrowBackUp, IconCheck, IconTrash, IconX } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
@@ -84,8 +84,12 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
       return (
         <>
           <div className={classes.topButtons}>
-            <IconArrowBackUp onClick={restoreProperty} style={{ cursor: "pointer" }}></IconArrowBackUp>
-            <IconTrash onClick={permanentlyDeleteProperty} style={{ cursor: "pointer" }}></IconTrash>
+            <Tooltip label="Restore" color="gray" withArrow>
+              <IconArrowBackUp onClick={restoreProperty} style={{ cursor: "pointer" }}></IconArrowBackUp>
+            </Tooltip>
+            <Tooltip label="Permanently Delete" color="gray" withArrow>
+              <IconTrash onClick={permanentlyDeleteProperty} style={{ cursor: "pointer" }}></IconTrash>
+            </Tooltip>
           </div>
         </>
       );
@@ -164,7 +168,6 @@ const useStyles = createStyles((theme) => ({
     bottom: 0,
     backgroundImage: "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .85) 90%)",
   },
-
   topButtons: {
     height: "100%",
     position: "relative",
