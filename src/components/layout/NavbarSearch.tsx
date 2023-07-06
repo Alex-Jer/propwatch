@@ -205,7 +205,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
           <Text size="xs" weight={500} color="dimmed">
             My Collections
           </Text>
-          <Tooltip label="Create collection" withArrow position="right">
+          <Tooltip color="gray"  label="Create collection" withArrow position="right">
             <ActionIcon variant="default" size={18}>
               <IconPlus size="0.8rem" stroke={1.5} />
             </ActionIcon>
