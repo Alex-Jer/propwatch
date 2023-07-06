@@ -1,16 +1,6 @@
 import { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
-import {
-  Button,
-  Drawer,
-  Stepper,
-  Paper,
-  SegmentedControl,
-  TextInput,
-  NumberInput,
-  Alert,
-  Divider,
-} from "@mantine/core";
+import { useForm, useFieldArray } from "react-hook-form";
+import { Button, Drawer, Stepper, Paper, Alert, Divider } from "@mantine/core";
 import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,6 +14,7 @@ import { useSession } from "next-auth/react";
 import { type Property } from "~/types";
 import { AddPropertyOffers } from "./AddPropertyOffers";
 import useOffersStore from "~/hooks/useOffersStore";
+import { NumberInput, SegmentedControl, TextInput } from "react-hook-form-mantine";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -72,6 +63,13 @@ const schema = z.object({
   images: z.array(z.any()),
   blueprints: z.array(z.any()),
   videos: z.array(z.any()),
+  characteristics: z.array(
+    z.object({
+      name: z.string().max(32, { message: "Characteristic name must be at most 32 characters long" }),
+      type: z.enum(["numerical", "textual"]),
+      value: z.string().max(32, { message: "Characteristic value must be at most 32 characters long" }),
+    })
+  ),
   /* ADDRESS */
   full_address: z
     .string()
@@ -114,6 +112,7 @@ const defaultValues: FormSchemaType = {
   images: [],
   blueprints: [],
   videos: [],
+  characteristics: [{ name: "", type: "numerical", value: "" }],
   full_address: "",
   postal_code: "",
   latitude: "",
@@ -148,6 +147,11 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const { control, handleSubmit, reset, resetField } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
+  });
+
+  const { fields, append } = useFieldArray({
+    name: "characteristics",
+    control,
   });
 
   const resetForm = () => {
@@ -310,43 +314,78 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
                 <Stepper.Step label="Characteristics">
                   {/* <AddPropertyCharacteristics control={control} /> */}
-
-                  <div className="mt-4 flex items-center space-x-2">
-                    <Alert
-                      icon={<IconAlertCircle size="1rem" />}
-                      color="blue"
-                      variant="outline"
-                      className="flex-grow"
-                      styles={{ root: { padding: "0.5rem 1rem" } }}
-                    >
-                      Characteristics provide additional details about the property
-                    </Alert>
-                    <Button styles={{ root: { height: "2.5rem" } }}>Add Characteristic</Button>
-                  </div>
-
-                  <Divider my="xl" />
-
-                  <div className="-mb-5 grid grid-cols-10 gap-4" style={{ minHeight: "60px" }}>
-                    <div className="col-span-3">
-                      <SegmentedControl styles={() => ({ root: { width: "100%" } })} data={characteristicTypes} />
+                  <>
+                    <div className="mt-4 flex items-center space-x-2">
+                      <Alert
+                        icon={<IconAlertCircle size="1rem" />}
+                        color="blue"
+                        variant="outline"
+                        className="flex-grow"
+                        styles={{ root: { padding: "0.5rem 1rem" } }}
+                      >
+                        Characteristics provide additional details about the property
+                      </Alert>
+                      <Button
+                        onClick={() => {
+                          append({ type: "numerical", name: "", value: "" });
+                          console.log(fields);
+                        }}
+                        styles={{ root: { height: "2.5rem" } }}
+                      >
+                        Add Characteristic
+                      </Button>
                     </div>
-                    <TextInput
-                      className="col-span-4"
-                      placeholder="Name"
-                      /* value={description} */
-                      /* onChange={handleDescriptionChange} */
-                      /* error={descriptionError} */
-                    />
-                    <NumberInput
-                      className="col-span-3"
-                      placeholder="Value"
-                      /* value={price} */
-                      /* onChange={handlePriceChange} */
-                      /* error={priceError} */
-                    />
-                  </div>
 
-                  <Divider my="xl" />
+                    <Divider my="xl" />
+
+                    {fields.map((field, index) => (
+                      <>
+                        <div className="-mb-5 grid grid-cols-10 gap-4" style={{ minHeight: "60px" }} key={field.id}>
+                          <div className="col-span-3">
+                            <SegmentedControl
+                              name={`characteristics[${index}].type`}
+                              control={control}
+                              styles={() => ({ root: { width: "100%" } })}
+                              data={characteristicTypes}
+                            />
+                          </div>
+                          <TextInput
+                            className="col-span-4"
+                            name={`characteristics[${index}].name`}
+                            control={control}
+                            placeholder="Name"
+                            /* value={description} */
+                            /* onChange={handleDescriptionChange} */
+                            /* error={descriptionError} */
+                          />
+                          <NumberInput
+                            className="col-span-3"
+                            name={`characteristics[${index}].value`}
+                            control={control}
+                            placeholder="Value"
+                            /* value={price} */
+                            /* onChange={handlePriceChange} */
+                            /* error={priceError} */
+                          />
+                        </div>
+                        <Divider my="xl" />
+                      </>
+                    ))}
+
+                    {/* <div className="-mb-5 grid grid-cols-10 gap-4" style={{ minHeight: "60px" }}> */}
+                    {/*   <div className="col-span-3"> */}
+                    {/*     <SegmentedControl styles={() => ({ root: { width: "100%" } })} data={characteristicTypes} /> */}
+                    {/*   </div> */}
+                    {/*   <TextInput */}
+                    {/*     className="col-span-4" */}
+                    {/*     placeholder="Name" */}
+                    {/*   /> */}
+                    {/*   <NumberInput */}
+                    {/*     className="col-span-3" */}
+                    {/*     placeholder="Value" */}
+                    {/*   /> */}
+                    {/* </div> */}
+                  </>
                 </Stepper.Step>
 
                 <Stepper.Step label="Media & Blueprints">
