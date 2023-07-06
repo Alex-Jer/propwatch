@@ -1,7 +1,17 @@
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Drawer, Stepper, Paper } from "@mantine/core";
-import { IconCheck, IconX } from "@tabler/icons-react";
+import {
+  Button,
+  Drawer,
+  Stepper,
+  Paper,
+  SegmentedControl,
+  TextInput,
+  NumberInput,
+  Alert,
+  Divider,
+} from "@mantine/core";
+import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddPropertyMainInfo } from "./AddPropertyMainInfo";
@@ -26,6 +36,11 @@ type PropertyResponse = {
 };
 
 const TOTAL_STEPS = 5;
+
+const characteristicTypes = [
+  { label: "Numerical", value: "numerical" },
+  { label: "Textual", value: "textual" },
+];
 
 const schema = z.object({
   title: z
@@ -128,7 +143,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
   const addPropertyButtonRef = useRef(null);
 
-  const { offers, totalOffers, clearOffers } = useOffersStore();
+  const { offers, clearOffers } = useOffersStore();
 
   const { control, handleSubmit, reset, resetField } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
@@ -293,7 +308,46 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   <AddPropertyAddress control={control} resetField={resetField} />
                 </Stepper.Step>
 
-                <Stepper.Step label="Characteristics"></Stepper.Step>
+                <Stepper.Step label="Characteristics">
+                  {/* <AddPropertyCharacteristics control={control} /> */}
+
+                  <div className="mt-4 flex items-center space-x-2">
+                    <Alert
+                      icon={<IconAlertCircle size="1rem" />}
+                      color="blue"
+                      variant="outline"
+                      className="flex-grow"
+                      styles={{ root: { padding: "0.5rem 1rem" } }}
+                    >
+                      Characteristics provide additional details about the property
+                    </Alert>
+                    <Button styles={{ root: { height: "2.5rem" } }}>Add Characteristic</Button>
+                  </div>
+
+                  <Divider my="xl" />
+
+                  <div className="-mb-5 grid grid-cols-10 gap-4" style={{ minHeight: "60px" }}>
+                    <div className="col-span-3">
+                      <SegmentedControl styles={() => ({ root: { width: "100%" } })} data={characteristicTypes} />
+                    </div>
+                    <TextInput
+                      className="col-span-4"
+                      placeholder="Name"
+                      /* value={description} */
+                      /* onChange={handleDescriptionChange} */
+                      /* error={descriptionError} */
+                    />
+                    <NumberInput
+                      className="col-span-3"
+                      placeholder="Value"
+                      /* value={price} */
+                      /* onChange={handlePriceChange} */
+                      /* error={priceError} */
+                    />
+                  </div>
+
+                  <Divider my="xl" />
+                </Stepper.Step>
 
                 <Stepper.Step label="Media & Blueprints">
                   <AddPropertyMedia
