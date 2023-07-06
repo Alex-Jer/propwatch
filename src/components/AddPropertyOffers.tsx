@@ -1,8 +1,10 @@
-import { Button, NumberInput, SegmentedControl, TextInput } from "@mantine/core";
+import { ActionIcon, Button, NumberInput, SegmentedControl, TextInput } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
-import { type ChangeEventHandler, useState } from "react";
-import { DataTable } from "mantine-datatable";
+import { type ChangeEventHandler, useState, useEffect } from "react";
+import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { type Offer } from "~/types";
+import { IconTrash } from "@tabler/icons-react";
+import { sortBy } from "remeda";
 
 type AddPropertyOffersProps = {
   offers: Offer[];
@@ -14,25 +16,6 @@ const listingTypes = [
   { label: "Rent", value: "rent" },
 ];
 
-const columns = [
-  {
-    accessor: "listing_type",
-    title: "Listing Type",
-  },
-  {
-    accessor: "price",
-    title: "Price",
-  },
-  {
-    accessor: "url",
-    title: "URL",
-  },
-  {
-    accessor: "description",
-    title: "Designation",
-  },
-];
-
 export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps) {
   const [listingType, setListingType] = useState("sale");
   const [price, setPrice] = useInputState<number | "">("");
@@ -42,6 +25,60 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
   const [description, setDescription] = useInputState("");
   const [descriptionError, setDescriptionError] = useState("");
   const [isAddDisabled, setIsAddDisabled] = useState(true);
+  const [selectedRecords, setSelectedRecords] = useState<Offer[]>([]);
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: "id", direction: "asc" });
+
+  useEffect(() => {
+    // @ts-expect-error sortBy is not typed
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-return
+    const data = sortBy(offers, (offer) => offer[sortStatus.columnAccessor]) as Offer[];
+    setOffers(sortStatus.direction === "asc" ? data : [...data].reverse());
+  }, [sortStatus, offers, setOffers]);
+
+  const deleteOffer = (offer: Offer) => {
+    const newOffers = offers.filter((o) => o.id !== offer.id);
+    setOffers(newOffers);
+  };
+
+  const columns = [
+    {
+      accessor: "listing_type",
+      title: "Type",
+      width: 100,
+      sortable: true,
+      cellsClassName: "capitalize",
+    },
+    {
+      accessor: "price",
+      title: "Price",
+      width: 100,
+      sortable: true,
+    },
+    {
+      accessor: "url",
+      title: "URL",
+      width: 250,
+      ellipsis: true,
+      sortable: true,
+    },
+    {
+      accessor: "description",
+      title: "Designation",
+      width: 200,
+      ellipsis: true,
+      sortable: true,
+    },
+    {
+      accessor: "actions",
+      title: "Actions",
+      width: 100,
+      render: (row: Offer) => (
+        <ActionIcon color="red" onClick={() => deleteOffer(row)}>
+          <IconTrash size={16} />
+        </ActionIcon>
+      ),
+    },
+  ];
 
   const validatePrice = (price: number | "") => {
     if (price === "") {
@@ -173,7 +210,15 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
           No offers added yet. Click on the <strong>Add</strong> button to add a new offer.
         </div>
       ) : (
-        <DataTable className="mb-4" columns={columns} records={offers} />
+        <DataTable
+          className="mb-4"
+          columns={columns}
+          records={offers}
+          selectedRecords={selectedRecords}
+          onSelectedRecordsChange={setSelectedRecords}
+          sortStatus={sortStatus}
+          onSortStatusChange={setSortStatus}
+        />
       )}
     </>
   );
