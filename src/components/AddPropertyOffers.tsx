@@ -23,9 +23,8 @@ export function AddPropertyOffers() {
   const [selectedOffers, setSelectedOffers] = useState<Offer[]>([]);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: "id", direction: "asc" });
   const [modalOpened, { open, close }] = useDisclosure(false);
-  const [offerCounter, setOfferCounter] = useState(1);
 
-  const { offers, addOffer, removeOffer, removeOffers, sortOffers } = useOffersStore();
+  const { offers, totalOffers, addOffer, removeOffer, removeOffers, sortOffers } = useOffersStore();
 
   const columns = [
     {
@@ -172,7 +171,7 @@ export function AddPropertyOffers() {
     }
 
     const newOffer: Offer = {
-      id: offerCounter,
+      id: totalOffers + 1,
       listing_type: listingType,
       price: Number(price),
       url,
@@ -180,7 +179,6 @@ export function AddPropertyOffers() {
     };
 
     addOffer(newOffer);
-    setOfferCounter(offerCounter + 1); // TODO: move to store
 
     setPrice("");
     setUrl("");

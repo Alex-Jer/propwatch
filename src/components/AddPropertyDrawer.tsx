@@ -128,7 +128,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
   const addPropertyButtonRef = useRef(null);
 
-  const { offers, clearOffers } = useOffersStore();
+  const { offers, totalOffers, clearOffers } = useOffersStore();
 
   const { control, handleSubmit, reset, resetField } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
@@ -237,6 +237,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
           notifications.show({
             title: "Error",
             message: "An unknown error occurred while adding your property.",
+            icon: <IconX size="1.1rem" />,
             color: "red",
           });
           console.error(error);
