@@ -3,7 +3,6 @@ import { IconTrash } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import Link from "next/link";
 import { useState } from "react";
 import { PropertyCard } from "~/components/PropertyCard";
 import { useTrashedProperties } from "~/hooks/useQueries";
@@ -50,6 +49,7 @@ const TrashedProperties: NextPage = () => {
               key={property.id}
               id={property.id}
               trashButtons={true}
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
               refresh={refetch}
             />
           );

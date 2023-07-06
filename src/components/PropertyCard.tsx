@@ -2,7 +2,7 @@ import { Card, Text, Group, createStyles, getStylesRef, rem, Tooltip } from "@ma
 import { notifications } from "@mantine/notifications";
 import { IconArrowBackUp, IconCheck, IconTrash, IconX } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { makeRequest } from "~/lib/requestHelper";
 
 interface PropertyCardProps {
@@ -66,7 +66,7 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
   const permanentlyDeleteProperty = () => {
     if (!id) return;
     makeRequest(`me/properties/${id}/permanent`, "DELETE", session?.user.access_token)
-      .then((res) => {
+      .then(() => {
         successNotification("Property permanently deleted!");
       })
       .catch((err) => {
