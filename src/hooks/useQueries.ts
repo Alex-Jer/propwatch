@@ -1,4 +1,4 @@
-import { DrawPolygon } from "@mapbox/mapbox-gl-draw";
+import { type DrawPolygon } from "@mapbox/mapbox-gl-draw";
 import { useQuery } from "@tanstack/react-query";
 import { type Session } from "next-auth";
 import { makeRequest } from "~/lib/requestHelper";
