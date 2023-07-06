@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import { Button, Drawer, Stepper, Paper, Alert, Divider } from "@mantine/core";
-import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
+import { useForm } from "react-hook-form";
+import { Button, Drawer, Stepper, Paper } from "@mantine/core";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddPropertyMainInfo } from "./AddPropertyMainInfo";
@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 import { type Property } from "~/types";
 import { AddPropertyOffers } from "./AddPropertyOffers";
 import useOffersStore from "~/hooks/useOffersStore";
-import { NumberInput, SegmentedControl, TextInput } from "react-hook-form-mantine";
+import { AddPropertyCharacteristics } from "./AddPropertyCharacteristics";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -27,11 +27,6 @@ type PropertyResponse = {
 };
 
 const TOTAL_STEPS = 5;
-
-const characteristicTypes = [
-  { label: "Numerical", value: "numerical" },
-  { label: "Textual", value: "textual" },
-];
 
 const schema = z.object({
   title: z
@@ -149,11 +144,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     defaultValues,
   });
 
-  const { fields, append } = useFieldArray({
-    name: "characteristics",
-    control,
-  });
-
   const resetForm = () => {
     setAddPropertyCounter(0);
     reset(defaultValues);
@@ -209,6 +199,12 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
     data.videos.forEach((video, index) => {
       appendIfNotNull(`media[videos][${index}]`, video);
+    });
+
+    data.characteristics.forEach((characteristic, index) => {
+      appendIfNotNull(`characteristics[${index}][name]`, characteristic.name);
+      appendIfNotNull(`characteristics[${index}][type]`, characteristic.type);
+      appendIfNotNull(`characteristics[${index}][value]`, characteristic.value);
     });
 
     offers.forEach((offer, index) => {
@@ -313,79 +309,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 </Stepper.Step>
 
                 <Stepper.Step label="Characteristics">
-                  {/* <AddPropertyCharacteristics control={control} /> */}
-                  <>
-                    <div className="mt-4 flex items-center space-x-2">
-                      <Alert
-                        icon={<IconAlertCircle size="1rem" />}
-                        color="blue"
-                        variant="outline"
-                        className="flex-grow"
-                        styles={{ root: { padding: "0.5rem 1rem" } }}
-                      >
-                        Characteristics provide additional details about the property
-                      </Alert>
-                      <Button
-                        onClick={() => {
-                          append({ type: "numerical", name: "", value: "" });
-                          console.log(fields);
-                        }}
-                        styles={{ root: { height: "2.5rem" } }}
-                      >
-                        Add Characteristic
-                      </Button>
-                    </div>
-
-                    <Divider my="xl" />
-
-                    {fields.map((field, index) => (
-                      <>
-                        <div className="-mb-5 grid grid-cols-10 gap-4" style={{ minHeight: "60px" }} key={field.id}>
-                          <div className="col-span-3">
-                            <SegmentedControl
-                              name={`characteristics[${index}].type`}
-                              control={control}
-                              styles={() => ({ root: { width: "100%" } })}
-                              data={characteristicTypes}
-                            />
-                          </div>
-                          <TextInput
-                            className="col-span-4"
-                            name={`characteristics[${index}].name`}
-                            control={control}
-                            placeholder="Name"
-                            /* value={description} */
-                            /* onChange={handleDescriptionChange} */
-                            /* error={descriptionError} */
-                          />
-                          <NumberInput
-                            className="col-span-3"
-                            name={`characteristics[${index}].value`}
-                            control={control}
-                            placeholder="Value"
-                            /* value={price} */
-                            /* onChange={handlePriceChange} */
-                            /* error={priceError} */
-                          />
-                        </div>
-                        <Divider my="xl" />
-                      </>
-                    ))}
-
-                    {/* <div className="-mb-5 grid grid-cols-10 gap-4" style={{ minHeight: "60px" }}> */}
-                    {/*   <div className="col-span-3"> */}
-                    {/*     <SegmentedControl styles={() => ({ root: { width: "100%" } })} data={characteristicTypes} /> */}
-                    {/*   </div> */}
-                    {/*   <TextInput */}
-                    {/*     className="col-span-4" */}
-                    {/*     placeholder="Name" */}
-                    {/*   /> */}
-                    {/*   <NumberInput */}
-                    {/*     className="col-span-3" */}
-                    {/*     placeholder="Value" */}
-                    {/*   /> */}
-                    {/* </div> */}
-                  </>
+                  <AddPropertyCharacteristics control={control} />
                 </Stepper.Step>
 
                 <Stepper.Step label="Media & Blueprints">
