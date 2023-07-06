@@ -1,10 +1,13 @@
-import { IconBuildingEstate, IconTrash } from "@tabler/icons-react";
+import { Group, Pagination } from "@mantine/core";
+import { IconTrash } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
+import Link from "next/link";
 import { useState } from "react";
-import { DisplayProperties } from "~/components/DisplayProperties";
+import { PropertyCard } from "~/components/PropertyCard";
 import { useTrashedProperties } from "~/hooks/useQueries";
+import { type CollectionProperty } from "~/types";
 
 const TrashedProperties: NextPage = () => {
   const { data: session, status } = useSession();
@@ -20,6 +23,39 @@ const TrashedProperties: NextPage = () => {
     page: activePage,
   });
 
+  const properties: CollectionProperty[] | undefined = propData?.data;
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading properties.</div>;
+  }
+
+  const renderProperties = (properties: CollectionProperty[] | undefined) => {
+    if (!properties) {
+      return <></>;
+    }
+
+    return (
+      <>
+        {properties.map((property: CollectionProperty) => {
+          return (
+            <PropertyCard
+              image={property.cover_url}
+              title={property.title}
+              author={property.type}
+              key={property.id}
+              id={property.id}
+              trashButtons={true}
+            />
+          );
+        })}
+      </>
+    );
+  };
+
   return (
     <>
       <Head>
@@ -34,13 +70,19 @@ const TrashedProperties: NextPage = () => {
 
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
-      <DisplayProperties
-        propData={propData}
-        isLoading={isLoading}
-        isError={isError}
-        activePage={activePage}
-        setPage={setPage}
-      />
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+        {renderProperties(properties)}
+      </div>
+
+      <Pagination.Root value={activePage} onChange={setPage} total={propData?.meta.last_page ?? 1}>
+        <Group spacing={5} position="center" className="mt-4">
+          <Pagination.First />
+          <Pagination.Previous />
+          <Pagination.Items />
+          <Pagination.Next />
+          <Pagination.Last />
+        </Group>
+      </Pagination.Root>
     </>
   );
 };
