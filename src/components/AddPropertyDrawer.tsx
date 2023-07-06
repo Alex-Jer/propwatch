@@ -11,7 +11,7 @@ import { AddPropertyAddress } from "./AddPropertyAddress";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { type Offer, type Property } from "~/types";
+import { type Property } from "~/types";
 import { AddPropertyOffers } from "./AddPropertyOffers";
 import useOffersStore from "~/hooks/useOffersStore";
 
@@ -128,7 +128,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
   const addPropertyButtonRef = useRef(null);
 
-  const offers2 = useOffersStore((state) => state.offers);
+  const { offers, clearOffers } = useOffersStore();
 
   const { control, handleSubmit, reset, resetField } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
@@ -142,7 +142,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     setSelectedImages([]);
     setSelectedBlueprints([]);
     setSelectedVideos([]);
-    /* TODO: setOffers([]); */
+    clearOffers();
   };
 
   const addPropertyMutation = async (data: FormSchemaType) => {
@@ -192,7 +192,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
       appendIfNotNull(`media[videos][${index}]`, video);
     });
 
-    offers2.forEach((offer, index) => {
+    offers.forEach((offer, index) => {
       appendIfNotNull(`offers[${index}][listing_type]`, offer.listing_type);
       appendIfNotNull(`offers[${index}][url]`, offer.url);
       appendIfNotNull(`offers[${index}][description]`, offer.description);
@@ -243,15 +243,17 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
         return;
       }
 
-      /* resetForm(); */
-      /* close(); */
+      if (mutation.isSuccess) {
+        resetForm();
+        close();
 
-      notifications.show({
-        title: "Property added",
-        message: "Your property has been added successfully!",
-        icon: <IconCheck size="1.1rem" />,
-        color: "teal",
-      });
+        notifications.show({
+          title: "Property added",
+          message: "Your property has been added successfully!",
+          icon: <IconCheck size="1.1rem" />,
+          color: "teal",
+        });
+      }
     }
   };
 
@@ -342,8 +344,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   {stepperActive === TOTAL_STEPS ? "Add Property" : "Next"}
                 </Button>
               </div>
-
-              <div className="flex justify-end space-x-2">offers: {offers2.length}</div>
             </form>
           </div>
         </div>
