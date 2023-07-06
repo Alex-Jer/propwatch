@@ -222,38 +222,26 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
         return;
       }
 
-      mutation.mutate(data);
-
-      if (mutation.isLoading) {
-        notifications.show({
-          title: "Adding property",
-          message: "Please wait while we add your property...",
-          loading: true,
-        });
-      }
-
-      if (mutation.isError) {
-        notifications.show({
-          title: "Error",
-          message: "An unknown error occurred while adding your property.",
-          icon: <IconX size="1.1rem" />,
-          color: "red",
-          autoClose: false,
-        });
-        return;
-      }
-
-      if (mutation.isSuccess) {
-        resetForm();
-        close();
-
-        notifications.show({
-          title: "Property added",
-          message: "Your property has been added successfully!",
-          icon: <IconCheck size="1.1rem" />,
-          color: "teal",
-        });
-      }
+      mutation.mutate(data, {
+        onSuccess: () => {
+          resetForm();
+          close();
+          notifications.show({
+            title: "Property added",
+            message: "Your property has been added successfully!",
+            icon: <IconCheck size="1.1rem" />,
+            color: "teal",
+          });
+        },
+        onError: (error) => {
+          notifications.show({
+            title: "Error",
+            message: "An unknown error occurred while adding your property.",
+            color: "red",
+          });
+          console.error(error);
+        },
+      });
     }
   };
 
