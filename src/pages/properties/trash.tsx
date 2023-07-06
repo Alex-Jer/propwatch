@@ -17,6 +17,7 @@ const TrashedProperties: NextPage = () => {
     data: propData,
     isLoading,
     isError,
+    refetch,
   } = useTrashedProperties({
     session,
     status,
@@ -49,6 +50,7 @@ const TrashedProperties: NextPage = () => {
               key={property.id}
               id={property.id}
               trashButtons={true}
+              refresh={refetch}
             />
           );
         })}

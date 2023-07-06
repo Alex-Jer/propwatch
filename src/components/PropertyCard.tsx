@@ -1,7 +1,9 @@
 import { Card, Text, Group, createStyles, getStylesRef, rem } from "@mantine/core";
-import { Icon123, IconArrowBackUp, IconTrash } from "@tabler/icons-react";
-import Link from "next/link";
-import { useState } from "react";
+import { notifications } from "@mantine/notifications";
+import { IconArrowBackUp, IconCheck, IconTrash, IconX } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { makeRequest } from "~/lib/requestHelper";
 
 interface PropertyCardProps {
   image: string;
@@ -9,9 +11,10 @@ interface PropertyCardProps {
   author: string;
   id?: string | undefined;
   trashButtons?: boolean | undefined;
+  refresh?: () => void;
 }
 
-export function PropertyCard({ image, title, author, id, trashButtons }: PropertyCardProps) {
+export function PropertyCard({ image, title, author, id, trashButtons, refresh }: PropertyCardProps) {
   const { classes } = useStyles();
 
   const [isHovered, setIsHovered] = useState(false);
@@ -24,17 +27,65 @@ export function PropertyCard({ image, title, author, id, trashButtons }: Propert
     setIsHovered(false);
   };
 
+  const { data: session } = useSession();
+
+  const errorNotification = (msg: string) => {
+    notifications.show({
+      title: "Error",
+      message: msg,
+      icon: <IconX size="1.1rem" />,
+      color: "red",
+    });
+  };
+
+  const successNotification = (msg: string) => {
+    notifications.show({
+      title: "Property added",
+      message: msg,
+      icon: <IconCheck size="1.1rem" />,
+      color: "teal",
+    });
+  };
+
+  const restoreProperty = () => {
+    if (!id) return;
+    makeRequest(`me/properties/${id}/restore`, "PATCH", session?.user.access_token)
+      .then(() => {
+        successNotification("Property restored!");
+      })
+      .catch((err) => {
+        errorNotification("An unknown error occurred while restoring this property.");
+        //TODO
+        console.log("Error: ", err, " when restoring property.");
+      })
+      .finally(() => {
+        if (refresh) refresh();
+      });
+  };
+
+  const permanentlyDeleteProperty = () => {
+    if (!id) return;
+    makeRequest(`me/properties/${id}/permanent`, "DELETE", session?.user.access_token)
+      .then((res) => {
+        successNotification("Property permanently deleted!");
+      })
+      .catch((err) => {
+        errorNotification("An unknown error occurred while permanently deleting this property.");
+        //TODO
+        console.log("Error: ", err, " when permanently deleting property.");
+      })
+      .finally(() => {
+        if (refresh) refresh();
+      });
+  };
+
   const renderTrashButtons = (id: string | undefined, trashButtons: boolean | undefined) => {
     if (trashButtons && id) {
       return (
         <>
           <div className={classes.topButtons}>
-            <Link href="#" key={id}>
-              <IconArrowBackUp></IconArrowBackUp>
-            </Link>
-            <Link href="#" key={id}>
-              <IconTrash></IconTrash>
-            </Link>
+            <IconArrowBackUp onClick={restoreProperty} style={{ cursor: "pointer" }}></IconArrowBackUp>
+            <IconTrash onClick={permanentlyDeleteProperty} style={{ cursor: "pointer" }}></IconTrash>
           </div>
         </>
       );
@@ -97,6 +148,7 @@ const useStyles = createStyles((theme) => ({
     },
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   image: {
     ...theme.fn.cover(),
     ref: getStylesRef("image"),
