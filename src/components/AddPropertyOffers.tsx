@@ -1,5 +1,5 @@
-import { ActionIcon, Button, NumberInput, SegmentedControl, TextInput } from "@mantine/core";
-import { useInputState } from "@mantine/hooks";
+import { ActionIcon, Button, Modal, NumberInput, SegmentedControl, TextInput } from "@mantine/core";
+import { useDisclosure, useInputState } from "@mantine/hooks";
 import { type ChangeEventHandler, useState, useEffect } from "react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { type Offer } from "~/types";
@@ -25,20 +25,10 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
   const [description, setDescription] = useInputState("");
   const [descriptionError, setDescriptionError] = useState("");
   const [isAddDisabled, setIsAddDisabled] = useState(true);
-  const [selectedRecords, setSelectedRecords] = useState<Offer[]>([]);
+  const [selectedOffers, setSelectedOffers] = useState<Offer[]>([]);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: "id", direction: "asc" });
-
-  useEffect(() => {
-    // @ts-expect-error sortBy is not typed
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-return
-    const data = sortBy(offers, (offer) => offer[sortStatus.columnAccessor]) as Offer[];
-    setOffers(sortStatus.direction === "asc" ? data : [...data].reverse());
-  }, [sortStatus, offers, setOffers]);
-
-  const deleteOffer = (offer: Offer) => {
-    const newOffers = offers.filter((o) => o.id !== offer.id);
-    setOffers(newOffers);
-  };
+  const [modalOpened, { open, close }] = useDisclosure(false);
+  const [offerCounter, setOfferCounter] = useState(1);
 
   const columns = [
     {
@@ -72,13 +62,41 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
       accessor: "actions",
       title: "Actions",
       width: 100,
-      render: (row: Offer) => (
-        <ActionIcon color="red" onClick={() => deleteOffer(row)}>
+      render: (offer: Offer) => (
+        <ActionIcon color="red" onClick={() => handleDelete(offer)}>
           <IconTrash size={16} />
         </ActionIcon>
       ),
     },
   ];
+
+  useEffect(() => {
+    // @ts-expect-error sortBy is not typed
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-return
+    const data = sortBy(offers, (offer) => offer[sortStatus.columnAccessor]) as Offer[];
+    setOffers(sortStatus.direction === "asc" ? data : [...data].reverse());
+  }, [sortStatus, offers, setOffers]);
+
+  const deleteOffer = (offer: Offer) => {
+    const newOffers = offers.filter((o) => o.id !== offer.id);
+    setOffers(newOffers);
+  };
+
+  const handleDelete = (offer: Offer) => {
+    if (selectedOffers.length > 1 && selectedOffers.some((s) => s.id === offer.id)) {
+      open();
+      return;
+    }
+
+    deleteOffer(offer);
+  };
+
+  const deleteSelectedOffers = () => {
+    const newOffers = offers.filter((o) => !selectedOffers.find((s) => s.id === o.id));
+    setOffers(newOffers);
+    setSelectedOffers([]);
+    close();
+  };
 
   const validatePrice = (price: number | "") => {
     if (price === "") {
@@ -161,7 +179,7 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
     }
 
     const newOffer: Offer = {
-      id: offers.length + 1,
+      id: offerCounter,
       listing_type: listingType,
       price: Number(price),
       url,
@@ -169,14 +187,27 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
     };
 
     setOffers([...offers, newOffer]);
+    setOfferCounter(offerCounter + 1);
 
     setPrice("");
     setUrl("");
     setDescription("");
+
+    setIsAddDisabled(true);
   };
 
   return (
     <>
+      <Modal opened={modalOpened} onClose={close} title="Delete selected offers" zIndex={999}>
+        <p className="text-gray-400">Are you sure you want to delete the {selectedOffers.length} selected offers?</p>
+        <div className="mt-4 flex justify-end space-x-2">
+          <Button onClick={close}>Cancel</Button>
+          <Button color="red" onClick={deleteSelectedOffers}>
+            Delete
+          </Button>
+        </div>
+      </Modal>
+
       <div className="mt-4 grid grid-cols-12 gap-4" style={{ minHeight: "60px" }}>
         <div className="col-span-2">
           <SegmentedControl
@@ -214,8 +245,8 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
           className="mb-4"
           columns={columns}
           records={offers}
-          selectedRecords={selectedRecords}
-          onSelectedRecordsChange={setSelectedRecords}
+          selectedRecords={selectedOffers}
+          onSelectedRecordsChange={setSelectedOffers}
           sortStatus={sortStatus}
           onSortStatusChange={setSortStatus}
         />
