@@ -14,7 +14,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Button, Drawer, Group } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
-import { IconPhoto, IconTrash, IconVideo, IconWallpaper } from "@tabler/icons-react";
+import { IconPhoto, IconPhotoCheck, IconPhotoX, IconTrash, IconVideo, IconWallpaper } from "@tabler/icons-react";
 import { makeRequest } from "~/lib/requestHelper";
 import { errorNotification, successNotification } from "~/components/PropertyCard";
 
@@ -38,6 +38,7 @@ const Property: NextPage = () => {
   const { data: property, isLoading, isError } = useProperty({ session, status, elementId: String(propertyId ?? "") });
 
   const [coverUrl, setCoverUrl] = useState("");
+  const [selectedUrl, setSelectedUrl] = useState("");
   const [imagesOpened, { open: openImages, close: closeImages }] = useDisclosure(false);
   const [videosOpened, { open: openVideos, close: closeVideos }] = useDisclosure(false);
   const [blueprintsOpened, { open: openBlueprints, close: closeBlueprints }] = useDisclosure(false);
@@ -82,7 +83,7 @@ const Property: NextPage = () => {
       <>
         {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-3"> */}
         {/* <span onClick={open}> */}
-        <MainCarousel images={photos} />
+        <MainCarousel images={photos} setSelectedUrl={setSelectedUrl} />
         {/* </span> */}
         {/* </div> */}
       </>
@@ -175,6 +176,27 @@ const Property: NextPage = () => {
       });
   };
 
+  const coverButtonClick = () => {
+    if (!property?.id) return;
+    if (selectedUrl == "" || !selectedUrl) return;
+
+    if (property.cover_url != selectedUrl) {
+      const formData = new FormData();
+      formData.append("cover_url", selectedUrl);
+      makeRequest(`me/properties/${property.id}/cover`, "PATCH", session?.user.access_token, formData)
+        .then(() => {
+          successNotification("The property's cover was set to the current image.", "Cover was set");
+        })
+        .catch(() => errorNotification("An unknown error occurred while setting this property's cover."));
+    } else {
+      makeRequest(`me/properties/${property.id}/cover`, "DELETE", session?.user.access_token)
+        .then(() => {
+          successNotification("The property's cover has been removed.", "Cover removed");
+        })
+        .catch(() => errorNotification("An unknown error occurred while removing this property's cover."));
+    }
+  };
+
   return (
     <>
       <Head>
@@ -193,7 +215,7 @@ const Property: NextPage = () => {
         <Group position="left" className="mt-4">
           <Button.Group>
             <Button
-              disabled={photos.length < 2}
+              disabled={photos.length < 2} // If it only has a photo, it's the cover
               onClick={openImages}
               variant="light"
               leftIcon={<IconPhoto size="1rem" className="-mr-1" />}
@@ -217,6 +239,21 @@ const Property: NextPage = () => {
               Blueprints
             </Button>
           </Button.Group>
+          <Button
+            disabled={photos.length < 2 && selectedUrl != ""} // If it only has a photo, it's the cover
+            color="yellow"
+            variant="default"
+            onClick={coverButtonClick}
+            leftIcon={
+              property.cover_url != selectedUrl ? (
+                <IconPhotoCheck size="1rem" className="-mb-0.5 -mr-1" />
+              ) : (
+                <IconPhotoX size="1rem" className="-mr-1" />
+              )
+            }
+          >
+            {property.cover_url != selectedUrl ? "Set as cover" : "Remove cover"}
+          </Button>
           <Button
             onClick={trashProperty}
             color="red"
