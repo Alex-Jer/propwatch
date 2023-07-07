@@ -44,7 +44,7 @@ export function DisplayProperties({ propData, isLoading, isError, activePage, se
         {renderProperties(properties)}
       </div>
 
-      {propData?.meta.last_page > 1 && (
+      {propData?.meta.last_page && propData?.meta.last_page > 1 && (
         <>
           <Pagination.Root value={activePage} onChange={setPage} total={propData?.meta.last_page ?? 1}>
             <Group spacing={5} position="center" className="mt-4">

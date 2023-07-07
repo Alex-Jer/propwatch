@@ -142,7 +142,7 @@ const TrashedProperties: NextPage = () => {
       </div>
 
       <div className="-mx-4 mb-4 border-b border-shark-700" />
-      {properties?.length && properties?.length > 0 ? (
+      {properties?.length && properties?.length > 4 ? (
         <>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
             {renderProperties(properties)}
@@ -163,8 +163,8 @@ const TrashedProperties: NextPage = () => {
           )}
         </>
       ) : (
-        <div className="flex h-96 flex-col items-center justify-center">
-          <h1 className="text-2xl font-semibold">Trash is empty.</h1>
+        <div className="flex h-5/6 flex-col items-center justify-center">
+          <h1 className="text-xl text-gray-500">Trash is empty.</h1>
         </div>
       )}
     </>
