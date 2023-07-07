@@ -142,20 +142,31 @@ const TrashedProperties: NextPage = () => {
       </div>
 
       <div className="-mx-4 mb-4 border-b border-shark-700" />
+      {properties?.length && properties?.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+            {renderProperties(properties)}
+          </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-        {renderProperties(properties)}
-      </div>
-
-      <Pagination.Root value={activePage} onChange={setPage} total={propData?.meta.last_page ?? 1}>
-        <Group spacing={5} position="center" className="mt-4">
-          <Pagination.First />
-          <Pagination.Previous />
-          <Pagination.Items />
-          <Pagination.Next />
-          <Pagination.Last />
-        </Group>
-      </Pagination.Root>
+          {propData?.meta.last_page > 1 && (
+            <>
+              <Pagination.Root value={activePage} onChange={setPage} total={propData?.meta.last_page ?? 1}>
+                <Group spacing={5} position="center" className="mt-4">
+                  <Pagination.First />
+                  <Pagination.Previous />
+                  <Pagination.Items />
+                  <Pagination.Next />
+                  <Pagination.Last />
+                </Group>
+              </Pagination.Root>
+            </>
+          )}
+        </>
+      ) : (
+        <div className="flex h-96 flex-col items-center justify-center">
+          <h1 className="text-2xl font-semibold">Trash is empty.</h1>
+        </div>
+      )}
     </>
   );
 };
