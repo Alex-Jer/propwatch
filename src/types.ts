@@ -16,6 +16,7 @@ export type Collection = {
   description: string;
   num_properties: number;
   tags: string[];
+  covers: string[];
 };
 
 export type CollectionWithProperties = {

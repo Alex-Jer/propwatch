@@ -30,7 +30,7 @@ const Collections: NextPage = () => {
           <Link href={`/collections/${collection.id}`} key={collection.id}>
             <CollectionCard
               key={collection.id}
-              image={"https://placehold.co/600x400"}
+              covers={collection.covers}
               title={collection.name}
               description={collection.description}
               tags={collection.tags}

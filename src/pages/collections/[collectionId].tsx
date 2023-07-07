@@ -1,3 +1,6 @@
+import { ActionIcon, Collapse, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { IconCaretDown, IconCaretUp } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
@@ -19,6 +22,8 @@ const Collection: NextPage = () => {
     elementId: String(collectionId ?? ""),
   });
 
+  const [descOpened, { toggle: toggleDesc }] = useDisclosure(false);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -30,6 +35,10 @@ const Collection: NextPage = () => {
   const { data: collection } = data;
 
   console.log("properties", data);
+
+  const TRIMMING_LENGTH = (window.innerWidth ?? 33) / 18;
+
+  const descriptionNeedsTrimming = collection?.description?.length > TRIMMING_LENGTH;
 
   const renderProperties = (properties: CollectionProperty[]) => {
     if (!properties) {
@@ -63,7 +72,29 @@ const Collection: NextPage = () => {
       </Head>
 
       <CardBackground className="pt-4">
-        <h1 className="pb-2">{collection?.name}</h1>
+        <h1>{collection?.name}</h1>
+        <div className="flex max-w-2xl items-center pb-3">
+          {descriptionNeedsTrimming ? (
+            <>
+              {!descOpened && <Text>{collection?.description?.substring(0, TRIMMING_LENGTH - 3) + "..."}</Text>}
+              <Collapse in={descOpened}>
+                <Text className="flex items-center">
+                  {collection?.description}
+                  <ActionIcon onClick={toggleDesc}>
+                    <IconCaretUp size="1.125rem" />
+                  </ActionIcon>
+                </Text>
+              </Collapse>
+              {!descOpened && (
+                <ActionIcon onClick={toggleDesc}>
+                  <IconCaretDown size="1.125rem" />
+                </ActionIcon>
+              )}
+            </>
+          ) : (
+            <Text>{collection?.description}</Text>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
           {renderProperties(collection.properties.data)}

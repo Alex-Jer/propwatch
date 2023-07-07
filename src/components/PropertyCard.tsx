@@ -2,7 +2,7 @@ import { Card, Text, Group, createStyles, getStylesRef, rem, Tooltip } from "@ma
 import { notifications } from "@mantine/notifications";
 import { IconArrowBackUp, IconCheck, IconTrash, IconX } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { makeRequest } from "~/lib/requestHelper";
 
 interface PropertyCardProps {
@@ -14,10 +14,40 @@ interface PropertyCardProps {
   refresh?: () => void;
 }
 
+export const errorNotification = (message: string, title = "Error") => {
+  notifications.show({
+    title,
+    message,
+    icon: <IconX size="1.1rem" />,
+    color: "red",
+  });
+};
+
+export const successNotification = (message: string, title = "Success") => {
+  notifications.show({
+    title,
+    message,
+    icon: <IconCheck size="1.1rem" />,
+    color: "teal",
+  });
+};
+
 export function PropertyCard({ image, title, author, id, trashButtons, refresh }: PropertyCardProps) {
   const { classes } = useStyles();
 
   const [isHovered, setIsHovered] = useState(false);
+
+  /*const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Windows Phone/i.test(navigator.userAgent)) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  }, []);*/
+
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -27,31 +57,17 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
     setIsHovered(false);
   };
 
+  const shouldDisplay = useMemo(() => {
+    return isFocused || isHovered /*|| isMobile*/;
+  }, [isHovered, isFocused /*, isMobile*/]);
+
   const { data: session } = useSession();
-
-  const errorNotification = (msg: string) => {
-    notifications.show({
-      title: "Error",
-      message: msg,
-      icon: <IconX size="1.1rem" />,
-      color: "red",
-    });
-  };
-
-  const successNotification = (msg: string) => {
-    notifications.show({
-      title: "Property added",
-      message: msg,
-      icon: <IconCheck size="1.1rem" />,
-      color: "teal",
-    });
-  };
 
   const restoreProperty = () => {
     if (!id) return;
     makeRequest(`me/properties/${id}/restore`, "PATCH", session?.user.access_token)
       .then(() => {
-        successNotification("Property restored!");
+        successNotification("The selected property has been restored!", "Property restored");
       })
       .catch((err) => {
         errorNotification("An unknown error occurred while restoring this property.");
@@ -66,8 +82,8 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
   const permanentlyDeleteProperty = () => {
     if (!id) return;
     makeRequest(`me/properties/${id}/permanent`, "DELETE", session?.user.access_token)
-      .then((res) => {
-        successNotification("Property permanently deleted!");
+      .then(() => {
+        successNotification("The selected property has been permanently deleted!", "Property permanently deleted");
       })
       .catch((err) => {
         errorNotification("An unknown error occurred while permanently deleting this property.");
@@ -85,7 +101,11 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
         <>
           <div className={classes.topButtons}>
             <Tooltip label="Restore" color="gray" withArrow>
-              <IconArrowBackUp onClick={restoreProperty} style={{ cursor: "pointer" }}></IconArrowBackUp>
+              <IconArrowBackUp
+                className="mr-4 md:mr-1"
+                onClick={restoreProperty}
+                style={{ cursor: "pointer" }}
+              ></IconArrowBackUp>
             </Tooltip>
             <Tooltip label="Permanently Delete" color="gray" withArrow>
               <IconTrash onClick={permanentlyDeleteProperty} style={{ cursor: "pointer" }}></IconTrash>
@@ -105,11 +125,13 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
       component="a"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
     >
       <div className={classes.image} style={{ backgroundImage: `url(${image})` }} />
       <div className={classes.overlay} />
       <div className={classes.content}>
-        {isHovered && renderTrashButtons(id, trashButtons)}
+        {shouldDisplay && renderTrashButtons(id, trashButtons)}
         <div>
           <Text size="lg" className={classes.title} weight={500}>
             {title}

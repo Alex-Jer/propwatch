@@ -14,6 +14,9 @@ import { useDisclosure } from "@mantine/hooks";
 import { Button, Drawer, Group } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
+import { IconTrash } from "@tabler/icons-react";
+import { makeRequest } from "~/lib/requestHelper";
+import { errorNotification, successNotification } from "~/components/PropertyCard";
 
 type MarkerIconComponent = FunctionComponent<SVGProps<SVGSVGElement>>;
 
@@ -132,6 +135,22 @@ const Property: NextPage = () => {
     );
   };
 
+  const trashProperty = () => {
+    if (!property?.id) return;
+    makeRequest(`me/properties/${property.id}`, "DELETE", session?.user.access_token)
+      .then(() => {
+        const sendSuccess = () => {
+          successNotification("This property has been sent to trash!", "Property deleted");
+        };
+        router.push("/properties").then(sendSuccess).catch(sendSuccess); //TODO: Should we redirect to trash?
+      })
+      .catch((err) => {
+        errorNotification("An unknown error occurred while deleting this property.");
+        //TODO
+        console.log("Error: ", err, " when trashing property.");
+      });
+  };
+
   return (
     <>
       <Head>
@@ -147,6 +166,14 @@ const Property: NextPage = () => {
         {/* TODO: Test Button */}
         <Group position="left" className="mt-4">
           <Button onClick={open}>Open Drawer</Button>
+          <Button
+            onClick={trashProperty}
+            color="red"
+            variant="light"
+            leftIcon={<IconTrash size="1rem" className="-mr-1" />}
+          >
+            Delete
+          </Button>
         </Group>
 
         <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
