@@ -27,6 +27,7 @@ import {
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useSidebarCollections, useTagsSidebar } from "~/hooks/useQueries";
 import type { SearchOptions, Collection, Tag } from "~/types";
 import { UserButton } from "./UserButton";
@@ -42,6 +43,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   const { classes } = useStyles();
   const theme = useMantineTheme();
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   const {
     data: colData,
@@ -78,27 +80,30 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
     { icon: IconMapSearch, url: "/properties/polygon", label: "Map search" },
   ];
 
-  const mainLinks = links.map((link) => (
-    <Link href={link.url} key={link.label}>
-      <UnstyledButton
-        key={link.label}
-        className={classes.mainLink}
-        onClick={() => {
-          setSearch({});
-        }}
-      >
-        <div className={classes.mainLinkInner}>
-          <link.icon size={20} className={classes.mainLinkIcon} stroke={1.5} />
-          <span>{link.label}</span>
-        </div>
-        {link.notifications && (
-          <Badge size="sm" variant="filled" className={classes.mainLinkBadge}>
-            {link.notifications}
-          </Badge>
-        )}
-      </UnstyledButton>
-    </Link>
-  ));
+  const mainLinks = links.map((link) => {
+    const isActive = router.pathname === link.url;
+    return (
+      <Link href={link.url} key={link.label}>
+        <UnstyledButton
+          key={link.label}
+          className={`${classes.mainLink} ${isActive ? classes.activeLink : ""}`}
+          onClick={() => {
+            setSearch({});
+          }}
+        >
+          <div className={classes.mainLinkInner}>
+            <link.icon size={20} className={classes.mainLinkIcon} stroke={1.5} />
+            <span>{link.label}</span>
+          </div>
+          {link.notifications && (
+            <Badge size="sm" variant="filled" className={classes.mainLinkBadge}>
+              {link.notifications}
+            </Badge>
+          )}
+        </UnstyledButton>
+      </Link>
+    );
+  });
 
   const collectionLinks = collections?.map((collection: Collection) => {
     const active = search.list == collection.id;
@@ -205,7 +210,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
           <Text size="xs" weight={500} color="dimmed">
             My Collections
           </Text>
-          <Tooltip color="gray"  label="Create collection" withArrow position="right">
+          <Tooltip color="gray" label="Create collection" withArrow position="right">
             <ActionIcon variant="default" size={18}>
               <IconPlus size="0.8rem" stroke={1.5} />
             </ActionIcon>
@@ -271,6 +276,15 @@ const useStyles = createStyles((theme) => ({
     "&:hover": {
       backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
       color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    },
+  },
+
+  activeLink: {
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+
+    "&:hover": {
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
     },
   },
 

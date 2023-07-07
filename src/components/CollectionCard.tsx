@@ -37,6 +37,8 @@ export function CollectionCard({ covers, description, title, tags, date }: Colle
           gridGap: "1px",
           width: "140px",
           height: "140px",
+          overflow: "hidden",
+          borderRadius: "4px",
         }}
       >
         {covers.map((coverUrl, index) => (
@@ -65,8 +67,8 @@ export function CollectionCard({ covers, description, title, tags, date }: Colle
   return (
     <Card radius={0} padding={0}>
       <Group noWrap spacing={0}>
-        <Image src={"https://placehold.co/400x400"} height={140} width={140} alt={title} className="flex-shrink-0" />
-        {/*<ThumbnailCollage covers={covers} />*/}
+        {/* <Image src={"https://placehold.co/400x400"} height={140} width={140} alt={title} className="flex-shrink-0" /> */}
+        <ThumbnailCollage covers={covers} />
 
         <div className={classes.body}>
           <Text className={classes.title} mb="xs">

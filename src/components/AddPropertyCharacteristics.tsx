@@ -1,4 +1,4 @@
-import { Alert, Button, CloseButton, createStyles, Divider } from "@mantine/core";
+import { Alert, Button, CloseButton, createStyles, Divider, Text } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { useState } from "react";
 import { useFieldArray, type UseFormWatch, type Control } from "react-hook-form";
@@ -53,6 +53,9 @@ export function AddPropertyCharacteristics({ control, watch }: AddPropertyCharac
             <Divider my="xl" />
             <div className="-mb-5 grid grid-cols-10 gap-4" style={{ minHeight: "60px" }}>
               <div className="col-span-3">
+                <Text size="sm" weight={500} className="mb-1">
+                  Type
+                </Text>
                 <SegmentedControl
                   name={`characteristics[${index}].type`}
                   control={control}

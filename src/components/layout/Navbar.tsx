@@ -26,6 +26,7 @@ import {
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useAllCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 import { UserButton } from "./UserButton";
@@ -40,6 +41,8 @@ export function NavbarDefault({ opened, setOpened }: Props) {
   const theme = useMantineTheme();
 
   const { data: session, status } = useSession();
+  const router = useRouter();
+
   const { data: colData, isLoading, isError } = useAllCollections({ session, status });
   const collections = colData?.data;
 
@@ -65,21 +68,24 @@ export function NavbarDefault({ opened, setOpened }: Props) {
     { icon: IconMapSearch, url: "/properties/polygon", label: "Map search" },
   ];
 
-  const mainLinks = links.map((link) => (
-    <Link href={link.url} key={link.label}>
-      <UnstyledButton key={link.label} className={classes.mainLink}>
-        <div className={classes.mainLinkInner}>
-          <link.icon size={20} className={classes.mainLinkIcon} stroke={1.5} />
-          <span>{link.label}</span>
-        </div>
-        {link.notifications && (
-          <Badge size="sm" variant="filled" className={classes.mainLinkBadge}>
-            {link.notifications}
-          </Badge>
-        )}
-      </UnstyledButton>
-    </Link>
-  ));
+  const mainLinks = links.map((link) => {
+    const isActive = router.pathname === link.url;
+    return (
+      <Link href={link.url} key={link.label}>
+        <UnstyledButton key={link.label} className={`${classes.mainLink} ${isActive ? classes.activeLink : ""}`}>
+          <div className={classes.mainLinkInner}>
+            <link.icon size={20} className={classes.mainLinkIcon} stroke={1.5} />
+            <span>{link.label}</span>
+          </div>
+          {link.notifications && (
+            <Badge size="sm" variant="filled" className={classes.mainLinkBadge}>
+              {link.notifications}
+            </Badge>
+          )}
+        </UnstyledButton>
+      </Link>
+    );
+  });
 
   const collectionLinks = collections?.map((collection: Collection) => (
     <Link href={`/collections/${collection.id}`} key={collection.id}>
@@ -179,6 +185,15 @@ const useStyles = createStyles((theme) => ({
     "&:hover": {
       backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
       color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    },
+  },
+
+  activeLink: {
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+
+    "&:hover": {
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
     },
   },
 
