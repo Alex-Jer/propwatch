@@ -102,7 +102,7 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
           <div className={classes.topButtons}>
             <Tooltip label="Restore" color="gray" withArrow>
               <IconArrowBackUp
-                className="mr-1"
+                className="mr-4 md:mr-1"
                 onClick={restoreProperty}
                 style={{ cursor: "pointer" }}
               ></IconArrowBackUp>
