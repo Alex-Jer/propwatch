@@ -44,15 +44,19 @@ export function DisplayProperties({ propData, isLoading, isError, activePage, se
         {renderProperties(properties)}
       </div>
 
-      <Pagination.Root value={activePage} onChange={setPage} total={propData?.meta.last_page ?? 1}>
-        <Group spacing={5} position="center" className="mt-4">
-          <Pagination.First />
-          <Pagination.Previous />
-          <Pagination.Items />
-          <Pagination.Next />
-          <Pagination.Last />
-        </Group>
-      </Pagination.Root>
+      {propData?.meta.last_page > 1 && (
+        <>
+          <Pagination.Root value={activePage} onChange={setPage} total={propData?.meta.last_page ?? 1}>
+            <Group spacing={5} position="center" className="mt-4">
+              <Pagination.First />
+              <Pagination.Previous />
+              <Pagination.Items />
+              <Pagination.Next />
+              <Pagination.Last />
+            </Group>
+          </Pagination.Root>
+        </>
+      )}
     </>
   );
 }
