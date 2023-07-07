@@ -225,6 +225,9 @@ export function AddPropertyOffers({ offers, addOffer, removeOffer, removeOffers,
           icon={<IconCurrencyEuro size="1.1rem" />}
           onChange={handlePriceChange}
           error={priceError}
+          min={0}
+          stepHoldDelay={500}
+          stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
         />
         <TextInput className="col-span-4" placeholder="URL" value={url} onChange={handleUrlChange} error={urlError} />
         <TextInput

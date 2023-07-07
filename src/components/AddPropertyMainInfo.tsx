@@ -164,6 +164,8 @@ export function AddPropertyMainInfo({ control, trigger, disabled }: AddPropertyM
           control={control}
           icon={<IconBathFilled size="1rem" />}
           min={0}
+          stepHoldDelay={500}
+          stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
           disabled={disabled}
         />
       </Group>
