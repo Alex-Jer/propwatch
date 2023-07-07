@@ -31,6 +31,7 @@ import { useRouter } from "next/router";
 import { useSidebarCollections, useTagsSidebar } from "~/hooks/useQueries";
 import type { SearchOptions, Collection, Tag } from "~/types";
 import { UserButton } from "./UserButton";
+import { useEffect, useRef } from "react";
 
 type Props = {
   opened: boolean;
@@ -59,6 +60,18 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   const isError = isErrorCollection || isErrorTags;
 
   const { query } = useRouter();
+
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    document.addEventListener("keydown", (event) => {
+      if (event.ctrlKey && event.key === "k" && searchInputRef.current) {
+        event.preventDefault();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        searchInputRef.current.focus();
+      }
+    });
+  }, []);
 
   //TODO: Better organization; Better error/loading processing; Better planning
 
@@ -205,6 +218,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
         }}
         defaultValue={query?.searchQuery ?? ""}
         mb="sm"
+        ref={searchInputRef}
       />
 
       <Navbar.Section className={classes.section}>
