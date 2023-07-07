@@ -30,6 +30,7 @@ import { useRouter } from "next/router";
 import { useAllCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 import { UserButton } from "./UserButton";
+import { useEffect, useRef } from "react";
 
 type Props = {
   opened: boolean;
@@ -45,6 +46,18 @@ export function NavbarDefault({ opened, setOpened }: Props) {
 
   const { data: colData, isLoading, isError } = useAllCollections({ session, status });
   const collections = colData?.data;
+
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    document.addEventListener("keydown", (event) => {
+      if (event.ctrlKey && event.key === "k" && searchInputRef.current) {
+        event.preventDefault();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        searchInputRef.current.focus();
+      }
+    });
+  }, []);
 
   //TODO: Better organization; Better error/loading processing; Better planning
 
@@ -120,6 +133,11 @@ export function NavbarDefault({ opened, setOpened }: Props) {
         rightSection={<Code className={classes.searchCode}>Ctrl + K</Code>}
         styles={{ rightSection: { pointerEvents: "none" } }}
         mb="sm"
+        onFocus={() => {
+          //HACK: redirect to search page
+          void router.push("/properties");
+        }}
+        ref={searchInputRef}
       />
 
       <Navbar.Section className={classes.section}>
