@@ -45,13 +45,15 @@ const useStyles = createStyles((theme) => ({
 type CarouselProps = {
   images: { url: string }[];
   setSelectedUrl: (url: string) => void;
+  setPhotoIndex: (index: number) => void;
 };
 
-export function MainCarousel({ images, setSelectedUrl }: CarouselProps) {
+export function MainCarousel({ images, setSelectedUrl, setPhotoIndex }: CarouselProps) {
   const { classes } = useStyles();
 
   const handleSlideChange = (newIndex: number) => {
     setSelectedUrl(images[newIndex]?.url ?? "");
+    setPhotoIndex(newIndex);
   };
 
   const slides = images?.map((image) => (

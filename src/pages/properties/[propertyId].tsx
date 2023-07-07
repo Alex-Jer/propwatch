@@ -38,16 +38,23 @@ const Property: NextPage = () => {
   const { data: property, isLoading, isError } = useProperty({ session, status, elementId: String(propertyId ?? "") });
 
   const [coverUrl, setCoverUrl] = useState("");
-  const [selectedUrl, setSelectedUrl] = useState("");
+  const [selectedUrl, setSelectedUrl] = useState(property?.cover_url);
+  const [photoIndex, setPhotoIndex] = useState(0);
   const [imagesOpened, { open: openImages, close: closeImages }] = useDisclosure(false);
   const [videosOpened, { open: openVideos, close: closeVideos }] = useDisclosure(false);
   const [blueprintsOpened, { open: openBlueprints, close: closeBlueprints }] = useDisclosure(false);
 
+  const photos = property?.media?.photos;
+
+  const [isCurrentCover, setIsCurrentCover] = useState(false);
+
   useEffect(() => {
     if (!isLoading && !isError && property) {
+      if ((selectedUrl == "" || !selectedUrl) && photos && photos[0]) setSelectedUrl(photos[0].url);
+      setIsCurrentCover(property?.cover_url != selectedUrl || !property?.cover_url);
       setCoverUrl(property.cover_url);
     }
-  }, [isLoading, isError, property]);
+  }, [isLoading, isError, property, selectedUrl, photos, isCurrentCover, setIsCurrentCover]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -57,7 +64,8 @@ const Property: NextPage = () => {
     return <div>Error loading property.</div>;
   }
 
-  const photos = property?.media?.photos;
+  if (!photos) return <div>Error loading property.</div>;
+
   const videos = property?.media?.videos;
   const blueprints = property?.media?.blueprints;
   const coordinates = property?.address?.coordinates;
@@ -78,12 +86,12 @@ const Property: NextPage = () => {
   };
 
   const renderCover = () => {
-    if (coverUrl == null) return <div>Loading...</div>;
+    if (photos?.length == 0) return <div>Loading...</div>;
     return (
       <>
         {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-3"> */}
         {/* <span onClick={open}> */}
-        <MainCarousel images={photos} setSelectedUrl={setSelectedUrl} />
+        <MainCarousel images={photos} setSelectedUrl={setSelectedUrl} setPhotoIndex={setPhotoIndex} />
         {/* </span> */}
         {/* </div> */}
       </>
@@ -182,15 +190,20 @@ const Property: NextPage = () => {
 
     if (property.cover_url != selectedUrl) {
       const formData = new FormData();
-      formData.append("cover_url", selectedUrl);
+      const newCover = selectedUrl;
+      formData.append("index", photoIndex.toString());
       makeRequest(`me/properties/${property.id}/cover`, "PATCH", session?.user.access_token, formData)
         .then(() => {
-          successNotification("The property's cover was set to the current image.", "Cover was set");
+          property.cover_url = newCover;
+          setIsCurrentCover(property?.cover_url != selectedUrl || !property?.cover_url); //HACK: useEffect wasn't enough for some reason
+          successNotification("The property's cover was set to the current image.", "Cover set");
         })
         .catch(() => errorNotification("An unknown error occurred while setting this property's cover."));
     } else {
       makeRequest(`me/properties/${property.id}/cover`, "DELETE", session?.user.access_token)
         .then(() => {
+          property.cover_url = "NULL"; //HACK: Ideally this would be null
+          setIsCurrentCover(property?.cover_url != selectedUrl || !property?.cover_url); //HACK: useEffect wasn't enough for some reason
           successNotification("The property's cover has been removed.", "Cover removed");
         })
         .catch(() => errorNotification("An unknown error occurred while removing this property's cover."));
@@ -245,14 +258,14 @@ const Property: NextPage = () => {
             variant="default"
             onClick={coverButtonClick}
             leftIcon={
-              property.cover_url != selectedUrl ? (
+              isCurrentCover ? (
                 <IconPhotoCheck size="1rem" className="-mb-0.5 -mr-1" />
               ) : (
-                <IconPhotoX size="1rem" className="-mr-1" />
+                <IconPhotoX size="1rem" className="-mb-0.5 -mr-1" />
               )
             }
           >
-            {property.cover_url != selectedUrl ? "Set as cover" : "Remove cover"}
+            {isCurrentCover ? "Set as cover" : "Remove cover"}
           </Button>
           <Button
             onClick={trashProperty}
