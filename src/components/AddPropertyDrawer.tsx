@@ -61,31 +61,13 @@ const schema = z.object({
   characteristics: z.array(
     z
       .object({
-        name: z
-          .string()
-          .min(1, { message: "Characteristic name must be at least 1 character long" })
-          .max(30, { message: "Characteristic name must be at most 30 characters long" }),
+        name: z.string().max(30, { message: "Characteristic name must be at most 30 characters long" }),
         type: z.enum(["numerical", "textual"]),
-        value: z
-          .string()
-          .min(1, { message: "Characteristic value must be at least 1 character long" })
-          .max(200, { message: "Characteristic value must be at most 200 characters long" }),
+        value: z.string().max(200, { message: "Characteristic value must be at most 200 characters long" }),
       })
-      .refine(
-        (value) => {
-          console.log(value.type);
-          if (value.type === "numerical") {
-            console.log(!isNaN(Number(value.value)));
-            return !isNaN(Number(value.value));
-          }
-          return true;
-        },
-        { message: "Characteristic value must be a number" }
-      )
       .optional()
       .nullable()
   ),
-  /* ADDRESS */
   full_address: z
     .string()
     .nonempty({ message: "Address is required" })
@@ -222,9 +204,13 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     });
 
     data.characteristics.forEach((characteristic, index) => {
-      appendIfNotNull(`characteristics[${index}][name]`, characteristic.name);
-      appendIfNotNull(`characteristics[${index}][type]`, characteristic.type);
-      appendIfNotNull(`characteristics[${index}][value]`, characteristic.value);
+      if (characteristic?.name === "" || characteristic?.value === "") {
+        return;
+      }
+
+      appendIfNotNull(`characteristics[${index}][name]`, characteristic?.name);
+      appendIfNotNull(`characteristics[${index}][type]`, characteristic?.type);
+      appendIfNotNull(`characteristics[${index}][value]`, characteristic?.value);
     });
 
     offers.forEach((offer, index) => {
