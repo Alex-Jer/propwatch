@@ -3,6 +3,7 @@ import { createStyles, Card, Image, Text, Group, Badge } from "@mantine/core";
 const useStyles = createStyles((theme) => ({
   title: {
     fontWeight: 700,
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     lineHeight: 1.2,
   },
