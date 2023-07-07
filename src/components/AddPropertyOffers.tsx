@@ -242,7 +242,7 @@ export function AddPropertyOffers({ offers, addOffer, removeOffer, removeOffers,
         </Button>
       </div>
       {offers?.length === 0 ? (
-        <div className="my-4 text-center text-gray-500">
+        <div className="mb-8 mt-4 text-center text-gray-500">
           No offers added yet. Click on the <strong>Add</strong> button to add a new offer.
         </div>
       ) : (
