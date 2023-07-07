@@ -14,19 +14,19 @@ interface PropertyCardProps {
   refresh?: () => void;
 }
 
-export const errorNotification = (msg: string) => {
+export const errorNotification = (message: string, title = "Error") => {
   notifications.show({
-    title: "Error",
-    message: msg,
+    title,
+    message,
     icon: <IconX size="1.1rem" />,
     color: "red",
   });
 };
 
-export const successNotification = (msg: string) => {
+export const successNotification = (message: string, title = "Success") => {
   notifications.show({
-    title: "Property added",
-    message: msg,
+    title,
+    message,
     icon: <IconCheck size="1.1rem" />,
     color: "teal",
   });
@@ -67,7 +67,7 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
     if (!id) return;
     makeRequest(`me/properties/${id}/restore`, "PATCH", session?.user.access_token)
       .then(() => {
-        successNotification("Property restored!");
+        successNotification("The selected property has been restored!", "Property restored");
       })
       .catch((err) => {
         errorNotification("An unknown error occurred while restoring this property.");
@@ -83,7 +83,7 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
     if (!id) return;
     makeRequest(`me/properties/${id}/permanent`, "DELETE", session?.user.access_token)
       .then(() => {
-        successNotification("Property permanently deleted!");
+        successNotification("The selected property has been permanently deleted!", "Property permanently deleted");
       })
       .catch((err) => {
         errorNotification("An unknown error occurred while permanently deleting this property.");

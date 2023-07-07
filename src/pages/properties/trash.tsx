@@ -42,7 +42,7 @@ const TrashedProperties: NextPage = () => {
   const restoreAll = () => {
     makeRequest(`me/properties/trashed/restore`, "PATCH", session?.user.access_token)
       .then(() => {
-        successNotification("All properties were restored!");
+        successNotification("All trashed properties have been restored!", "All properties restored");
       })
       .catch((err) => {
         errorNotification("An unknown error occurred while restoring this property.");
@@ -57,7 +57,7 @@ const TrashedProperties: NextPage = () => {
   const emptyTrash = () => {
     makeRequest(`me/properties/trashed`, "DELETE", session?.user.access_token)
       .then(() => {
-        successNotification("Trash has been emptied!");
+        successNotification("All trashed properties have been permanently deleted!", "Trash emptied");
       })
       .catch((err) => {
         errorNotification("An unknown error occurred while emptying the trash.");
