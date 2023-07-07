@@ -3,7 +3,7 @@ import { useDisclosure, useInputState } from "@mantine/hooks";
 import { type ChangeEventHandler, useState, useEffect } from "react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { type Offer } from "~/types";
-import { IconTrash } from "@tabler/icons-react";
+import { IconCurrencyEuro, IconLink, IconTrash } from "@tabler/icons-react";
 import useOffersStore from "~/hooks/useOffersStore";
 import { ConfirmationModal } from "./ConfirmationModal";
 
@@ -37,7 +37,7 @@ export function AddPropertyOffers() {
     },
     {
       accessor: "price",
-      title: "Price",
+      title: "Price (€)",
       width: 100,
       sortable: true,
     },
@@ -208,11 +208,19 @@ export function AddPropertyOffers() {
         <NumberInput
           className="col-span-2"
           placeholder="Price"
+          icon={<IconCurrencyEuro size="1.1rem" />}
           value={price}
           onChange={handlePriceChange}
           error={priceError}
         />
-        <TextInput className="col-span-4" placeholder="URL" value={url} onChange={handleUrlChange} error={urlError} />
+        <TextInput
+          className="col-span-4"
+          placeholder="URL"
+          icon={<IconLink size="1.1rem" />}
+          value={url}
+          onChange={handleUrlChange}
+          error={urlError}
+        />
         <TextInput
           className="col-span-3"
           placeholder="Designation"
