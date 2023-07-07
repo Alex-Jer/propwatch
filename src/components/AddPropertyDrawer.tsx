@@ -302,7 +302,17 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
               /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
               onSubmit={handleSubmit(
                 (data: FormSchemaType) => addProperty(data),
-                (error) => console.log({ error })
+                (error) => {
+                  console.log({ error });
+                  setStepperActive(0);
+                  notifications.show({
+                    title: "Error",
+                    message: "Please fill in the required fields or fix the errors.",
+                    icon: <IconX size="1.1rem" />,
+                    color: "red",
+                    autoClose: 10000,
+                  });
+                }
               )}
             >
               <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">

@@ -50,8 +50,8 @@ export function AddPropertyCharacteristics({ control, watch }: AddPropertyCharac
 
         return (
           <div key={field.id} onMouseEnter={() => setHoveredIndex(index)} onMouseLeave={() => setHoveredIndex(-1)}>
-            <Divider my="xl" />
-            <div className="-mb-5 grid grid-cols-10 gap-4" style={{ minHeight: "60px" }}>
+            <Divider mt="xl" mb="xs" />
+            <div className=" grid grid-cols-10 gap-4" style={{ minHeight: "60px" }}>
               <div className="col-span-3">
                 <Text size="sm" weight={500} className="mb-1">
                   Type
@@ -67,21 +67,17 @@ export function AddPropertyCharacteristics({ control, watch }: AddPropertyCharac
               <TextInput
                 className="col-span-4"
                 name={`characteristics[${index}].name`}
+                label="Name"
                 control={control}
-                placeholder="Name"
-                /* value={description} */
-                /* onChange={handleDescriptionChange} */
-                /* error={descriptionError} */
+                placeholder="Distance to the beach (Km)"
               />
               <TextInput
                 className="col-span-3"
                 name={`characteristics[${index}].value`}
+                label="Value"
                 control={control}
-                placeholder="Value"
+                placeholder="3.5"
                 type={isTextual ? "text" : "number"}
-                /* value={description} */
-                /* onChange={handleDescriptionChange} */
-                /* error={descriptionError} */
               />
             </div>
             {index > 0 && (
