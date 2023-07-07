@@ -14,6 +14,24 @@ interface PropertyCardProps {
   refresh?: () => void;
 }
 
+export const errorNotification = (msg: string) => {
+  notifications.show({
+    title: "Error",
+    message: msg,
+    icon: <IconX size="1.1rem" />,
+    color: "red",
+  });
+};
+
+export const successNotification = (msg: string) => {
+  notifications.show({
+    title: "Property added",
+    message: msg,
+    icon: <IconCheck size="1.1rem" />,
+    color: "teal",
+  });
+};
+
 export function PropertyCard({ image, title, author, id, trashButtons, refresh }: PropertyCardProps) {
   const { classes } = useStyles();
 
@@ -28,24 +46,6 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
   };
 
   const { data: session } = useSession();
-
-  const errorNotification = (msg: string) => {
-    notifications.show({
-      title: "Error",
-      message: msg,
-      icon: <IconX size="1.1rem" />,
-      color: "red",
-    });
-  };
-
-  const successNotification = (msg: string) => {
-    notifications.show({
-      title: "Property added",
-      message: msg,
-      icon: <IconCheck size="1.1rem" />,
-      color: "teal",
-    });
-  };
 
   const restoreProperty = () => {
     if (!id) return;
