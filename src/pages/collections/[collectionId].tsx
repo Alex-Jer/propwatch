@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Collapse, Group, Text } from "@mantine/core";
+import { ActionIcon, Collapse, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCaretDown, IconCaretUp } from "@tabler/icons-react";
 import { type NextPage } from "next";
