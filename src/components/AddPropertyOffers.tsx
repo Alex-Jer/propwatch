@@ -121,6 +121,14 @@ export function AddPropertyOffers({ offers, addOffer, removeOffer, removeOffers,
       return false;
     }
 
+    try {
+      new URL(url);
+    } catch (_) {
+      setUrlError("URL is not valid");
+      setIsAddDisabled(true);
+      return false;
+    }
+
     setUrlError("");
 
     if (priceError === "" && urlError === "" && descriptionError === "") {
