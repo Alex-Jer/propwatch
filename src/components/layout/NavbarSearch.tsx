@@ -58,6 +58,8 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   const isLoading = isLoadingCollections || isLoadingTags;
   const isError = isErrorCollection || isErrorTags;
 
+  const { query } = useRouter();
+
   //TODO: Better organization; Better error/loading processing; Better planning
 
   if (isLoading) {
@@ -198,6 +200,10 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
         rightSectionWidth={70}
         rightSection={<Code className={classes.searchCode}>Ctrl + K</Code>}
         styles={{ rightSection: { pointerEvents: "none" } }}
+        onChange={(event) => {
+          if (!!event.target) setSearch({ ...search, query: event.currentTarget.value });
+        }}
+        defaultValue={query?.searchQuery ?? ""}
         mb="sm"
       />
 
