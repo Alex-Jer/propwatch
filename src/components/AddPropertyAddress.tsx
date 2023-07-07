@@ -1,6 +1,6 @@
 import { useInputState } from "@mantine/hooks";
 import { useSession } from "next-auth/react";
-import { type UseFormResetField, type Control } from "react-hook-form";
+import { type UseFormResetField, type Control, type UseFormTrigger } from "react-hook-form";
 import { useAdms, useAdms2, useAdms3 } from "~/hooks/useQueries";
 import { type AdministrativeDivision, type SelectOption } from "~/types";
 import { type FormSchemaType } from "./AddPropertyDrawer";
@@ -10,11 +10,12 @@ import { IconTag, IconWorldLatitude, IconWorldLongitude } from "@tabler/icons-re
 
 type AddPropertyAddressProps = {
   control: Control<FormSchemaType>;
+  trigger?: UseFormTrigger<FormSchemaType>;
   resetField: UseFormResetField<FormSchemaType>;
   disabled?: boolean;
 };
 
-export function AddPropertyAddress({ control, resetField, disabled }: AddPropertyAddressProps) {
+export function AddPropertyAddress({ control, trigger, resetField, disabled }: AddPropertyAddressProps) {
   const { data: session, status } = useSession();
 
   const [selectedAdm1, setSelectedAdm1] = useInputState("");
@@ -62,6 +63,7 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
         data-autofocus
         required
         disabled={disabled}
+        onBlur={() => trigger && void trigger("full_address")}
       />
       {!disabled && (
         <Group className="mb-3" position="apart" grow>
@@ -122,6 +124,7 @@ export function AddPropertyAddress({ control, resetField, disabled }: AddPropert
           control={control}
           icon={<IconTag size="1rem" />}
           disabled={disabled}
+          onBlur={() => trigger && void trigger("postal_code")}
         />
         <NumberInput
           name="latitude"

@@ -2,7 +2,7 @@ import { Group, Loader } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import { IconBathFilled } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
-import { type Control } from "react-hook-form";
+import { type UseFormTrigger, type Control } from "react-hook-form";
 import { TextInput, Select, MultiSelect, NumberInput, Rating, Textarea } from "react-hook-form-mantine";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
 import { type SelectOption } from "~/types";
@@ -41,10 +41,11 @@ const currentStatuses = [
 
 type AddPropertyMainInfoProps = {
   control: Control<FormSchemaType>;
+  trigger?: UseFormTrigger<FormSchemaType>;
   disabled?: boolean;
 };
 
-export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoProps) {
+export function AddPropertyMainInfo({ control, trigger, disabled }: AddPropertyMainInfoProps) {
   const { data: session, status } = useSession();
   const { data: tagsData, isLoading: tagsIsLoading } = useTags({ session, status });
   const { data: collectionsData, isLoading: collectionsIsLoading } = useAllCollections({ session, status });
@@ -79,6 +80,7 @@ export function AddPropertyMainInfo({ control, disabled }: AddPropertyMainInfoPr
         withAsterisk
         data-autofocus
         required
+        onBlur={() => trigger && void trigger("title")}
         disabled={disabled}
       />
       <Textarea

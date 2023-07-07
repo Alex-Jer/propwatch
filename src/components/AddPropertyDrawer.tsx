@@ -78,6 +78,9 @@ const schema = z.object({
     .refine((value) => value === "" || value.length >= 4, {
       message: "Postal Code must be at least 4 characters long",
     })
+    .refine((value) => value === "" || /^[0-9-]*$/.test(value), {
+      message: "Postal Code can only contain numbers and dashes",
+    })
     .optional()
     .nullable(),
   latitude: z
@@ -136,7 +139,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const { data: session } = useSession();
   const { offers, clearOffers } = useOffersStore();
 
-  const { control, handleSubmit, reset, resetField, watch } = useForm<FormSchemaType>({
+  const { control, handleSubmit, reset, resetField, watch, trigger } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
   });
@@ -315,11 +318,11 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
             >
               <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
                 <Stepper.Step label="Main Info">
-                  <AddPropertyMainInfo control={control} />
+                  <AddPropertyMainInfo control={control} trigger={trigger} />
                 </Stepper.Step>
 
                 <Stepper.Step label="Address">
-                  <AddPropertyAddress control={control} resetField={resetField} />
+                  <AddPropertyAddress control={control} trigger={trigger} resetField={resetField} />
                 </Stepper.Step>
 
                 <Stepper.Step label="Characteristics">
