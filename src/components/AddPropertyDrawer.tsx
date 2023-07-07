@@ -131,20 +131,18 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
-
-  const nextStep = () => setStepperActive((current) => (current < TOTAL_STEPS ? current + 1 : current));
-  const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
-
-  const { data: session } = useSession();
-
   const addPropertyButtonRef = useRef(null);
 
+  const { data: session } = useSession();
   const { offers, clearOffers } = useOffersStore();
 
   const { control, handleSubmit, reset, resetField, watch } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
   });
+
+  const nextStep = () => setStepperActive((current) => (current < TOTAL_STEPS ? current + 1 : current));
+  const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
 
   const resetForm = () => {
     setAddPropertyCounter(0);
