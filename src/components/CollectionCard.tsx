@@ -66,7 +66,7 @@ export function CollectionCard({ covers, description, title, tags, date }: Colle
     <Card radius={0} padding={0}>
       <Group noWrap spacing={0}>
         <Image src={"https://placehold.co/400x400"} height={140} width={140} alt={title} className="flex-shrink-0" />
-        <ThumbnailCollage covers={covers} />
+        {/*<ThumbnailCollage covers={covers} />*/}
 
         <div className={classes.body}>
           <Text className={classes.title} mb="xs">
