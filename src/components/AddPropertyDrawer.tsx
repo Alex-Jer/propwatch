@@ -174,7 +174,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     appendIfNotNull("useful_area", data.useful_area);
     appendIfNotNull("wc", data.wc);
     appendIfNotNull("current_price", data.current_price);
-    appendIfNotNull("rating", data.rating);
+    appendIfNotNull("rating", data.rating ? data.rating * 2 : null);
     appendIfNotNull("address[full_address]", data.full_address);
     appendIfNotNull("address[adm1_id]", data.adm1_id);
     appendIfNotNull("address[adm2_id]", data.adm2_id);
