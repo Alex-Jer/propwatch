@@ -192,13 +192,28 @@ const Property: NextPage = () => {
         {/* TODO: Test Button */}
         <Group position="left" className="mt-4">
           <Button.Group>
-            <Button onClick={openImages} variant="light" leftIcon={<IconPhoto size="1rem" className="-mr-1" />}>
+            <Button
+              disabled={photos.length < 2}
+              onClick={openImages}
+              variant="light"
+              leftIcon={<IconPhoto size="1rem" className="-mr-1" />}
+            >
               Images
             </Button>
-            <Button onClick={openVideos} variant="light" leftIcon={<IconVideo size="1rem" className="-mr-1" />}>
+            <Button
+              disabled={videos.length == 0}
+              onClick={openVideos}
+              variant="light"
+              leftIcon={<IconVideo size="1rem" className="-mr-1" />}
+            >
               Videos
             </Button>
-            <Button onClick={openBlueprints} variant="light" leftIcon={<IconWallpaper size="1rem" className="-mr-1" />}>
+            <Button
+              disabled={blueprints.length == 0}
+              onClick={openBlueprints}
+              variant="light"
+              leftIcon={<IconWallpaper size="1rem" className="-mr-1" />}
+            >
               Blueprints
             </Button>
           </Button.Group>
