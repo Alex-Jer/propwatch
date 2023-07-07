@@ -60,7 +60,7 @@ export function ConfirmationModal({
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title={<b>{title}</b>} centered zIndex={99}>
+      <Modal opened={opened} onClose={close} title={<b>{title}</b>} centered zIndex={999}>
         <Group position="left">
           <p className="text-gray-400">{text}</p>
         </Group>

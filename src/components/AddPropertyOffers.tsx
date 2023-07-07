@@ -3,8 +3,7 @@ import { useDisclosure, useInputState } from "@mantine/hooks";
 import { type ChangeEventHandler, useState, useEffect } from "react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { type Offer } from "~/types";
-import { IconCurrencyEuro, IconLink, IconTrash } from "@tabler/icons-react";
-import useOffersStore from "~/hooks/useOffersStore";
+import { IconCurrencyEuro, IconTrash } from "@tabler/icons-react";
 import { ConfirmationModal } from "./ConfirmationModal";
 
 const listingTypes = [
@@ -12,7 +11,15 @@ const listingTypes = [
   { label: "Rent", value: "rent" },
 ];
 
-export function AddPropertyOffers() {
+type AddPropertyOffersProps = {
+  offers: Offer[];
+  addOffer: (offer: Offer) => void;
+  removeOffer: (offer: Offer) => void;
+  removeOffers: (offers: Offer[]) => void;
+  sortOffers: (offers: Offer[], sortStatus: DataTableSortStatus) => void;
+};
+
+export function AddPropertyOffers({ offers, addOffer, removeOffer, removeOffers, sortOffers }: AddPropertyOffersProps) {
   const [listingType, setListingType] = useState("sale");
   const [price, setPrice] = useInputState<number | "">("");
   const [priceError, setPriceError] = useState("");
@@ -24,8 +31,6 @@ export function AddPropertyOffers() {
   const [selectedOffers, setSelectedOffers] = useState<Offer[]>([]);
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: "id", direction: "asc" });
   const [modalOpened, { open, close }] = useDisclosure(false);
-
-  const { offers, totalOffers, addOffer, removeOffer, removeOffers, sortOffers } = useOffersStore();
 
   const columns = [
     {
@@ -116,6 +121,14 @@ export function AddPropertyOffers() {
       return false;
     }
 
+    try {
+      new URL(url);
+    } catch (_) {
+      setUrlError("URL is not valid");
+      setIsAddDisabled(true);
+      return false;
+    }
+
     setUrlError("");
 
     if (priceError === "" && urlError === "" && descriptionError === "") {
@@ -168,9 +181,9 @@ export function AddPropertyOffers() {
     }
 
     const newOffer: Offer = {
-      id: totalOffers + 1,
+      id: offers.length + 1,
       listing_type: listingType,
-      price: Number(price),
+      price: price === "" ? undefined : Number(price),
       url,
       description,
     };
@@ -194,7 +207,7 @@ export function AddPropertyOffers() {
         text="Are you sure you want to delete the {selectedOffers.length} selected offers?"
         yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
-      ></ConfirmationModal>
+      />
 
       <div className="mt-4 grid grid-cols-12 gap-4" style={{ minHeight: "60px" }}>
         <div className="col-span-2">
@@ -208,19 +221,15 @@ export function AddPropertyOffers() {
         <NumberInput
           className="col-span-2"
           placeholder="Price"
-          icon={<IconCurrencyEuro size="1.1rem" />}
           value={price}
+          icon={<IconCurrencyEuro size="1.1rem" />}
           onChange={handlePriceChange}
           error={priceError}
+          min={0}
+          stepHoldDelay={500}
+          stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
         />
-        <TextInput
-          className="col-span-4"
-          placeholder="URL"
-          icon={<IconLink size="1.1rem" />}
-          value={url}
-          onChange={handleUrlChange}
-          error={urlError}
-        />
+        <TextInput className="col-span-4" placeholder="URL" value={url} onChange={handleUrlChange} error={urlError} />
         <TextInput
           className="col-span-3"
           placeholder="Designation"
@@ -232,7 +241,7 @@ export function AddPropertyOffers() {
           Add
         </Button>
       </div>
-      {offers.length === 0 ? (
+      {offers?.length === 0 ? (
         <div className="my-4 text-center text-gray-500">
           No offers added yet. Click on the <strong>Add</strong> button to add a new offer.
         </div>
