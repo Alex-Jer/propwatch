@@ -114,7 +114,7 @@ const TrashedProperties: NextPage = () => {
         opened={emptyTrashOpened}
         close={closeEmptyTrash}
         yesFunction={emptyTrash}
-        yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrashX size="1rem" /> }}
+        yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrashX size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
         text="Are you sure you want to permanently delete all the properties in the trash?"
       />
