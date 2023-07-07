@@ -175,7 +175,7 @@ export function AddPropertyOffers({ offers, addOffer, removeOffer, removeOffers,
     const newOffer: Offer = {
       id: offers.length + 1,
       listing_type: listingType,
-      price: Number(price),
+      price: price === "" ? undefined : Number(price),
       url,
       description,
     };
