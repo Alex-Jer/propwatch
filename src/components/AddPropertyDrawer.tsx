@@ -164,8 +164,8 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   };
 
   const handleStepChange = (nextStep: number) => {
-    const isOutOfBound = nextStep < 0 || nextStep > TOTAL_STEPS;
-    if (isOutOfBound) return;
+    const isOutOfBounds = nextStep < 0 || nextStep > TOTAL_STEPS;
+    if (isOutOfBounds) return;
     setStepperActive(nextStep);
   };
 
@@ -245,7 +245,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     return makeRequest("me/properties", "POST", session?.user.access_token, formData) as Promise<PropertyResponse>;
   };
 
-  const { mutate } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: addProperty,
     onSuccess: () => {
       close();
@@ -365,9 +365,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
               </Stepper>
 
               <div className="flex justify-end space-x-2">
-                <Button variant="default" onClick={resetForm}>
-                  Reset
-                </Button>
                 <Button
                   variant="default"
                   onClick={() => handleStepChange(stepperActive - 1)}
@@ -375,13 +372,11 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 >
                   Back
                 </Button>
-                <Button
-                  type={stepperActive === TOTAL_STEPS ? "submit" : "button"}
-                  onClick={() => handleStepChange(stepperActive + 1)}
-                  // TODO:
-                  /* loading={isLoading} */
-                >
-                  {stepperActive === TOTAL_STEPS ? "Add Property" : "Next"}
+                <Button onClick={() => handleStepChange(stepperActive + 1)} disabled={stepperActive === TOTAL_STEPS}>
+                  Next
+                </Button>
+                <Button type="submit" loading={isLoading} disabled={stepperActive !== TOTAL_STEPS}>
+                  Add Property
                 </Button>
               </div>
             </form>
