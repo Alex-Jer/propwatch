@@ -1,8 +1,9 @@
-import { Group, Loader } from "@mantine/core";
+import { ActionIcon, Group, Loader, Text } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
-import { IconBathFilled } from "@tabler/icons-react";
+import { IconArrowBack, IconBathFilled } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
-import { type UseFormTrigger, type Control } from "react-hook-form";
+import { useState } from "react";
+import { type UseFormTrigger, type Control, type UseFormResetField } from "react-hook-form";
 import { TextInput, Select, MultiSelect, NumberInput, Rating, Textarea } from "react-hook-form-mantine";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
 import { type SelectOption } from "~/types";
@@ -43,14 +44,16 @@ type AddPropertyMainInfoProps = {
   control: Control<FormSchemaType>;
   trigger?: UseFormTrigger<FormSchemaType>;
   disabled?: boolean;
+  resetField?: UseFormResetField<FormSchemaType>;
 };
 
-export function AddPropertyMainInfo({ control, trigger, disabled }: AddPropertyMainInfoProps) {
+export function AddPropertyMainInfo({ control, trigger, disabled, resetField }: AddPropertyMainInfoProps) {
   const { data: session, status } = useSession();
   const { data: tagsData, isLoading: tagsIsLoading } = useTags({ session, status });
   const { data: collectionsData, isLoading: collectionsIsLoading } = useAllCollections({ session, status });
 
   const [selectedPropertyType, setSelectedPropertyType] = useInputState("");
+  const [isUndoRatingVisible, setIsUndoRatingVisible] = useState(false);
 
   let tags = [] as SelectOption[];
   let collections = [] as SelectOption[];
@@ -203,11 +206,26 @@ export function AddPropertyMainInfo({ control, trigger, disabled }: AddPropertyM
           disabled={disabled}
         />
       </Group>
-      <Group>
-        {/*TODO: style the label */}
-        <div className="mb-2 flex items-center space-x-2">
-          <span> Rating: </span>
-          <Rating name="rating" fractions={2} control={control} readOnly={disabled} />
+      <Text size="sm" weight={600}>
+        Rating
+      </Text>
+      <Group className="-ml-px -mt-1">
+        <Rating
+          name="rating"
+          fractions={2}
+          control={control}
+          readOnly={disabled}
+          onChange={() => setIsUndoRatingVisible(true)}
+        />
+        <div className={`-ml-3 ${isUndoRatingVisible ? "" : "invisible"}`}>
+          <ActionIcon
+            onClick={() => {
+              resetField && resetField("rating");
+              setIsUndoRatingVisible(false);
+            }}
+          >
+            <IconArrowBack size="1rem" />
+          </ActionIcon>
         </div>
       </Group>
     </div>

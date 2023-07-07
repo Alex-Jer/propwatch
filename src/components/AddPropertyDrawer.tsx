@@ -320,7 +320,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
             >
               <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
                 <Stepper.Step label="Main Info">
-                  <AddPropertyMainInfo control={control} trigger={trigger} />
+                  <AddPropertyMainInfo control={control} trigger={trigger} resetField={resetField} />
                 </Stepper.Step>
 
                 <Stepper.Step label="Address">
