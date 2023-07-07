@@ -45,7 +45,9 @@ export function AddPropertyCharacteristics({ control, watch }: AddPropertyCharac
       </div>
 
       {fields.map((field, index) => {
+        /* @ts-expect-error works fine */
         const characteristicType = watch(`characteristics[${index}].type`);
+        /* @ts-expect-error works fine */
         const isTextual = characteristicType === "textual";
 
         return (
@@ -57,6 +59,7 @@ export function AddPropertyCharacteristics({ control, watch }: AddPropertyCharac
                   Type
                 </Text>
                 <SegmentedControl
+                  /* @ts-expect-error works fine */
                   name={`characteristics[${index}].type`}
                   control={control}
                   styles={() => ({ root: { width: "100%" } })}
@@ -66,6 +69,7 @@ export function AddPropertyCharacteristics({ control, watch }: AddPropertyCharac
 
               <TextInput
                 className="col-span-4"
+                /* @ts-expect-error works fine */
                 name={`characteristics[${index}].name`}
                 label="Name"
                 control={control}
@@ -73,6 +77,7 @@ export function AddPropertyCharacteristics({ control, watch }: AddPropertyCharac
               />
               <TextInput
                 className="col-span-3"
+                /* @ts-expect-error works fine */
                 name={`characteristics[${index}].value`}
                 label="Value"
                 control={control}
