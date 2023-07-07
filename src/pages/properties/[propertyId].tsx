@@ -14,7 +14,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Button, Drawer, Group } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
-import { IconTrash } from "@tabler/icons-react";
+import { IconPhoto, IconTrash, IconVideo, IconWallpaper } from "@tabler/icons-react";
 import { makeRequest } from "~/lib/requestHelper";
 import { errorNotification, successNotification } from "~/components/PropertyCard";
 
@@ -38,7 +38,9 @@ const Property: NextPage = () => {
   const { data: property, isLoading, isError } = useProperty({ session, status, elementId: String(propertyId ?? "") });
 
   const [coverUrl, setCoverUrl] = useState("");
-  const [opened, { open, close }] = useDisclosure(false);
+  const [imagesOpened, { open: openImages, close: closeImages }] = useDisclosure(false);
+  const [videosOpened, { open: openVideos, close: closeVideos }] = useDisclosure(false);
+  const [blueprintsOpened, { open: openBlueprints, close: closeBlueprints }] = useDisclosure(false);
 
   useEffect(() => {
     if (!isLoading && !isError && property) {
@@ -55,6 +57,8 @@ const Property: NextPage = () => {
   }
 
   const photos = property?.media?.photos;
+  const videos = property?.media?.videos;
+  const blueprints = property?.media?.blueprints;
   const coordinates = property?.address?.coordinates;
 
   const renderHeader = () => {
@@ -85,11 +89,31 @@ const Property: NextPage = () => {
     );
   };
 
-  const renderDrawer = () => {
+  const renderImageDrawer = () => {
     return (
-      <Drawer opened={opened} onClose={close} position="bottom" size="100%">
+      <Drawer opened={imagesOpened} onClose={closeImages} position="bottom" size="100%">
         <div className="flex h-screen items-center">
           <CardsCarousel data={photos} currentUrl={coverUrl} setCover={setCoverUrl} />
+        </div>
+      </Drawer>
+    );
+  };
+
+  /*const renderVideoDrawer = () => {
+    return (
+      <Drawer opened={videosOpened} onClose={closeVideos} position="bottom" size="100%">
+        <div className="flex h-screen items-center">
+          <CardsCarousel data={videos} />
+        </div>
+      </Drawer>
+    );
+  };*/
+
+  const renderBlueprintDrawer = () => {
+    return (
+      <Drawer opened={blueprintsOpened} onClose={closeBlueprints} position="bottom" size="100%">
+        <div className="flex h-screen items-center">
+          <CardsCarousel data={blueprints} />
         </div>
       </Drawer>
     );
@@ -161,11 +185,23 @@ const Property: NextPage = () => {
       <CardBackground className="pt-6">
         {renderHeader()}
         {renderCover()}
-        {renderDrawer()}
+        {renderImageDrawer()}
+        {renderVideoDrawer()}
+        {renderBlueprintDrawer()}
 
         {/* TODO: Test Button */}
         <Group position="left" className="mt-4">
-          <Button onClick={open}>Open Drawer</Button>
+          <Button.Group>
+            <Button onClick={openImages} variant="light" leftIcon={<IconPhoto size="1rem" className="-mr-1" />}>
+              Images
+            </Button>
+            <Button onClick={openVideos} variant="light" leftIcon={<IconVideo size="1rem" className="-mr-1" />}>
+              Videos
+            </Button>
+            <Button onClick={openBlueprints} variant="light" leftIcon={<IconWallpaper size="1rem" className="-mr-1" />}>
+              Blueprints
+            </Button>
+          </Button.Group>
           <Button
             onClick={trashProperty}
             color="red"

@@ -40,14 +40,14 @@ const useStyles = createStyles(() => ({
 
 type CarouselProps = {
   data: { url: string }[];
-  currentUrl: string;
-  setCover: (url: string) => void;
+  currentUrl?: string;
+  setCover?: (url: string) => void;
 };
 
 type CardProps = {
   url: string;
-  currentUrl: string;
-  setCover: (url: string) => void;
+  currentUrl?: string;
+  setCover?: (url: string) => void;
 };
 
 function Card({ url, currentUrl, setCover }: CardProps) {
@@ -60,12 +60,12 @@ function Card({ url, currentUrl, setCover }: CardProps) {
       radius="md"
       sx={{
         backgroundImage: `url(${url})`,
-        cursor: url != currentUrl ? "pointer" : "default",
+        cursor: currentUrl && url != currentUrl ? "pointer" : "default",
         userSelect: "none",
       }}
       className={classes.card}
       onClick={() => {
-        if (url != currentUrl) setCover(url);
+        if (url != currentUrl && setCover) setCover(url);
       }}
     />
   );
