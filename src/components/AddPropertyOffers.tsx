@@ -196,7 +196,7 @@ export function AddPropertyOffers() {
         yesFunction={deleteSelectedOffers}
         title="Delete selected offers"
         text="Are you sure you want to delete the {selectedOffers.length} selected offers?"
-        yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" /> }}
+        yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
       ></ConfirmationModal>
 
