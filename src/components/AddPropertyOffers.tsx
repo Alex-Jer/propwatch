@@ -1,10 +1,11 @@
-import { ActionIcon, Button, Modal, NumberInput, SegmentedControl, TextInput } from "@mantine/core";
+import { ActionIcon, Button, NumberInput, SegmentedControl, TextInput } from "@mantine/core";
 import { useDisclosure, useInputState } from "@mantine/hooks";
 import { type ChangeEventHandler, useState, useEffect } from "react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { type Offer } from "~/types";
 import { IconTrash } from "@tabler/icons-react";
 import useOffersStore from "~/hooks/useOffersStore";
+import { ConfirmationModal } from "./ConfirmationModal";
 
 const listingTypes = [
   { label: "Sale", value: "sale" },
@@ -189,15 +190,15 @@ export function AddPropertyOffers() {
 
   return (
     <>
-      <Modal opened={modalOpened} onClose={close} title="Delete selected offers" zIndex={999}>
-        <p className="text-gray-400">Are you sure you want to delete the {selectedOffers.length} selected offers?</p>
-        <div className="mt-4 flex justify-end space-x-2">
-          <Button onClick={close}>Cancel</Button>
-          <Button color="red" onClick={deleteSelectedOffers}>
-            Delete
-          </Button>
-        </div>
-      </Modal>
+      <ConfirmationModal
+        opened={modalOpened}
+        close={close}
+        yesFunction={deleteSelectedOffers}
+        title="Delete selected offers"
+        text="Are you sure you want to delete the {selectedOffers.length} selected offers?"
+        yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" /> }}
+        noBtn={{ text: "Cancel", variant: "default" }}
+      ></ConfirmationModal>
 
       <div className="mt-4 grid grid-cols-12 gap-4" style={{ minHeight: "60px" }}>
         <div className="col-span-2">
