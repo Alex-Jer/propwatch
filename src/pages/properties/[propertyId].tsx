@@ -99,15 +99,15 @@ const Property: NextPage = () => {
     );
   };
 
-  /*const renderVideoDrawer = () => {
+  const renderVideoDrawer = () => {
     return (
       <Drawer opened={videosOpened} onClose={closeVideos} position="bottom" size="100%">
         <div className="flex h-screen items-center">
-          <CardsCarousel data={videos} />
+          <CardsCarousel data={videos} isImage={false} />
         </div>
       </Drawer>
     );
-  };*/
+  };
 
   const renderBlueprintDrawer = () => {
     return (
