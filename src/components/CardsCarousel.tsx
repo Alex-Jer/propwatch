@@ -40,45 +40,48 @@ const useStyles = createStyles(() => ({
 
 type CarouselProps = {
   data: { url: string }[];
-  currentUrl: string;
-  setCover: (url: string) => void;
+  currentUrl?: string;
+  setCover?: (url: string) => void;
+  isImage?: boolean;
 };
 
 type CardProps = {
   url: string;
-  currentUrl: string;
-  setCover: (url: string) => void;
+  currentUrl?: string;
+  setCover?: (url: string) => void;
+  isImage?: boolean;
 };
 
-function Card({ url, currentUrl, setCover }: CardProps) {
+function Card({ url, currentUrl, setCover, isImage = true }: CardProps) {
   const { classes } = useStyles();
-
-  return (
+  return isImage ? (
     <Paper
       shadow="md"
       p="xl"
       radius="md"
       sx={{
         backgroundImage: `url(${url})`,
-        cursor: url != currentUrl ? "pointer" : "default",
+        cursor: currentUrl && url != currentUrl ? "pointer" : "default",
         userSelect: "none",
       }}
       className={classes.card}
       onClick={() => {
-        if (url != currentUrl) setCover(url);
+        if (url != currentUrl && setCover) setCover(url);
       }}
     />
+  ) : (
+    <video src={url} controls style={{ width: "100%" }} />
   );
 }
 
-export function CardsCarousel({ data, currentUrl, setCover }: CarouselProps) {
+export function CardsCarousel({ data, currentUrl, setCover, isImage = true }: CarouselProps) {
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const { classes } = useStyles();
 
   const slides = data.map((item) => (
     <Carousel.Slide key={item.url}>
-      <Card url={item.url} currentUrl={currentUrl} setCover={setCover} />
+      <Card url={item.url} currentUrl={currentUrl} setCover={setCover} isImage={isImage} />
     </Carousel.Slide>
   ));
 
