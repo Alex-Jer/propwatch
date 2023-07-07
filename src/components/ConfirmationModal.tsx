@@ -60,9 +60,9 @@ export function ConfirmationModal({
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title={title} centered>
+      <Modal opened={opened} onClose={close} title={<b>{title}</b>} centered>
         <Group position="left">
-          <Text>{text}</Text>
+          <p className="text-gray-400">{text}</p>
         </Group>
         <Group position="right" className="mt-5">
           <Button variant={ybVariant} color={ybColor} onClick={yesFunctionWrapper} leftIcon={ybIcon}>
