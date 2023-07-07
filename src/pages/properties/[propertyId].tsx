@@ -139,7 +139,10 @@ const Property: NextPage = () => {
     if (!property?.id) return;
     makeRequest(`me/properties/${property.id}`, "DELETE", session?.user.access_token)
       .then(() => {
-        successNotification("This property has been sent to trash!", "Property deleted");
+        const sendSuccess = () => {
+          successNotification("This property has been sent to trash!", "Property deleted");
+        };
+        router.push("/properties").then(sendSuccess).catch(sendSuccess); //TODO: Should we redirect to trash?
       })
       .catch((err) => {
         errorNotification("An unknown error occurred while deleting this property.");
