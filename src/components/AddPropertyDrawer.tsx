@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Drawer, Stepper, Paper } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
@@ -11,10 +11,11 @@ import { AddPropertyAddress } from "./AddPropertyAddress";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { type Property } from "~/types";
+import { type Offer, type Property } from "~/types";
 import { AddPropertyOffers } from "./AddPropertyOffers";
-import useOffersStore from "~/hooks/useOffersStore";
 import { AddPropertyCharacteristics } from "./AddPropertyCharacteristics";
+import { type DataTableSortStatus } from "mantine-datatable";
+import { sortBy } from "remeda";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -127,37 +128,57 @@ export type FormSchemaType = z.infer<typeof schema>;
 
 export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [stepperActive, setStepperActive] = useState(0);
-  const [addPropertyCounter, setAddPropertyCounter] = useState(0);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
-  const addPropertyButtonRef = useRef(null);
+  const [offers, setOffers] = useState<Offer[]>([]);
 
   const { data: session } = useSession();
-  const { offers, clearOffers } = useOffersStore();
 
   const { control, handleSubmit, reset, resetField, watch, trigger } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
   });
 
-  const nextStep = () => setStepperActive((current) => (current < TOTAL_STEPS ? current + 1 : current));
-  const prevStep = () => setStepperActive((current) => (current > 0 ? current - 1 : current));
+  const addOffer = (offer: Offer) => {
+    setOffers((state) => [...state, offer]);
+  };
+
+  const removeOffer = (offer: Offer) => {
+    setOffers((state) => state.filter((o) => o.id !== offer.id));
+  };
+
+  const removeOffers = (offers: Offer[]) => {
+    setOffers((state) => state.filter((o) => !offers.some((s) => s.id === o.id)));
+  };
+
+  const sortOffers = (offers: Offer[], sortStatus: DataTableSortStatus) => {
+    // @ts-expect-error sortBy is not typed
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    const sortedOffers = sortBy(offers, (offer) => offer[sortStatus.columnAccessor]);
+    const sortedData = sortStatus.direction === "asc" ? sortedOffers : [...sortedOffers].reverse();
+    setOffers(sortedData);
+  };
+
+  const handleStepChange = (nextStep: number) => {
+    const isOutOfBound = nextStep < 0 || nextStep > TOTAL_STEPS;
+    if (isOutOfBound) return;
+    setStepperActive(nextStep);
+  };
 
   const resetForm = () => {
-    setAddPropertyCounter(0);
-    reset(defaultValues);
     setStepperActive(0);
     setSelectedImages([]);
     setSelectedBlueprints([]);
     setSelectedVideos([]);
-    clearOffers();
+    setOffers([]);
+    reset();
   };
 
-  const addPropertyMutation = async (data: FormSchemaType) => {
+  const addProperty = async (data: FormSchemaType) => {
     const formData = new FormData();
 
     function appendIfNotNull(key: string, value: unknown) {
@@ -224,49 +245,28 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     return makeRequest("me/properties", "POST", session?.user.access_token, formData) as Promise<PropertyResponse>;
   };
 
-  const mutation = useMutation(addPropertyMutation);
-
-  const addProperty = (data: FormSchemaType) => {
-    if (addPropertyButtonRef.current === null) {
-      return;
-    }
-
-    const addPropertyButtonElement = addPropertyButtonRef.current as HTMLElement;
-    const buttonText = addPropertyButtonElement?.querySelector(".mantine-Button-label")?.textContent;
-    const containsAddProperty = buttonText?.includes("Add Property");
-
-    // HACK: Check if the button text contains "Add Property"
-    if (containsAddProperty) {
-      setAddPropertyCounter((current) => current + 1);
-
-      // HACK: Only submit the form if the button has been clicked twice
-      if (addPropertyCounter === 0) {
-        return;
-      }
-
-      mutation.mutate(data, {
-        onSuccess: () => {
-          resetForm();
-          close();
-          notifications.show({
-            title: "Property added",
-            message: "Your property has been added successfully!",
-            icon: <IconCheck size="1.1rem" />,
-            color: "teal",
-          });
-        },
-        onError: (error) => {
-          notifications.show({
-            title: "Error",
-            message: "An unknown error occurred while adding your property.",
-            icon: <IconX size="1.1rem" />,
-            color: "red",
-          });
-          console.error(error);
-        },
+  const { mutate } = useMutation({
+    mutationFn: addProperty,
+    onSuccess: () => {
+      close();
+      notifications.show({
+        title: "Property added",
+        message: "Your property was added successfully",
+        color: "teal",
+        icon: <IconCheck size="1.5rem" />,
+        autoClose: 10000,
       });
-    }
-  };
+    },
+    onError: (error) => {
+      console.error({ error });
+      notifications.show({
+        title: "Error",
+        message: "An error occurred while adding your property",
+        color: "red",
+        icon: <IconX size="1.5rem" />,
+      });
+    },
+  });
 
   return (
     <>
@@ -302,10 +302,12 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
             <form
               /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
               onSubmit={handleSubmit(
-                (data: FormSchemaType) => addProperty(data),
+                (data) =>
+                  mutate(data, {
+                    onSuccess: () => resetForm(),
+                  }),
                 (error) => {
                   console.log({ error });
-                  setStepperActive(0);
                   notifications.show({
                     title: "Error",
                     message: "Please fill in the required fields or fix the errors.",
@@ -329,7 +331,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   <AddPropertyCharacteristics control={control} watch={watch} />
                 </Stepper.Step>
 
-                <Stepper.Step label="Media & Blueprints">
+                <Stepper.Step label="Media">
                   <AddPropertyMedia
                     control={control}
                     selectedImages={selectedImages}
@@ -341,28 +343,43 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   />
                 </Stepper.Step>
 
-                <Stepper.Step label="Offers & Prices">
-                  <AddPropertyOffers />
+                <Stepper.Step label="Offers">
+                  <AddPropertyOffers
+                    offers={offers}
+                    addOffer={addOffer}
+                    removeOffer={removeOffer}
+                    removeOffers={removeOffers}
+                    sortOffers={sortOffers}
+                  />
                 </Stepper.Step>
 
-                <Stepper.Completed>
+                <Stepper.Step label="Summary">
+                  {/* TODO: Extract to a component */}
+                  {/* <AddPropertySummary />  */}
                   <h1 className="mb-2 text-2xl font-semibold">Summary</h1>
                   <Paper className="mb-4" shadow="xs" p="md" withBorder>
-                    <AddPropertyMainInfo control={control} disabled />
-                    <AddPropertyAddress control={control} resetField={resetField} disabled />
+                    <AddPropertyMainInfo control={control} />
+                    <AddPropertyAddress control={control} resetField={resetField} />
                   </Paper>
-                </Stepper.Completed>
+                </Stepper.Step>
               </Stepper>
 
               <div className="flex justify-end space-x-2">
-                <Button variant="default" onClick={prevStep} disabled={stepperActive === 0}>
+                <Button variant="default" onClick={resetForm}>
+                  Reset
+                </Button>
+                <Button
+                  variant="default"
+                  onClick={() => handleStepChange(stepperActive - 1)}
+                  disabled={stepperActive === 0}
+                >
                   Back
                 </Button>
                 <Button
-                  ref={addPropertyButtonRef}
                   type={stepperActive === TOTAL_STEPS ? "submit" : "button"}
-                  onClick={nextStep}
-                  loading={mutation.isLoading}
+                  onClick={() => handleStepChange(stepperActive + 1)}
+                  // TODO:
+                  /* loading={isLoading} */
                 >
                   {stepperActive === TOTAL_STEPS ? "Add Property" : "Next"}
                 </Button>
