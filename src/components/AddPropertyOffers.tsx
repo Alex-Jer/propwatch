@@ -92,11 +92,7 @@ export function AddPropertyOffers() {
   };
 
   const validatePrice = (price: number | "") => {
-    if (price === "") {
-      setPriceError("Price is required");
-      setIsAddDisabled(true);
-      return false;
-    } else if (price < 0) {
+    if (price !== "" && price < 0) {
       setPriceError("Price must be greater than 0");
       setIsAddDisabled(true);
       return false;
@@ -123,7 +119,7 @@ export function AddPropertyOffers() {
     setUrlError("");
 
     if (priceError === "" && urlError === "" && descriptionError === "") {
-      if (price !== "" && description !== "") {
+      if (description !== "") {
         setIsAddDisabled(false);
       }
     }
@@ -141,7 +137,7 @@ export function AddPropertyOffers() {
     setDescriptionError("");
 
     if (priceError === "" && urlError === "" && descriptionError === "") {
-      if (price !== "" && url !== "") {
+      if (url !== "") {
         setIsAddDisabled(false);
       }
     }
