@@ -30,23 +30,23 @@ export function ConfirmationModal({
     text: ybText = "Yes",
     color: ybColor = "teal",
     variant: ybVariant = "light",
-    icon: ybIcon = <IconCheck size="1rem" className="-mr-1" />,
+    icon: ybIcon = <IconCheck size="1rem" className="-mb-0.5 -mr-1" />,
   } = {
     text: "Yes",
     color: "teal",
     variant: "light",
-    icon: <IconCheck size="1rem" className="-mr-1" />,
+    icon: <IconCheck size="1rem" className="-mb-0.5 -mr-1" />,
   },
   noBtn: {
     text: nbText = "No",
     color: nbColor = "red",
     variant: nbVariant = "light",
-    icon: nbIcon = <IconX size="1rem" className="-mr-1" />,
+    icon: nbIcon = <IconX size="1rem" className="-mb-0.5 -mr-1" />,
   } = {
     text: "No",
     color: "red",
     variant: "light",
-    icon: <IconX size="1rem" className="-mr-1" />,
+    icon: <IconX size="1rem" className="-mb-0.5 -mr-1" />,
   },
 }: ConfirmationModalProps) {
   const [functionHasRun, setFunctionHasRun] = useState(false);
