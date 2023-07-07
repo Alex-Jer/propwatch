@@ -59,11 +59,31 @@ const schema = z.object({
   blueprints: z.array(z.any()),
   videos: z.array(z.any()),
   characteristics: z.array(
-    z.object({
-      name: z.string().max(32, { message: "Characteristic name must be at most 32 characters long" }),
-      type: z.enum(["numerical", "textual"]),
-      value: z.string().max(32, { message: "Characteristic value must be at most 32 characters long" }),
-    })
+    z
+      .object({
+        name: z
+          .string()
+          .min(1, { message: "Characteristic name must be at least 1 character long" })
+          .max(30, { message: "Characteristic name must be at most 30 characters long" }),
+        type: z.enum(["numerical", "textual"]),
+        value: z
+          .string()
+          .min(1, { message: "Characteristic value must be at least 1 character long" })
+          .max(200, { message: "Characteristic value must be at most 200 characters long" }),
+      })
+      .refine(
+        (value) => {
+          console.log(value.type);
+          if (value.type === "numerical") {
+            console.log(!isNaN(Number(value.value)));
+            return !isNaN(Number(value.value));
+          }
+          return true;
+        },
+        { message: "Characteristic value must be a number" }
+      )
+      .optional()
+      .nullable()
   ),
   /* ADDRESS */
   full_address: z
@@ -139,7 +159,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
   const { offers, clearOffers } = useOffersStore();
 
-  const { control, handleSubmit, reset, resetField } = useForm<FormSchemaType>({
+  const { control, handleSubmit, reset, resetField, watch } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
   });
@@ -309,7 +329,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 </Stepper.Step>
 
                 <Stepper.Step label="Characteristics">
-                  <AddPropertyCharacteristics control={control} />
+                  <AddPropertyCharacteristics control={control} watch={watch} />
                 </Stepper.Step>
 
                 <Stepper.Step label="Media & Blueprints">

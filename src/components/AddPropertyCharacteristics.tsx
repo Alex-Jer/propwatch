@@ -1,12 +1,13 @@
 import { Alert, Button, CloseButton, createStyles, Divider } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { useState } from "react";
-import { useFieldArray, type Control } from "react-hook-form";
+import { useFieldArray, type UseFormWatch, type Control } from "react-hook-form";
 import { SegmentedControl, TextInput } from "react-hook-form-mantine";
 import { type FormSchemaType } from "./AddPropertyDrawer";
 
 type AddPropertyCharacteristicsProps = {
   control: Control<FormSchemaType>;
+  watch: UseFormWatch<FormSchemaType>;
 };
 
 const characteristicTypes = [
@@ -14,7 +15,7 @@ const characteristicTypes = [
   { label: "Textual", value: "textual" },
 ];
 
-export function AddPropertyCharacteristics({ control }: AddPropertyCharacteristicsProps) {
+export function AddPropertyCharacteristics({ control, watch }: AddPropertyCharacteristicsProps) {
   const { fields, append, remove } = useFieldArray({
     name: "characteristics",
     control,
@@ -44,6 +45,9 @@ export function AddPropertyCharacteristics({ control }: AddPropertyCharacteristi
       </div>
 
       {fields.map((field, index) => {
+        const characteristicType = watch(`characteristics[${index}].type`);
+        const isTextual = characteristicType === "textual";
+
         return (
           <div key={field.id} onMouseEnter={() => setHoveredIndex(index)} onMouseLeave={() => setHoveredIndex(-1)}>
             <Divider my="xl" />
@@ -71,6 +75,7 @@ export function AddPropertyCharacteristics({ control }: AddPropertyCharacteristi
                 name={`characteristics[${index}].value`}
                 control={control}
                 placeholder="Value"
+                type={isTextual ? "text" : "number"}
                 /* value={description} */
                 /* onChange={handleDescriptionChange} */
                 /* error={descriptionError} */
