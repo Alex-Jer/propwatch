@@ -1,6 +1,7 @@
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
-import { createStyles, Paper, useMantineTheme, rem, getStylesRef } from "@mantine/core";
+import { createStyles, Paper, useMantineTheme, rem, getStylesRef, Modal, Image } from "@mantine/core";
+import { useState } from "react";
 
 const useStyles = createStyles(() => ({
   card: {
@@ -54,23 +55,43 @@ type CardProps = {
 
 function Card({ url, currentUrl, setCover, isImage = true }: CardProps) {
   const { classes } = useStyles();
-  return isImage ? (
-    <Paper
-      shadow="md"
-      p="xl"
-      radius="md"
-      sx={{
-        backgroundImage: `url(${url})`,
-        cursor: currentUrl && url != currentUrl ? "pointer" : "default",
-        userSelect: "none",
-      }}
-      className={classes.card}
-      onClick={() => {
-        if (url != currentUrl && setCover) setCover(url);
-      }}
-    />
-  ) : (
-    <video src={url} controls style={{ width: "100%" }} />
+  const [fullscreen, setFullscreen] = useState(false);
+  const theme = useMantineTheme();
+
+  const toggleFullscreen = () => {
+    setFullscreen((prevFullscreen) => !prevFullscreen);
+  };
+  return (
+    <>
+      {isImage ? (
+        <Paper
+          shadow="md"
+          p="xl"
+          radius="md"
+          sx={{
+            backgroundImage: `url(${url})`,
+            cursor: currentUrl && url != currentUrl ? "pointer" : "default",
+            userSelect: "none",
+          }}
+          className={classes.card}
+          onClick={() => {
+            if (url != currentUrl && setCover) setCover(url);
+            toggleFullscreen();
+          }}
+        />
+      ) : (
+        <video src={url} controls style={{ width: "100%" }} />
+      )}
+      <Modal
+        opened={fullscreen}
+        onClose={toggleFullscreen}
+        size="xl"
+        padding="xs"
+        style={{ backgroundColor: theme.colors.dark[9] }}
+      >
+        <Image src={url} alt="Full screen image" />
+      </Modal>
+    </>
   );
 }
 
