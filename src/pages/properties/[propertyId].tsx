@@ -17,7 +17,7 @@ import { env } from "~/env.mjs";
 import { IconPhoto, IconPhotoCheck, IconPhotoX, IconTrash, IconVideo, IconWallpaper } from "@tabler/icons-react";
 import { makeRequest } from "~/lib/requestHelper";
 import { errorNotification, successNotification } from "~/components/PropertyCard";
-import { priceToString } from "~/lib/propertyHelper";
+import { completeAddress, completeAdmAddress, priceToString } from "~/lib/propertyHelper";
 
 type MarkerIconComponent = FunctionComponent<SVGProps<SVGSVGElement>>;
 
@@ -141,7 +141,7 @@ const Property: NextPage = () => {
   const renderDescription = (property: Property) => {
     return (
       <div className="mt-4">
-        <h2 className="text-3xl">Description</h2>
+        <h2 className="mb-2 text-2xl">{completeAdmAddress(property.address)}</h2>
         <div>{property.description}</div>
       </div>
     );
@@ -157,7 +157,7 @@ const Property: NextPage = () => {
 
     return (
       <>
-        <h2 className="my-2 text-3xl">Location</h2>
+        <h2 className="my-2 text-2xl">Location</h2>
         <div className="h-3/6 w-auto">
           <Map
             mapboxAccessToken={env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}

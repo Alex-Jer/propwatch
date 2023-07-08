@@ -32,18 +32,22 @@ export type SelectOption = {
   label: string;
 };
 
-type Address = {
-  adm1_id: number;
-  adm1: string;
-  adm2_id: number;
-  adm2: string;
-  adm3_id: number;
-  adm3: string;
-  full_address: string;
-  coordinates: {
-    latitude: number;
-    longitude: number;
-  };
+export type Address = {
+  adm1_id: number | null | undefined;
+  adm1: string | null | undefined;
+  adm2_id: number | null | undefined;
+  adm2: string | null | undefined;
+  adm3_id: number | null | undefined;
+  adm3: string | null | undefined;
+  postal_code: string | null | undefined;
+  full_address: string | null | undefined;
+  coordinates:
+    | {
+        latitude: number;
+        longitude: number;
+      }
+    | null
+    | undefined;
 };
 
 type Characteristic = {
