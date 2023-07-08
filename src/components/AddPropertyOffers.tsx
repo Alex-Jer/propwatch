@@ -5,6 +5,8 @@ import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { type Offer } from "~/types";
 import { IconCurrencyEuro, IconTrash } from "@tabler/icons-react";
 import { ConfirmationModal } from "./ConfirmationModal";
+import { sortBy } from "remeda";
+import { nanoid } from "nanoid";
 
 const listingTypes = [
   { label: "Sale", value: "sale" },
@@ -13,13 +15,10 @@ const listingTypes = [
 
 type AddPropertyOffersProps = {
   offers: Offer[];
-  addOffer: (offer: Offer) => void;
-  removeOffer: (offer: Offer) => void;
-  removeOffers: (offers: Offer[]) => void;
-  sortOffers: (offers: Offer[], sortStatus: DataTableSortStatus) => void;
+  setOffers: (offers: Offer[]) => void;
 };
 
-export function AddPropertyOffers({ offers, addOffer, removeOffer, removeOffers, sortOffers }: AddPropertyOffersProps) {
+export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps) {
   const [listingType, setListingType] = useState("sale");
   const [price, setPrice] = useInputState<number | "">("");
   const [priceError, setPriceError] = useState("");
@@ -71,6 +70,28 @@ export function AddPropertyOffers({ offers, addOffer, removeOffer, removeOffers,
       ),
     },
   ];
+
+  const addOffer = (offer: Offer) => {
+    // setOffers without using a spread operator
+    const newOffers = offers.concat(offer);
+    setOffers(newOffers);
+  };
+
+  const removeOffer = (offer: Offer) => {
+    setOffers((state) => state.filter((o) => o.id !== offer.id));
+  };
+
+  const removeOffers = (offers: Offer[]) => {
+    setOffers((state) => state.filter((o) => !offers.some((s) => s.id === o.id)));
+  };
+
+  const sortOffers = (offers: Offer[], sortStatus: DataTableSortStatus) => {
+    // @ts-expect-error sortBy is not typed
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    const sortedOffers = sortBy(offers, (offer) => offer[sortStatus.columnAccessor]);
+    const sortedData = sortStatus.direction === "asc" ? sortedOffers : [...sortedOffers].reverse();
+    setOffers(sortedData);
+  };
 
   useEffect(() => {
     sortOffers(offers, sortStatus);
@@ -131,6 +152,11 @@ export function AddPropertyOffers({ offers, addOffer, removeOffer, removeOffers,
 
     setUrlError("");
 
+    if (urlError !== "") {
+      setIsAddDisabled(false);
+      return true;
+    }
+
     if (priceError === "" && urlError === "" && descriptionError === "") {
       if (description !== "") {
         setIsAddDisabled(false);
@@ -148,6 +174,11 @@ export function AddPropertyOffers({ offers, addOffer, removeOffer, removeOffers,
     }
 
     setDescriptionError("");
+
+    if (descriptionError !== "") {
+      setIsAddDisabled(false);
+      return true;
+    }
 
     if (priceError === "" && urlError === "" && descriptionError === "") {
       if (url !== "") {
@@ -181,7 +212,7 @@ export function AddPropertyOffers({ offers, addOffer, removeOffer, removeOffers,
     }
 
     const newOffer: Offer = {
-      id: offers.length + 1,
+      id: nanoid(),
       listing_type: listingType,
       price: price === "" ? undefined : Number(price),
       url,

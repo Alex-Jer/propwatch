@@ -39,6 +39,7 @@
     "filepond-plugin-image-preview": "^4.6.11",
     "mantine-datatable": "^2.8.2",
     "mapbox-gl": "^2.15.0",
+    "nanoid": "^4.0.2",
     "next": "^13.4.7",
     "next-auth": "^4.22.1",
     "nextjs-progressbar": "^0.0.16",

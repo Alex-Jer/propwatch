@@ -70,7 +70,7 @@ type PriceHistory = {
 };
 
 export type Offer = {
-  id?: number;
+  id?: string;
   listing_type?: string;
   url: string;
   description: string;

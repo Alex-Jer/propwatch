@@ -143,26 +143,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     defaultValues,
   });
 
-  const addOffer = (offer: Offer) => {
-    setOffers((state) => [...state, offer]);
-  };
-
-  const removeOffer = (offer: Offer) => {
-    setOffers((state) => state.filter((o) => o.id !== offer.id));
-  };
-
-  const removeOffers = (offers: Offer[]) => {
-    setOffers((state) => state.filter((o) => !offers.some((s) => s.id === o.id)));
-  };
-
-  const sortOffers = (offers: Offer[], sortStatus: DataTableSortStatus) => {
-    // @ts-expect-error sortBy is not typed
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const sortedOffers = sortBy(offers, (offer) => offer[sortStatus.columnAccessor]);
-    const sortedData = sortStatus.direction === "asc" ? sortedOffers : [...sortedOffers].reverse();
-    setOffers(sortedData);
-  };
-
   const handleStepChange = (nextStep: number) => {
     const isOutOfBounds = nextStep < 0 || nextStep > TOTAL_STEPS;
     if (isOutOfBounds) return;
@@ -344,13 +324,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                 </Stepper.Step>
 
                 <Stepper.Step label="Offers">
-                  <AddPropertyOffers
-                    offers={offers}
-                    addOffer={addOffer}
-                    removeOffer={removeOffer}
-                    removeOffers={removeOffers}
-                    sortOffers={sortOffers}
-                  />
+                  <AddPropertyOffers offers={offers} setOffers={setOffers} />
                 </Stepper.Step>
 
                 <Stepper.Step label="Summary">
