@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import NextNProgress from "nextjs-progressbar";
 import Properties from "./properties";
 import SearchPolygonProperties from "./properties/polygon";
+import { useDebouncedState } from "@mantine/hooks";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +28,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
 
   const isAppRoute = router.pathname !== "/" && !router.pathname.startsWith("/auth");
 
-  const [search, setSearch] = useState({});
+  const [search, setSearch] = useDebouncedState({}, 500);
   const isPropertySearch: boolean | undefined = Component == Properties || Component == SearchPolygonProperties;
 
   return (
