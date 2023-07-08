@@ -5,10 +5,10 @@ import { useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
 import { priceToString } from "~/lib/propertyHelper";
 import { makeRequest } from "~/lib/requestHelper";
-import { type Property } from "~/types";
+import { type CollectionProperty } from "~/types";
 
 interface PropertyCardProps {
-  property: Property;
+  property: CollectionProperty;
   id?: string | undefined;
   trashButtons?: boolean | undefined;
   refresh?: () => void;
