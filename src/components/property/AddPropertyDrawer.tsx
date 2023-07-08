@@ -4,16 +4,18 @@ import { Button, Drawer, Stepper, Paper } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddPropertyMainInfo } from "./AddPropertyMainInfo";
 import { notifications } from "@mantine/notifications";
-import { AddPropertyMedia } from "./AddPropertyMedia";
-import { AddPropertyAddress } from "./AddPropertyAddress";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
 import { type Offer, type Property } from "~/types";
-import { AddPropertyOffers } from "./AddPropertyOffers";
-import { AddPropertyCharacteristics } from "./AddPropertyCharacteristics";
+import {
+  AddPropertyAddress,
+  AddPropertyCharacteristics,
+  AddPropertyMainInfo,
+  AddPropertyMedia,
+  AddPropertyOffers,
+} from "~/components/property";
 
 interface AddPropertyDrawerProps {
   opened: boolean;

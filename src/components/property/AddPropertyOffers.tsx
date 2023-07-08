@@ -4,7 +4,7 @@ import { type ChangeEventHandler, useState, useEffect } from "react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { type Offer } from "~/types";
 import { IconCurrencyEuro, IconTrash } from "@tabler/icons-react";
-import { ConfirmationModal } from "./ConfirmationModal";
+import { ConfirmationModal } from "~/components/ConfirmationModal";
 import { sortBy } from "remeda";
 import { nanoid } from "nanoid";
 

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { IconHomePlus, IconSearch } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import { AddPropertyDrawer } from "../AddPropertyDrawer";
 import { useRouter } from "next/router";
+import { AddPropertyDrawer } from "~/components/property";
 
 type HeaderActionProps = {
   links?: { link: string; label: string }[];
