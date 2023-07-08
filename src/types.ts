@@ -84,13 +84,12 @@ export type Offer = {
 
 export type Property = {
   id: string;
-  quantity: number;
   listing_type: string;
   title: string;
   description: string;
   cover_url: string;
-  useful_area: string;
-  gross_area: string;
+  useful_area: number;
+  gross_area: number;
   type: string;
   typology: string;
   wc: number;

@@ -1,7 +1,14 @@
 import { Group, Text, Accordion } from "@mantine/core";
-import { Icon24Hours, IconAddressBook, IconCurrentLocation, IconMapPin } from "@tabler/icons-react";
+import {
+  Icon24Hours,
+  IconAddressBook,
+  IconClipboardList,
+  IconCurrentLocation,
+  IconListDetails,
+  IconMapPin,
+} from "@tabler/icons-react";
 import { type ReactNode } from "react";
-import { completeAddress, completeAdmAddress } from "~/lib/propertyHelper";
+import { completeAddress, completeAdmAddress, propertyDetailsResume } from "~/lib/propertyHelper";
 import { type Property } from "~/types";
 
 interface AccordionLabelProps {
@@ -33,18 +40,28 @@ export type AccordionItem = {
 };
 
 function LabelAndValue({ label, value }: { label: string; value: string | undefined }) {
-  return (
+  return value ? (
     <div>
       <Text>{label}</Text>
       <Text size="sm" color="dimmed" weight={400}>
         {value ?? "N/A"}
       </Text>
     </div>
+  ) : (
+    <></>
   );
 }
 
 export function PropertyAccordion({ property }: { property: Property }) {
   const itemList: AccordionItem[] = [
+    {
+      id: "details",
+      icon: IconListDetails,
+      label: "Property Details",
+      description: propertyDetailsResume(property),
+      content: <>Lorem ipsum</>,
+    },
+    { id: "ipsum", icon: Icon24Hours, label: "Lorem ipsum", description: "Lorem ipsum", content: <>Lorem ipsum</> },
     {
       id: "address",
       icon: IconMapPin,
@@ -64,24 +81,6 @@ export function PropertyAccordion({ property }: { property: Property }) {
           </div>
         </>
       ),
-    },
-
-    {
-      id: "carol",
-      icon: Icon24Hours,
-      label: "Carol Miller",
-      description: "One of the richest people on Earth",
-      content:
-        "Carol Miller (born January 30, 2880), better known as Mom, is the evil chief executive officer and shareholder of 99.7% of Momcorp, one of the largest industrial conglomerates in the universe and the source of most of Earth's robots. She is also one of the main antagonists of the Futurama series.",
-    },
-
-    {
-      id: "homer",
-      icon: Icon24Hours,
-      label: "Homer Simpson",
-      description: "Overweight, lazy, and often ignorant",
-      content:
-        "Homer Jay Simpson (born May 12) is the main protagonist and one of the five main characters of The Simpsons series(or show). He is the spouse of Marge Simpson and father of Bart, Lisa and Maggie Simpson.",
     },
   ];
 
