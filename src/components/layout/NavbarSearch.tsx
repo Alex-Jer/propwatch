@@ -235,7 +235,7 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
             className={classes.mainLink}
             onClick={() => {
               if (setSearch) setSearch("");
-              setFilters({ ...filters, include_tags: [], exclude_tags: [] });
+              setFilters({});
             }}
           >
             <div className={classes.mainLinkInner}>
