@@ -11,6 +11,18 @@ const useStyles = createStyles((theme) => ({
   body: {
     padding: theme.spacing.md,
   },
+
+  placeholder: {
+    backgroundColor: theme.colors.dark[7],
+    borderRadius: theme.radius.md,
+    width: 144,
+    height: 144,
+
+    "& span": {
+      color: theme.colors.dark[3],
+      fontWeight: 600,
+    },
+  },
 }));
 
 interface CollectionCardProps {
@@ -36,8 +48,8 @@ export function CollectionCard({ covers, description, title, tags, date }: Colle
           gridTemplateColumns: "repeat(2, 1fr)",
           gridTemplateRows: "repeat(2, 1fr)",
           gridGap: "1px",
-          width: "140px",
-          height: "140px",
+          width: "144px",
+          height: "144px",
           overflow: "hidden",
           borderRadius: "4px",
         }}
@@ -51,8 +63,8 @@ export function CollectionCard({ covers, description, title, tags, date }: Colle
           >
             <Image
               src={coverUrl}
-              width={140}
-              height={140}
+              width={144}
+              height={144}
               style={{
                 objectFit: "cover",
               }}
@@ -69,7 +81,13 @@ export function CollectionCard({ covers, description, title, tags, date }: Colle
     <Card radius={0} padding={0}>
       <Group noWrap spacing={0}>
         <div>
-          <ThumbnailCollage covers={covers} />
+          {covers.length === 0 ? (
+            <div className={`flex items-center justify-center  ${classes.placeholder}`}>
+              <span>No covers</span>
+            </div>
+          ) : (
+            <ThumbnailCollage covers={covers} />
+          )}
         </div>
 
         <div className={classes.body}>
