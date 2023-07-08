@@ -37,12 +37,15 @@ export const completeAdmAddress = (address: Address) => {
   return addressWithProps(address, ["adm3", "adm2", "adm1"]);
 };
 
+export const ucfirst = (string: string) =>
+  string.length > 1 ? string.charAt(0).toUpperCase() + string.slice(1) : string.toUpperCase();
+
 export const propertyDetailsResume = (property: Property) => {
-  const _sep = " ; ";
+  const _sep = " | ";
 
   let detailsStr = "";
 
-  if (property.type) detailsStr += property.type + _sep;
+  if (property.type) detailsStr += ucfirst(property.type) + _sep;
   if (property.typology) detailsStr += property.typology + _sep; // The "T" comes from the database!!
   if (property.wc) detailsStr += property.wc.toString() + " bathroom" + (property.wc > 1 ? "s" : "") + _sep;
   // Areas

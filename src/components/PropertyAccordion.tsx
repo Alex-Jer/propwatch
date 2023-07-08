@@ -8,7 +8,13 @@ import {
   IconMapPin,
 } from "@tabler/icons-react";
 import { type ReactNode } from "react";
-import { completeAddress, completeAdmAddress, numberToString, propertyDetailsResume } from "~/lib/propertyHelper";
+import {
+  completeAddress,
+  completeAdmAddress,
+  numberToString,
+  propertyDetailsResume,
+  ucfirst,
+} from "~/lib/propertyHelper";
 import { type Property } from "~/types";
 
 interface AccordionLabelProps {
@@ -72,7 +78,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
       return (
         <LabelAndValue
           key={characteristic.id}
-          label={characteristic.name.substring(0, 1).toUpperCase() + characteristic.name.substring(1)}
+          label={ucfirst(characteristic.name)}
           value={convertCharacteristicValue(characteristic.value, characteristic.type) ?? "N/A"}
         />
       );
@@ -88,7 +94,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
       content: (
         <>
           <div style={{ display: "flex", flexWrap: "wrap", gridGap: "2rem" }}>
-            <LabelAndValue label="Type" value={property.type?.toString()} />
+            <LabelAndValue label="Type" value={ucfirst(property.type?.toString())} />
             <LabelAndValue label="Typology" value={property.typology?.toString()} />
             <LabelAndValue label="Bathrooms" value={property.wc?.toString()} />
             {property.gross_area && (
