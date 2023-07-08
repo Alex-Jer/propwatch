@@ -1,7 +1,7 @@
 import { Burger, Button, Container, Group, Header, createStyles, rem } from "@mantine/core";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { IconHomePlus, IconStarFilled } from "@tabler/icons-react";
+import { IconHomePlus } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { AddPropertyDrawer } from "../AddPropertyDrawer";
 
@@ -30,15 +30,9 @@ export function NavHeader({ links, opened, setOpened }: HeaderActionProps) {
   const renderButtons = () => {
     if (session) {
       return (
-        <>
-          <Link href="/auth/login">
-            <Button variant="default">Log out</Button>
-          </Link>
-
-          <Button onClick={open} leftIcon={<IconHomePlus /*IconSquareRoundedPlusFilled*/ size="1rem" />}>
-            Add
-          </Button>
-        </>
+        <Button onClick={open} leftIcon={<IconHomePlus size="1rem" />}>
+          Add Property
+        </Button>
       );
     }
 

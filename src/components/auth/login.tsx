@@ -11,10 +11,9 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { logout } from "~/lib/requestHelper";
 
 type Inputs = {
   email: string;
@@ -23,7 +22,7 @@ type Inputs = {
 
 export function LoginForm() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<Inputs>({
@@ -47,12 +46,6 @@ export function LoginForm() {
 
     void router.push("/collections");
     setIsLoading(false);
-  };
-
-  const handleLogout = async () => {
-    if (!session) return;
-    await signOut({ redirect: false });
-    await logout(session.user.access_token);
   };
 
   return (
@@ -86,25 +79,8 @@ export function LoginForm() {
           <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
             Sign in
           </Button>
-          <Button
-            fullWidth
-            mt="sm"
-            variant="default"
-            onClick={() => void handleLogout()}
-            disabled={status !== "authenticated"}
-          >
-            Log out
-          </Button>
         </Paper>
       </form>
-      {/* TODO: Debug variables */}
-      <Text color="dimmed" size="sm" align="left" mt={5}>
-        <div>
-          <p>email: {session?.user?.email}</p>
-          <p>photo_url: {session?.user?.photo_url || "none"}</p>
-          <p>access_token: {session?.user.access_token}</p>
-        </div>
-      </Text>
     </Container>
   );
 }

@@ -5,11 +5,12 @@ import { notifications } from "@mantine/notifications";
 import { IconCheck, IconChevronRight, IconHomePlus, IconLogout, IconTextPlus, IconX } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import { type AxiosError } from "axios";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { Textarea, TextInput } from "react-hook-form-mantine";
 import { z } from "zod";
-import { makeRequest } from "~/lib/requestHelper";
+import { logout, makeRequest } from "~/lib/requestHelper";
 import { type Collection, type UserButtonProps } from "~/types";
 
 type CollectionResponse = {
@@ -49,8 +50,21 @@ type FormSchemaType = z.infer<typeof schema>;
 export function UserButton({ image, name, icon, ...others }: UserButtonProps) {
   const { classes } = useStyles();
   const { data: session } = useSession();
+  const router = useRouter();
   const [newCollectionModalOpened, { open: openNewCollectionModal, close: closeNewCollectionModal }] =
     useDisclosure(false);
+
+  const { control, handleSubmit, reset, setError } = useForm<FormSchemaType>({
+    resolver: zodResolver(schema),
+    defaultValues,
+  });
+
+  const handleLogout = async () => {
+    if (!session) return;
+    await router.push("/");
+    await signOut({ redirect: false });
+    await logout(session.user.access_token);
+  };
 
   const newCollection = async (data: FormSchemaType) => {
     const formData = new FormData();
@@ -63,11 +77,6 @@ export function UserButton({ image, name, icon, ...others }: UserButtonProps) {
 
     return (await makeRequest("me/lists", "POST", session?.user.access_token, formData)) as Promise<CollectionResponse>;
   };
-
-  const { control, handleSubmit, reset, setError } = useForm<FormSchemaType>({
-    resolver: zodResolver(schema),
-    defaultValues,
-  });
 
   const { mutate } = useMutation({
     mutationFn: newCollection,
@@ -146,7 +155,9 @@ export function UserButton({ image, name, icon, ...others }: UserButtonProps) {
             </Menu.Item>
             <Menu.Item icon={<IconHomePlus size="0.9rem" stroke={1.5} />}>Add Property</Menu.Item>
             <Menu.Label>Account</Menu.Label>
-            <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />}>Logout</Menu.Item>
+            <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />} onClick={() => void handleLogout()}>
+              Logout
+            </Menu.Item>
           </Menu.Dropdown>
         </Menu>
       </Group>
