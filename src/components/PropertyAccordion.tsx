@@ -8,7 +8,7 @@ import {
   IconMapPin,
 } from "@tabler/icons-react";
 import { type ReactNode } from "react";
-import { completeAddress, completeAdmAddress, propertyDetailsResume } from "~/lib/propertyHelper";
+import { completeAddress, completeAdmAddress, numberToString, propertyDetailsResume } from "~/lib/propertyHelper";
 import { type Property } from "~/types";
 
 interface AccordionLabelProps {
@@ -37,6 +37,7 @@ export type AccordionItem = {
   icon: React.ElementType;
   description: string;
   content: string | ReactNode;
+  open?: boolean;
 };
 
 function LabelAndValue({ label, value }: { label: string; value: string | undefined }) {
@@ -53,13 +54,56 @@ function LabelAndValue({ label, value }: { label: string; value: string | undefi
 }
 
 export function PropertyAccordion({ property }: { property: Property }) {
+  const convertCharacteristicValue = (value: string, type: string) => {
+    switch (type) {
+      case "numerical":
+        const numberValue = Number(value);
+        if (Number.isNaN(numberValue)) return value;
+        return numberToString(numberValue);
+      case "textual":
+      case "other":
+      default:
+        return value;
+        break;
+    }
+  };
+  const renderCharacteristics = () => {
+    console.log(property.characteristics);
+    return property.characteristics?.map((characteristic) => {
+      return (
+        <LabelAndValue
+          key={characteristic.id}
+          label={characteristic.name.substring(0, 1).toUpperCase() + characteristic.name.substring(1)}
+          value={convertCharacteristicValue(characteristic.value, characteristic.type) ?? "N/A"}
+        />
+      );
+    });
+  };
+
   const itemList: AccordionItem[] = [
     {
       id: "details",
       icon: IconListDetails,
       label: "Property Details",
       description: propertyDetailsResume(property),
-      content: <>Lorem ipsum</>,
+      content: (
+        <>
+          <div style={{ display: "flex", flexWrap: "wrap", gridGap: "2rem" }}>
+            <LabelAndValue label="Type" value={property.type?.toString()} />
+            <LabelAndValue label="Typology" value={property.typology?.toString()} />
+            <LabelAndValue label="Bathrooms" value={property.wc?.toString()} />
+            {property.gross_area && (
+              <LabelAndValue label="Gross Area" value={numberToString(property.gross_area) + " m²"} />
+            )}
+            {property.useful_area && (
+              <LabelAndValue label="Net Area" value={numberToString(property.useful_area) + " m²"} />
+            )}
+            {/* TODO: should go to another category?? */}
+            {renderCharacteristics()}
+          </div>
+        </>
+      ),
+      open: true,
     },
     { id: "ipsum", icon: Icon24Hours, label: "Lorem ipsum", description: "Lorem ipsum", content: <>Lorem ipsum</> },
     {
@@ -94,7 +138,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
   ));
 
   return (
-    <Accordion chevronPosition="right" variant="contained" multiple>
+    <Accordion defaultValue={["details"]} chevronPosition="right" variant="contained" multiple>
       {items}
     </Accordion>
   );
