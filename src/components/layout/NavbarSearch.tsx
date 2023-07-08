@@ -234,7 +234,8 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
           <UnstyledButton
             className={classes.mainLink}
             onClick={() => {
-              setSearch({});
+              if (setSearch) setSearch("");
+              setFilters({ ...filters, include_tags: [], exclude_tags: [] });
             }}
           >
             <div className={classes.mainLinkInner}>
