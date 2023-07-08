@@ -253,7 +253,7 @@ const Property: NextPage = () => {
             </Button>
           </Button.Group>
           <Button
-            disabled={photos.length < 2 && selectedUrl != ""} // If it only has a photo, it's the cover
+            disabled={selectedUrl == ""}
             color="yellow"
             variant="default"
             onClick={coverButtonClick}
