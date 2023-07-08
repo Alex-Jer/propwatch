@@ -115,7 +115,7 @@ export function AddPropertyAddress({ control, trigger, resetField, disabled }: A
         </Group>
       )}
 
-      <Group className="mb-3" position="apart" grow>
+      <Group className="mb-4" position="apart" grow>
         <TextInput
           name="postal_code"
           label="Postal Code"

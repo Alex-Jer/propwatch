@@ -206,7 +206,7 @@ export function AddPropertyMainInfo({ control, trigger, disabled, resetField }: 
         />
       </Group>
       {!trigger && (
-        <>
+        <div className="-mb-10">
           <Text size="sm" weight={600}>
             Rating
           </Text>
@@ -229,7 +229,7 @@ export function AddPropertyMainInfo({ control, trigger, disabled, resetField }: 
               </ActionIcon>
             </div>
           </Group>
-        </>
+        </div>
       )}
     </div>
   );
