@@ -1,7 +1,7 @@
 import { Group, Text, Accordion } from "@mantine/core";
-import { Icon24Hours, IconAddressBook, IconCurrentLocation } from "@tabler/icons-react";
+import { Icon24Hours, IconAddressBook, IconCurrentLocation, IconMapPin } from "@tabler/icons-react";
 import { type ReactNode } from "react";
-import { completeAdmAddress } from "~/lib/propertyHelper";
+import { completeAddress, completeAdmAddress } from "~/lib/propertyHelper";
 import { type Property } from "~/types";
 
 interface AccordionLabelProps {
@@ -32,16 +32,36 @@ export type AccordionItem = {
   content: string | ReactNode;
 };
 
+function LabelAndValue({ label, value }: { label: string; value: string | undefined }) {
+  return (
+    <div>
+      <Text>{label}</Text>
+      <Text size="sm" color="dimmed" weight={400}>
+        {value ?? "N/A"}
+      </Text>
+    </div>
+  );
+}
+
 export function PropertyAccordion({ property }: { property: Property }) {
   const itemList: AccordionItem[] = [
     {
       id: "address",
-      icon: IconCurrentLocation,
+      icon: IconMapPin,
       label: "Address",
-      description: completeAdmAddress(property.address),
+      description: completeAddress(property.address),
       content: (
         <>
-          <Text size="sm">{property.description}</Text>
+          <div style={{ display: "flex", flexWrap: "wrap", gridGap: "2rem" }}>
+            {/* TODO: MANTER ESTA ORDEM?? */}
+            <LabelAndValue label="District" value={property.address.adm1?.toString()} />
+            <LabelAndValue label="Municipality" value={property.address.adm2?.toString()} />
+            <LabelAndValue label="Parish" value={property.address.adm3?.toString()} />
+            <LabelAndValue label="Postal Code" value={property.address.postal_code?.toString()} />
+            <LabelAndValue label="Street Address" value={property.address.full_address?.toString()} />
+            <LabelAndValue label="Latitude" value={property.address.coordinates?.latitude?.toString()} />
+            <LabelAndValue label="Longitude" value={property.address.coordinates?.longitude?.toString()} />
+          </div>
         </>
       ),
     },
