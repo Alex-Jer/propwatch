@@ -1,9 +1,10 @@
 import { Burger, Button, Container, Group, Header, createStyles, rem } from "@mantine/core";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { IconHomePlus } from "@tabler/icons-react";
+import { IconHomePlus, IconSearch } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { AddPropertyDrawer } from "../AddPropertyDrawer";
+import { useRouter } from "next/router";
 
 type HeaderActionProps = {
   links?: { link: string; label: string }[];
@@ -16,6 +17,8 @@ const HEADER_HEIGHT = rem(60);
 export function NavHeader({ links, opened, setOpened }: HeaderActionProps) {
   const { classes } = useStyles();
   const { data: session } = useSession();
+
+  const router = useRouter();
 
   const [drawerOpened, { open, close }] = useDisclosure(false);
 
@@ -30,9 +33,21 @@ export function NavHeader({ links, opened, setOpened }: HeaderActionProps) {
   const renderButtons = () => {
     if (session) {
       return (
-        <Button onClick={open} leftIcon={<IconHomePlus size="1rem" />}>
-          Add Property
-        </Button>
+        <>
+          <Button
+            className="mr-1"
+            onClick={() => {
+              //HACK: Go to search page
+              void router.push("/properties");
+            }}
+            leftIcon={<IconSearch size="1rem" className="-mr-1" />}
+          >
+            Search
+          </Button>
+          <Button onClick={open} leftIcon={<IconHomePlus size="1rem" className="-mr-1" />}>
+            Add Property
+          </Button>
+        </>
       );
     }
 

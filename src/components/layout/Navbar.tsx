@@ -85,17 +85,15 @@ export function NavbarDefault({ opened, setOpened }: Props) {
   const { data: colData, isLoading, isError } = useAllCollections({ session, status });
   const collections = colData?.data;
 
-  const searchInputRef = useRef(null);
-
   useEffect(() => {
     document.addEventListener("keydown", (event) => {
-      if (event.ctrlKey && event.key === "k" && searchInputRef.current) {
+      if (event.ctrlKey && event.key === "k") {
         event.preventDefault();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        searchInputRef.current.focus();
+        //HACK: redirect to search page
+        void router.push("/properties");
       }
     });
-  }, []);
+  });
 
   //TODO: Better organization; Better error/loading processing; Better planning
 
@@ -239,21 +237,6 @@ export function NavbarDefault({ opened, setOpened }: Props) {
             icon={<IconSelector size="0.9rem" stroke={1.5} />}
           />
         </Navbar.Section>
-
-        <TextInput
-          placeholder="Search"
-          size="xs"
-          icon={<IconSearch size="0.8rem" stroke={1.5} />}
-          rightSectionWidth={70}
-          rightSection={<Code className={classes.searchCode}>Ctrl + K</Code>}
-          styles={{ rightSection: { pointerEvents: "none" } }}
-          mb="sm"
-          onFocus={() => {
-            //HACK: redirect to search page
-            void router.push("/properties");
-          }}
-          ref={searchInputRef}
-        />
 
         <Navbar.Section className={classes.section}>
           <div className={classes.mainLinks}>{mainLinks}</div>
