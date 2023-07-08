@@ -14,8 +14,6 @@ import { useSession } from "next-auth/react";
 import { type Offer, type Property } from "~/types";
 import { AddPropertyOffers } from "./AddPropertyOffers";
 import { AddPropertyCharacteristics } from "./AddPropertyCharacteristics";
-import { type DataTableSortStatus } from "mantine-datatable";
-import { sortBy } from "remeda";
 
 interface AddPropertyDrawerProps {
   opened: boolean;
@@ -293,18 +291,18 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                     message: "Please fill in the required fields or fix the errors.",
                     icon: <IconX size="1.1rem" />,
                     color: "red",
-                    autoClose: 10000,
+                    autoClose: 5000,
                   });
                 }
               )}
             >
               <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
                 <Stepper.Step label="Main Info">
-                  <AddPropertyMainInfo control={control} trigger={trigger} resetField={resetField} />
+                  <AddPropertyMainInfo control={control} resetField={resetField} />
                 </Stepper.Step>
 
                 <Stepper.Step label="Address">
-                  <AddPropertyAddress control={control} trigger={trigger} resetField={resetField} />
+                  <AddPropertyAddress control={control} resetField={resetField} />
                 </Stepper.Step>
 
                 <Stepper.Step label="Characteristics">
@@ -332,8 +330,8 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
                   {/* <AddPropertySummary />  */}
                   <h1 className="mb-2 text-2xl font-semibold">Summary</h1>
                   <Paper className="mb-4" shadow="xs" p="md" withBorder>
-                    <AddPropertyMainInfo control={control} />
-                    <AddPropertyAddress control={control} resetField={resetField} />
+                    <AddPropertyMainInfo control={control} trigger={trigger} />
+                    <AddPropertyAddress control={control} trigger={trigger} resetField={resetField} />
                   </Paper>
                 </Stepper.Step>
               </Stepper>

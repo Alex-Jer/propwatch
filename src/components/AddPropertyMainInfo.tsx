@@ -82,7 +82,6 @@ export function AddPropertyMainInfo({ control, trigger, disabled, resetField }: 
         control={control}
         withAsterisk
         data-autofocus
-        required
         onBlur={() => trigger && void trigger("title")}
         disabled={disabled}
       />
@@ -206,28 +205,32 @@ export function AddPropertyMainInfo({ control, trigger, disabled, resetField }: 
           disabled={disabled}
         />
       </Group>
-      <Text size="sm" weight={600}>
-        Rating
-      </Text>
-      <Group className="-ml-px -mt-1">
-        <Rating
-          name="rating"
-          fractions={2}
-          control={control}
-          readOnly={disabled}
-          onChange={() => setIsUndoRatingVisible(true)}
-        />
-        <div className={`-ml-3 ${isUndoRatingVisible ? "" : "invisible"}`}>
-          <ActionIcon
-            onClick={() => {
-              resetField && resetField("rating");
-              setIsUndoRatingVisible(false);
-            }}
-          >
-            <IconArrowBack size="1rem" />
-          </ActionIcon>
-        </div>
-      </Group>
+      {!trigger && (
+        <>
+          <Text size="sm" weight={600}>
+            Rating
+          </Text>
+          <Group className="-ml-px -mt-1">
+            <Rating
+              name="rating"
+              fractions={2}
+              control={control}
+              readOnly={disabled}
+              onChange={() => setIsUndoRatingVisible(true)}
+            />
+            <div className={`-ml-3 ${isUndoRatingVisible ? "" : "invisible"}`}>
+              <ActionIcon
+                onClick={() => {
+                  resetField && resetField("rating");
+                  setIsUndoRatingVisible(false);
+                }}
+              >
+                <IconArrowBack size="1rem" />
+              </ActionIcon>
+            </div>
+          </Group>
+        </>
+      )}
     </div>
   );
 }

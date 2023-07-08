@@ -61,7 +61,6 @@ export function AddPropertyAddress({ control, trigger, resetField, disabled }: A
         control={control}
         withAsterisk
         data-autofocus
-        required
         disabled={disabled}
         onBlur={() => trigger && void trigger("full_address")}
       />
