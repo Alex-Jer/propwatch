@@ -8,7 +8,7 @@ import { makeRequest } from "~/lib/requestHelper";
 interface PropertyCardProps {
   image: string;
   title: string;
-  author: string;
+  propertyType: string;
   id?: string | undefined;
   trashButtons?: boolean | undefined;
   refresh?: () => void;
@@ -32,7 +32,7 @@ export const successNotification = (message: string, title = "Success") => {
   });
 };
 
-export function PropertyCard({ image, title, author, id, trashButtons, refresh }: PropertyCardProps) {
+export function PropertyCard({ image, title, propertyType, id, trashButtons, refresh }: PropertyCardProps) {
   const { classes } = useStyles();
 
   const [isHovered, setIsHovered] = useState(false);
@@ -127,8 +127,8 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
           </Text>
 
           <Group position="apart" spacing="xs">
-            <Text size="sm" className={classes.author}>
-              {author}
+            <Text size="sm" className={classes.propertyType}>
+              {propertyType}
             </Text>
 
             {/* <Group spacing="lg"> */}
@@ -208,7 +208,7 @@ const useStyles = createStyles((theme) => ({
     marginLeft: rem(7),
   },
 
-  author: {
+  propertyType: {
     color: theme.colors.dark[2],
   },
 }));
