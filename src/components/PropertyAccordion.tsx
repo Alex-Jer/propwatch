@@ -68,7 +68,6 @@ export function PropertyAccordion({ property }: { property: Property }) {
     }
   };
   const renderCharacteristics = () => {
-    console.log(property.characteristics);
     return property.characteristics?.map((characteristic) => {
       return (
         <LabelAndValue

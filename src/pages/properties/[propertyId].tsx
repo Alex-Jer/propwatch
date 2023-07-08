@@ -7,11 +7,11 @@ import { Property } from "~/types";
 import { CardsCarousel } from "~/components/CardsCarousel";
 import Map, { Marker } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { type FunctionComponent, type SVGProps, useEffect, useState } from "react";
+import { type FunctionComponent, type SVGProps, useEffect, useState, useRef } from "react";
 import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "public/icons";
 import { MainCarousel } from "~/components/MainCarousel";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, Drawer, Group, Title } from "@mantine/core";
+import { ActionIcon, Button, Drawer, Group, Rating, Title } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
 import { IconPhoto, IconPhotoCheck, IconPhotoX, IconTrash, IconVideo, IconWallpaper } from "@tabler/icons-react";
@@ -19,6 +19,7 @@ import { makeRequest } from "~/lib/requestHelper";
 import { errorNotification, successNotification } from "~/components/PropertyCard";
 import { completeAddress, completeAdmAddress, priceToString } from "~/lib/propertyHelper";
 import { PropertyAccordion } from "~/components/PropertyAccordion";
+import { IconArrowBack } from "@tabler/icons-react";
 
 type MarkerIconComponent = FunctionComponent<SVGProps<SVGSVGElement>>;
 
@@ -46,9 +47,20 @@ const Property: NextPage = () => {
   const [videosOpened, { open: openVideos, close: closeVideos }] = useDisclosure(false);
   const [blueprintsOpened, { open: openBlueprints, close: closeBlueprints }] = useDisclosure(false);
 
+  const [rating, setRating] = useState(0);
+
   const photos = property?.media?.photos;
 
   const [isCurrentCover, setIsCurrentCover] = useState(false);
+
+  const hasSetRatingOnce = useRef(false);
+
+  useEffect(() => {
+    if (property?.rating && !hasSetRatingOnce.current) {
+      setRating(property.rating / 2);
+      hasSetRatingOnce.current = true;
+    }
+  }, [hasSetRatingOnce, property?.rating]);
 
   useEffect(() => {
     if (!isLoading && !isError && property) {
@@ -128,11 +140,29 @@ const Property: NextPage = () => {
     );
   };
 
+  const handleRatingChange = (value: number) => {
+    if (!property?.id) return;
+    if (value == rating) value = 0;
+    const formData = new FormData();
+    formData.append("rating", (value * 2).toString());
+    makeRequest(`me/properties/${property.id}/rating`, "PATCH", session?.user.access_token, formData)
+      .then(() => {
+        setRating(value);
+        property.rating = value * 2;
+      })
+      .catch(() => errorNotification("An error as occurred while rating this property."));
+  };
+
   const renderHeader = (property: Property) => {
     return (
       <div className="mt-4">
-        <Title order={2}>{property.title}</Title>
-        <div className="mt-2">{property.description}</div>
+        <div className="flex flex-wrap items-center">
+          <Title className="mb-2" order={2}>
+            {property.title}
+          </Title>
+          <Rating className="ml-3" value={rating} onChange={handleRatingChange} fractions={2} />
+        </div>
+        <div className="mt-1">{property.description}</div>
       </div>
     );
   };
