@@ -79,9 +79,7 @@ const TrashedProperties: NextPage = () => {
         {properties.map((property: CollectionProperty) => {
           return (
             <PropertyCard
-              image={property.cover_url}
-              title={property.title}
-              propertyType={property.type}
+              property={property}
               key={property.id}
               id={property.id}
               trashButtons={true}

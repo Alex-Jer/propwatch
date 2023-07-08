@@ -73,12 +73,7 @@ const Collection: NextPage = () => {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
           {collection?.properties?.data.map((property: CollectionProperty) => (
             <Link href={`/properties/${property.id}`} key={property.id}>
-              <PropertyCard
-                image={property.cover_url}
-                title={property.title}
-                propertyType={property.type}
-                key={property.id}
-              />
+              <PropertyCard property={property} key={property.id} />
             </Link>
           ))}
         </div>
