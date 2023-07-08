@@ -345,7 +345,7 @@ const useStyles = createStyles((theme) => ({
 
   disabled: {
     textDecoration: "line-through",
-    color: theme.colors.dark[4],
+    color: theme.colors.dark[3],
   },
 
   mainLinkIcon: {
