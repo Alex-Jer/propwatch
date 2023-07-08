@@ -147,8 +147,7 @@ const Property: NextPage = () => {
 
     return (
       <>
-        <h2 className="my-2 text-2xl">Map</h2>
-        <div className="h-3/6 w-auto">
+        <div className="mt-5 h-3/6 w-auto">
           <Map
             mapboxAccessToken={env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
             initialViewState={{
@@ -285,7 +284,7 @@ const Property: NextPage = () => {
 
         <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
 
-        {coordinates && renderMap()}
+        {coordinates && <>{renderMap()}</>}
       </CardBackground>
     </>
   );
