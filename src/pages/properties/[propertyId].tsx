@@ -11,13 +11,14 @@ import { type FunctionComponent, type SVGProps, useEffect, useState } from "reac
 import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "public/icons";
 import { MainCarousel } from "~/components/MainCarousel";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, Drawer, Group } from "@mantine/core";
+import { Button, Drawer, Group, Title } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
 import { IconPhoto, IconPhotoCheck, IconPhotoX, IconTrash, IconVideo, IconWallpaper } from "@tabler/icons-react";
 import { makeRequest } from "~/lib/requestHelper";
 import { errorNotification, successNotification } from "~/components/PropertyCard";
 import { completeAddress, completeAdmAddress, priceToString } from "~/lib/propertyHelper";
+import { PropertyAccordion } from "~/components/PropertyAccordion";
 
 type MarkerIconComponent = FunctionComponent<SVGProps<SVGSVGElement>>;
 
@@ -84,17 +85,6 @@ const Property: NextPage = () => {
     }
   };
 
-  const renderHeader = () => {
-    return (
-      <>
-        <div className="mb-2 flex justify-between">
-          <h1 className="text-3xl">{property.title}</h1>
-          <div className="text-3xl">{renderPrice()}</div>
-        </div>
-      </>
-    );
-  };
-
   const renderCover = () => {
     if (photos?.length == 0) return <div>Loading...</div>;
     return (
@@ -138,11 +128,11 @@ const Property: NextPage = () => {
     );
   };
 
-  const renderDescription = (property: Property) => {
+  const renderHeader = (property: Property) => {
     return (
       <div className="mt-4">
-        <h2 className="mb-2 text-2xl">{completeAdmAddress(property.address)}</h2>
-        <div>{property.description}</div>
+        <Title order={2}>{property.title}</Title>
+        <div className="mt-2">{property.description}</div>
       </div>
     );
   };
@@ -151,13 +141,13 @@ const Property: NextPage = () => {
   const MarkerIcon = (markerIcons[markerType] as MarkerIconComponent) || markerIcons.default;
 
   const renderMap = () => {
-    //TODO: If coordinates are null? Can they even be null?
+    if (coordinates == null) return <></>;
     const latitude = coordinates.latitude;
     const longitude = coordinates.longitude;
 
     return (
       <>
-        <h2 className="my-2 text-2xl">Location</h2>
+        <h2 className="my-2 text-2xl">Map</h2>
         <div className="h-3/6 w-auto">
           <Map
             mapboxAccessToken={env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
@@ -228,13 +218,13 @@ const Property: NextPage = () => {
       </Head>
 
       <CardBackground className="pt-6">
-        {renderHeader()}
         {renderCover()}
         {renderImageDrawer()}
         {renderVideoDrawer()}
         {renderBlueprintDrawer()}
 
         {/* TODO: Test Button */}
+
         <Group position="left" className="mt-4">
           <Button.Group>
             <Button
@@ -287,9 +277,11 @@ const Property: NextPage = () => {
           </Button>
         </Group>
 
-        <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
+        {renderHeader(property)}
 
-        {renderDescription(property)}
+        <div className="-ml-6 -mr-6 mb-4  border-b border-shark-700 pb-4" />
+
+        <PropertyAccordion property={property} />
 
         <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
 
