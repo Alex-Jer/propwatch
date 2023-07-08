@@ -159,29 +159,29 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
   };
 
   const tagLinks = tags?.map((tag: Tag) => {
-    const enabled = filters.include_tags?.includes(tag.id.toString());
-    const disabled = filters.exclude_tags?.includes(tag.id.toString());
-    const color = enabled ? classes.enabled : disabled ? classes.disabled : "";
+    const enabledTags = filters.include_tags?.includes(tag.id.toString());
+    const disabledTags = filters.exclude_tags?.includes(tag.id.toString());
+    const color = enabledTags ? classes.enabled : disabledTags ? classes.disabled : "";
 
     return (
       <UnstyledButton
         onClick={() => {
-          if (!enabled && !disabled) {
+          if (!enabledTags && !disabledTags) {
             setFilters({ ...filters, include_tags: addToList(filters.include_tags, tag.id.toString()) });
-          } else if (enabled) {
+          } else if (enabledTags) {
             setFilters({
               ...filters,
               include_tags: removeFromList(filters.include_tags, tag.id.toString()),
               exclude_tags: addToList(filters.exclude_tags, tag.id.toString()),
             });
-          } else if (disabled) {
+          } else if (disabledTags) {
             setFilters({ ...filters, exclude_tags: removeFromList(filters.exclude_tags, tag.id.toString()) });
           }
         }}
         key={tag.id}
-        className={classes.mainLink}
+        className={`${classes.mainLink} ${color}`}
       >
-        <div className={`${classes.mainLinkInner} ${color}`}>
+        <div className={`${classes.mainLinkInner}`}>
           <IconTag size={20} className={`${classes.mainLinkIcon} ${color}`} stroke={1.5} />
           <span>{tag.name}</span>
         </div>
@@ -287,15 +287,15 @@ const useStyles = createStyles((theme) => ({
     marginBottom: theme.spacing.md,
 
     "&:not(:last-of-type)": {
-      borderBottom: `${rem(1)} solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}`,
+      borderBottom: `${rem(1)} solid ${theme.colors.dark[4]}`,
     },
   },
 
   searchCode: {
     fontWeight: 700,
     fontSize: rem(10),
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[0],
-    border: `${rem(1)} solid ${theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[2]}`,
+    backgroundColor: theme.colors.dark[7],
+    border: `${rem(1)} solid ${theme.colors.dark[7]}`,
   },
 
   mainLinks: {
@@ -312,20 +312,20 @@ const useStyles = createStyles((theme) => ({
     padding: `${rem(8)} ${theme.spacing.xs}`,
     borderRadius: theme.radius.sm,
     fontWeight: 500,
-    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.gray[7],
+    color: theme.colors.dark[0],
 
     "&:hover": {
-      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
-      color: theme.colorScheme === "dark" ? theme.white : theme.black,
+      backgroundColor: theme.colors.dark[6],
+      color: theme.white,
     },
   },
 
   activeLink: {
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    backgroundColor: theme.colors.dark[6],
+    color: theme.white,
 
     "&:hover": {
-      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+      backgroundColor: theme.colors.dark[6],
     },
   },
 
@@ -336,20 +336,21 @@ const useStyles = createStyles((theme) => ({
   },
 
   active: {
-    color: "mediumpurple !important",
+    color: theme.colors.blue[5],
   },
 
   enabled: {
-    color: "green !important",
+    color: theme.colors.blue[5],
   },
 
   disabled: {
-    color: "red !important",
+    textDecoration: "line-through",
+    color: theme.colors.dark[4],
   },
 
   mainLinkIcon: {
     marginRight: theme.spacing.sm,
-    color: theme.colorScheme === "dark" ? theme.colors.dark[2] : theme.colors.gray[6],
+    color: theme.colors.dark[2],
   },
 
   mainLinkBadge: {
