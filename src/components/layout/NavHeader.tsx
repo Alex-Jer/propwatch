@@ -8,13 +8,14 @@ import { AddPropertyDrawer } from "~/components/property";
 
 type HeaderActionProps = {
   links?: { link: string; label: string }[];
-  opened: boolean;
-  setOpened: (opened: boolean) => void;
+  opened?: boolean;
+  setOpened?: (opened: boolean) => void;
+  isHero?: boolean;
 };
 
 const HEADER_HEIGHT = rem(60);
 
-export function NavHeader({ links, opened, setOpened }: HeaderActionProps) {
+export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProps) {
   const { classes } = useStyles();
   const { data: session } = useSession();
 
@@ -64,13 +65,23 @@ export function NavHeader({ links, opened, setOpened }: HeaderActionProps) {
 
   return (
     <>
-      <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }} mb={20} className={classes.header}>
+      <Header
+        height={HEADER_HEIGHT}
+        sx={{ borderBottom: 0 }}
+        mb={20}
+        className={isHero ? classes.headerHero : classes.header}
+      >
         <Container className={classes.inner} fluid>
           <Group>
-            <Burger opened={opened} onClick={() => setOpened(!opened)} className={classes.burger} size="sm" />
-            <Link href="/">
-              <span className="w-44 font-bold">realtywatch</span>
-            </Link>
+            {!isHero && (
+              <Burger
+                opened={opened as boolean}
+                onClick={() => setOpened?.(!opened)}
+                className={classes.burger}
+                size="sm"
+              />
+            )}
+            <span className="w-44 cursor-default font-bold">realtywatch</span>
           </Group>
 
           <Group spacing={5} className={classes.links}>
@@ -91,6 +102,11 @@ export function NavHeader({ links, opened, setOpened }: HeaderActionProps) {
 const useStyles = createStyles((theme) => ({
   header: {
     backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+    borderBottom: 0,
+  },
+
+  headerHero: {
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[0],
     borderBottom: 0,
   },
 

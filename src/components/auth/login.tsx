@@ -70,12 +70,9 @@ export function LoginForm() {
             mt="md"
             {...form.getInputProps("password")}
           />
-          <Group position="apart" mt="lg">
-            <Checkbox label="Remember me" />
-            <Anchor component="button" size="sm">
-              Forgot password?
-            </Anchor>
-          </Group>
+          {/* <Anchor component="button" size="sm"> */}
+          {/*   Forgot password? */}
+          {/* </Anchor> */}
           <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
             Sign in
           </Button>
