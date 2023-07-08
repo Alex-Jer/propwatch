@@ -1,14 +1,14 @@
-import { Card, Text, Group, createStyles, getStylesRef, rem, Tooltip } from "@mantine/core";
+import { Card, Text, Group, createStyles, getStylesRef, rem, Tooltip, Center } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconArrowBackUp, IconCheck, IconTrash, IconX } from "@tabler/icons-react";
+import { IconArrowBackUp, IconBed, IconCheck, IconHomeDollar, IconTrash, IconX } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
+import { priceToString } from "~/lib/propertyHelper";
 import { makeRequest } from "~/lib/requestHelper";
+import { type Property } from "~/types";
 
 interface PropertyCardProps {
-  image: string;
-  title: string;
-  propertyType: string;
+  property: Property;
   id?: string | undefined;
   trashButtons?: boolean | undefined;
   refresh?: () => void;
@@ -32,7 +32,7 @@ export const successNotification = (message: string, title = "Success") => {
   });
 };
 
-export function PropertyCard({ image, title, propertyType, id, trashButtons, refresh }: PropertyCardProps) {
+export function PropertyCard({ property, id, trashButtons, refresh }: PropertyCardProps) {
   const { classes } = useStyles();
 
   const [isHovered, setIsHovered] = useState(false);
@@ -117,34 +117,48 @@ export function PropertyCard({ image, title, propertyType, id, trashButtons, ref
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
     >
-      <div className={classes.image} style={{ backgroundImage: `url(${image})` }} />
+      <div className={classes.image} style={{ backgroundImage: `url(${property?.cover_url})` }} />
       <div className={classes.overlay} />
       <div className={classes.content}>
         {shouldDisplay && renderTrashButtons(id, trashButtons)}
         <div>
           <Text size="lg" className={classes.title} weight={500}>
-            {title}
+            {property.title}
           </Text>
 
           <Group position="apart" spacing="xs">
-            <Text size="sm" className={classes.propertyType}>
-              {propertyType}
+            <Text size="sm" className={`${classes.propertyType} capitalize`}>
+              {property.type}
             </Text>
 
-            {/* <Group spacing="lg"> */}
-            {/*   <Center> */}
-            {/*     <IconEye size="1rem" stroke={1.5} color={theme.colors.dark[2]} /> */}
-            {/*     <Text size="sm" className={classes.bodyText}> */}
-            {/*       {views} */}
-            {/*     </Text> */}
-            {/*   </Center> */}
-            {/*   <Center> */}
-            {/*     <IconMessageCircle size="1rem" stroke={1.5} color={theme.colors.dark[2]} /> */}
-            {/*     <Text size="sm" className={classes.bodyText}> */}
-            {/*       {comments} */}
-            {/*     </Text> */}
-            {/*   </Center> */}
-            {/* </Group> */}
+            <Group spacing="lg">
+              {property.typology && (
+                <Center>
+                  <IconBed size="1rem" stroke={1.5} />
+                  <Text size="sm" className={classes.bodyText}>
+                    {property.typology.slice(1)}
+                  </Text>
+                </Center>
+              )}
+
+              {property.current_price_rent && (
+                <Center>
+                  <Text size="sm" className={classes.bodyText}>
+                    {priceToString(property.current_price_rent)}
+                    <span className="text-xs">/month</span>
+                  </Text>
+                </Center>
+              )}
+
+              {property.current_price_sale && (
+                <Center>
+                  <IconHomeDollar size="1rem" stroke={1.5} />
+                  <Text size="sm" className={classes.bodyText}>
+                    {priceToString(property.current_price_sale)}
+                  </Text>
+                </Center>
+              )}
+            </Group>
           </Group>
         </div>
       </div>
