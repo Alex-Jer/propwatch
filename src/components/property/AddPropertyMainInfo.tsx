@@ -21,17 +21,17 @@ const propertyTypes = [
 ];
 
 const typologies = [
-  { value: "t0", label: "T0" },
-  { value: "t1", label: "T1" },
-  { value: "t2", label: "T2" },
-  { value: "t3", label: "T3" },
-  { value: "t4", label: "T4" },
-  { value: "t5", label: "T5" },
-  { value: "t6", label: "T6" },
-  { value: "t7", label: "T7" },
-  { value: "t8", label: "T8" },
-  { value: "t9", label: "T9" },
-  { value: "t10", label: "T10" },
+  { value: "T0", label: "T0" },
+  { value: "T1", label: "T1" },
+  { value: "T2", label: "T2" },
+  { value: "T3", label: "T3" },
+  { value: "T4", label: "T4" },
+  { value: "T5", label: "T5" },
+  { value: "T6", label: "T6" },
+  { value: "T7", label: "T7" },
+  { value: "T8", label: "T8" },
+  { value: "T9", label: "T9" },
+  { value: "T10", label: "T10" },
 ];
 
 const currentStatuses = [
