@@ -33,36 +33,10 @@ const Collection: NextPage = () => {
   }
 
   const { data: collection } = data;
-
-  console.log("properties", data);
-
   const TRIMMING_LENGTH = (window.innerWidth ?? 33) / 18;
-
   const descriptionNeedsTrimming = collection?.description?.length > TRIMMING_LENGTH;
 
-  const renderProperties = (properties: CollectionProperty[]) => {
-    if (!properties) {
-      return <></>;
-    }
-
-    return (
-      <>
-        {properties.map((property: CollectionProperty) => {
-          const url = `/properties/${property.id}`;
-          return (
-            <Link href={url} key={property.id}>
-              <PropertyCard
-                image={property.cover_url}
-                title={property.title}
-                author={property.type}
-                key={property.id}
-              />
-            </Link>
-          );
-        })}
-      </>
-    );
-  };
+  console.log("properties", data);
 
   return (
     <>
@@ -97,7 +71,16 @@ const Collection: NextPage = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-          {renderProperties(collection.properties.data)}
+          {collection?.properties?.data.map((property: CollectionProperty) => (
+            <Link href={`/properties/${property.id}`} key={property.id}>
+              <PropertyCard
+                image={property.cover_url}
+                title={property.title}
+                author={property.type}
+                key={property.id}
+              />
+            </Link>
+          ))}
         </div>
       </CardBackground>
     </>

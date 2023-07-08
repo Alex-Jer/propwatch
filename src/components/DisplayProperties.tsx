@@ -14,34 +14,14 @@ export function DisplayProperties({ propData, isLoading, isError, activePage, se
     return <div>Error loading properties.</div>;
   }
 
-  const renderProperties = (properties: CollectionProperty[] | undefined) => {
-    if (!properties) {
-      return <></>;
-    }
-
-    return (
-      <>
-        {properties.map((property: CollectionProperty) => {
-          const url = `/properties/${property.id}`;
-          return (
-            <Link href={url} key={property.id}>
-              <PropertyCard
-                image={property.cover_url}
-                title={property.title}
-                author={property.type}
-                key={property.id}
-              />
-            </Link>
-          );
-        })}
-      </>
-    );
-  };
-
   return (
     <>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-        {renderProperties(properties)}
+        {properties?.map((property: CollectionProperty) => (
+          <Link href={`/properties/${property.id}`} key={property.id}>
+            <PropertyCard image={property.cover_url} title={property.title} author={property.type} key={property.id} />
+          </Link>
+        ))}
       </div>
 
       {propData?.meta.last_page && propData?.meta.last_page > 1 && (

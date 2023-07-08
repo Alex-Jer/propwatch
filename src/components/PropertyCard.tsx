@@ -36,17 +36,6 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
   const { classes } = useStyles();
 
   const [isHovered, setIsHovered] = useState(false);
-
-  /*const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Windows Phone/i.test(navigator.userAgent)) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  }, []);*/
-
   const [isFocused, setIsFocused] = useState(false);
 
   const handleMouseEnter = () => {
@@ -58,8 +47,8 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
   };
 
   const shouldDisplay = useMemo(() => {
-    return isFocused || isHovered /*|| isMobile*/;
-  }, [isHovered, isFocused /*, isMobile*/]);
+    return isFocused || isHovered;
+  }, [isHovered, isFocused]);
 
   const { data: session } = useSession();
 
@@ -71,7 +60,7 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
       })
       .catch((err) => {
         errorNotification("An unknown error occurred while restoring this property.");
-        //TODO
+        //TODO:
         console.log("Error: ", err, " when restoring property.");
       })
       .finally(() => {
