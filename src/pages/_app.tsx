@@ -28,7 +28,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
 
   const isAppRoute = router.pathname !== "/" && !router.pathname.startsWith("/auth");
 
-  const [search, setSearch] = useDebouncedState({}, 500);
+  const [search, setSearch] = useDebouncedState({}, 300);
   const isPropertySearch: boolean | undefined = Component == Properties || Component == SearchPolygonProperties;
 
   return (
