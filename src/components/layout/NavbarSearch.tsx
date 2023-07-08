@@ -341,11 +341,19 @@ const useStyles = createStyles((theme) => ({
 
   enabled: {
     color: theme.colors.blue[5],
+
+    "&:hover": {
+      color: theme.colors.blue[5],
+    },
   },
 
   disabled: {
     textDecoration: "line-through",
     color: theme.colors.dark[3],
+
+    "&:hover": {
+      color: theme.colors.dark[3],
+    },
   },
 
   mainLinkIcon: {
