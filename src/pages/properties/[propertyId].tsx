@@ -17,6 +17,7 @@ import { env } from "~/env.mjs";
 import { IconPhoto, IconPhotoCheck, IconPhotoX, IconTrash, IconVideo, IconWallpaper } from "@tabler/icons-react";
 import { makeRequest } from "~/lib/requestHelper";
 import { errorNotification, successNotification } from "~/components/PropertyCard";
+import { priceToString } from "~/lib/propertyHelper";
 
 type MarkerIconComponent = FunctionComponent<SVGProps<SVGSVGElement>>;
 
@@ -69,12 +70,6 @@ const Property: NextPage = () => {
   const videos = property?.media?.videos;
   const blueprints = property?.media?.blueprints;
   const coordinates = property?.address?.coordinates;
-
-  const priceToString = (price: number) => {
-    //check if price has decimals
-    if (price % 1 == 0) price = Math.floor(price);
-    return price.toLocaleString("pt-PT") + " €";
-  };
 
   const renderPrice = () => {
     switch (property.listing_type) {
