@@ -24,6 +24,7 @@ import {
   IconBuildingEstate,
   IconTag,
   IconMapSearch,
+  IconFilterOff,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -223,6 +224,22 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
 
       <Navbar.Section className={classes.section}>
         <div className={classes.mainLinks}>{mainLinks}</div>
+      </Navbar.Section>
+
+      <Navbar.Section className={classes.section}>
+        <div className={classes.mainLinks}>
+          <UnstyledButton
+            className={classes.mainLink}
+            onClick={() => {
+              setSearch({});
+            }}
+          >
+            <div className={classes.mainLinkInner}>
+              <IconFilterOff className={classes.mainLinkIcon} size={20} stroke={1.5} />
+              <span>Reset Filters</span>
+            </div>
+          </UnstyledButton>
+        </div>
       </Navbar.Section>
 
       <Navbar.Section className={classes.section}>
