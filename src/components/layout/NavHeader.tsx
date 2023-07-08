@@ -65,7 +65,12 @@ export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProp
 
   return (
     <>
-      <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }} mb={20} className={classes.header}>
+      <Header
+        height={HEADER_HEIGHT}
+        sx={{ borderBottom: 0 }}
+        mb={20}
+        className={isHero ? classes.headerHero : classes.header}
+      >
         <Container className={classes.inner} fluid>
           <Group>
             {!isHero && (
@@ -76,9 +81,7 @@ export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProp
                 size="sm"
               />
             )}
-            <Link href="/">
-              <span className="w-44 font-bold">realtywatch</span>
-            </Link>
+            <span className="w-44 cursor-default font-bold">realtywatch</span>
           </Group>
 
           <Group spacing={5} className={classes.links}>
@@ -99,6 +102,11 @@ export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProp
 const useStyles = createStyles((theme) => ({
   header: {
     backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+    borderBottom: 0,
+  },
+
+  headerHero: {
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[0],
     borderBottom: 0,
   },
 
