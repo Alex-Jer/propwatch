@@ -156,21 +156,22 @@ export type AdministrativeDivision = {
   parent_id: number;
 };
 
-export type ShellProps = {
-  children: ReactNode;
-  useNavbarSearch?: boolean;
-  search: SearchOptions;
-  setSearch: (search: SearchOptions) => void;
-};
-
 export type UserButtonProps = UnstyledButtonProps & {
   image: string;
   name: string;
   icon?: React.ReactNode;
 };
 
-export type SearchOptions = {
-  query?: string;
+export type ShellProps = {
+  children: ReactNode;
+  useNavbarSearch?: boolean;
+  search?: string;
+  filters: FiltersOptions;
+  setSearch?: (search: string) => void;
+  setFilters: (filters: FiltersOptions) => void;
+};
+
+export type FiltersOptions = {
   include_tags?: string[];
   exclude_tags?: string[];
   list?: string;
@@ -178,8 +179,9 @@ export type SearchOptions = {
 };
 
 export type SearchPropertyProps = {
-  search: SearchOptions;
-  setSearch: (search: SearchOptions) => void;
+  search: string;
+  filters: FiltersOptions;
+  setFilters: (filters: FiltersOptions) => void;
 };
 
 export type DisplayPropertiesProps = {

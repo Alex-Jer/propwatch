@@ -28,7 +28,9 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
 
   const isAppRoute = router.pathname !== "/" && !router.pathname.startsWith("/auth");
 
-  const [search, setSearch] = useDebouncedState({}, 300);
+  const [search, setSearch] = useDebouncedState("", 300);
+  const [filters, setFilters] = useState({});
+
   const isPropertySearch: boolean | undefined = Component == Properties || Component == SearchPolygonProperties;
 
   return (
@@ -39,9 +41,21 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
           <QueryClientProvider client={queryClient}>
             <NextNProgress options={{ showSpinner: false }} />
             {isAppRoute ? (
-              <Shell useNavbarSearch={isPropertySearch} search={search} setSearch={setSearch}>
+              <Shell
+                useNavbarSearch={isPropertySearch}
+                search={search}
+                setSearch={setSearch}
+                filters={filters}
+                setFilters={setFilters}
+              >
                 {isPropertySearch ? (
-                  <Component {...pageProps} search={search} setSearch={setSearch} />
+                  <Component
+                    {...pageProps}
+                    search={search}
+                    setSearch={setSearch}
+                    filters={filters}
+                    setFilters={setFilters}
+                  />
                 ) : (
                   <Component {...pageProps} />
                 )}

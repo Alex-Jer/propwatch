@@ -5,7 +5,7 @@ import { NavbarDefault } from "./Navbar";
 import { NavbarSearch } from "./NavbarSearch";
 import { NavHeader } from "./NavHeader";
 
-const Shell = ({ children, useNavbarSearch, search, setSearch }: ShellProps) => {
+const Shell = ({ children, useNavbarSearch, setSearch, filters, setFilters }: ShellProps) => {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
 
@@ -22,7 +22,13 @@ const Shell = ({ children, useNavbarSearch, search, setSearch }: ShellProps) => 
       fixed
       navbar={
         useNavbarSearch ? (
-          <NavbarSearch opened={opened} setOpened={setOpened} search={search} setSearch={setSearch} />
+          <NavbarSearch
+            opened={opened}
+            setOpened={setOpened}
+            setSearch={setSearch}
+            filters={filters}
+            setFilters={setFilters}
+          />
         ) : (
           <NavbarDefault opened={opened} setOpened={setOpened} />
         )
