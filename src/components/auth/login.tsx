@@ -71,7 +71,6 @@ export function LoginForm() {
             {...form.getInputProps("password")}
           />
           <Group position="apart" mt="lg">
-            <Checkbox label="Remember me" />
             <Anchor component="button" size="sm">
               Forgot password?
             </Anchor>

@@ -8,13 +8,14 @@ import { AddPropertyDrawer } from "~/components/property";
 
 type HeaderActionProps = {
   links?: { link: string; label: string }[];
-  opened: boolean;
-  setOpened: (opened: boolean) => void;
+  opened?: boolean;
+  setOpened?: (opened: boolean) => void;
+  isHero?: boolean;
 };
 
 const HEADER_HEIGHT = rem(60);
 
-export function NavHeader({ links, opened, setOpened }: HeaderActionProps) {
+export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProps) {
   const { classes } = useStyles();
   const { data: session } = useSession();
 
@@ -67,7 +68,14 @@ export function NavHeader({ links, opened, setOpened }: HeaderActionProps) {
       <Header height={HEADER_HEIGHT} sx={{ borderBottom: 0 }} mb={20} className={classes.header}>
         <Container className={classes.inner} fluid>
           <Group>
-            <Burger opened={opened} onClick={() => setOpened(!opened)} className={classes.burger} size="sm" />
+            {!isHero && (
+              <Burger
+                opened={opened as boolean}
+                onClick={() => setOpened?.(!opened)}
+                className={classes.burger}
+                size="sm"
+              />
+            )}
             <Link href="/">
               <span className="w-44 font-bold">realtywatch</span>
             </Link>
