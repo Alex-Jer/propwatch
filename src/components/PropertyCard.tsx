@@ -8,7 +8,7 @@ import { makeRequest } from "~/lib/requestHelper";
 interface PropertyCardProps {
   image: string;
   title: string;
-  author: string;
+  propertyType: string;
   id?: string | undefined;
   trashButtons?: boolean | undefined;
   refresh?: () => void;
@@ -32,21 +32,10 @@ export const successNotification = (message: string, title = "Success") => {
   });
 };
 
-export function PropertyCard({ image, title, author, id, trashButtons, refresh }: PropertyCardProps) {
+export function PropertyCard({ image, title, propertyType, id, trashButtons, refresh }: PropertyCardProps) {
   const { classes } = useStyles();
 
   const [isHovered, setIsHovered] = useState(false);
-
-  /*const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Windows Phone/i.test(navigator.userAgent)) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  }, []);*/
-
   const [isFocused, setIsFocused] = useState(false);
 
   const handleMouseEnter = () => {
@@ -58,8 +47,8 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
   };
 
   const shouldDisplay = useMemo(() => {
-    return isFocused || isHovered /*|| isMobile*/;
-  }, [isHovered, isFocused /*, isMobile*/]);
+    return isFocused || isHovered;
+  }, [isHovered, isFocused]);
 
   const { data: session } = useSession();
 
@@ -71,7 +60,7 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
       })
       .catch((err) => {
         errorNotification("An unknown error occurred while restoring this property.");
-        //TODO
+        //TODO:
         console.log("Error: ", err, " when restoring property.");
       })
       .finally(() => {
@@ -138,8 +127,8 @@ export function PropertyCard({ image, title, author, id, trashButtons, refresh }
           </Text>
 
           <Group position="apart" spacing="xs">
-            <Text size="sm" className={classes.author}>
-              {author}
+            <Text size="sm" className={classes.propertyType}>
+              {propertyType}
             </Text>
 
             {/* <Group spacing="lg"> */}
@@ -219,7 +208,7 @@ const useStyles = createStyles((theme) => ({
     marginLeft: rem(7),
   },
 
-  author: {
+  propertyType: {
     color: theme.colors.dark[2],
   },
 }));

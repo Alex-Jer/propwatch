@@ -81,7 +81,7 @@ const TrashedProperties: NextPage = () => {
             <PropertyCard
               image={property.cover_url}
               title={property.title}
-              author={property.type}
+              propertyType={property.type}
               key={property.id}
               id={property.id}
               trashButtons={true}

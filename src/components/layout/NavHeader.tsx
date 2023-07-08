@@ -36,6 +36,7 @@ export function NavHeader({ links, opened, setOpened }: HeaderActionProps) {
         <>
           <Button
             className="mr-1"
+            color="gray"
             onClick={() => {
               //HACK: Go to search page
               void router.push("/properties");
