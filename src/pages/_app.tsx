@@ -20,7 +20,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
   const cache = emCache();
   const router = useRouter();
 
-  const isAppRoute = router.pathname !== "/" && !router.pathname.startsWith("/auth");
+  const isAppRoute = router.pathname !== "/" && router.pathname !== "/403" && !router.pathname.startsWith("/auth");
 
   const [search, setSearch] = useDebouncedState("", 300);
   const [filters, setFilters] = useState({});
