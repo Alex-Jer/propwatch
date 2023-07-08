@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UnstyledButton, Group, Avatar, Text, createStyles, Menu, Modal, Button, Box } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconCheck, IconChevronRight, IconHomePlus, IconLogout, IconTextPlus, IconX } from "@tabler/icons-react";
+import { IconCheck, IconChevronRight, IconLogout, IconTextPlus, IconX } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import { type AxiosError } from "axios";
 import { signOut, useSession } from "next-auth/react";
@@ -153,7 +153,6 @@ export function UserButton({ image, name, icon, ...others }: UserButtonProps) {
             <Menu.Item icon={<IconTextPlus size="0.9rem" stroke={1.5} />} onClick={openNewCollectionModal}>
               New Collection
             </Menu.Item>
-            <Menu.Item icon={<IconHomePlus size="0.9rem" stroke={1.5} />}>Add Property</Menu.Item>
             <Menu.Label>Account</Menu.Label>
             <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />} onClick={() => void handleLogout()}>
               Logout
