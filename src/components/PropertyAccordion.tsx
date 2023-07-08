@@ -148,14 +148,14 @@ export function PropertyAccordion({ property }: { property: Property }) {
   const generateOffersDescription = (property: Property) => {
     switch (property.listing_type) {
       case "sale":
-        return `View ${property.offers.sale.length} sale offers.`;
+        return `View ${property.offers.sale.length} sale offers`;
       case "rent":
-        return `View ${property.offers.rent.length} rent offers.`;
+        return `View ${property.offers.rent.length} rent offers`;
       case "both":
-        return `View ${property.offers.sale.length} sale offers and ${property.offers.rent.length} rent offers.`;
+        return `View ${property.offers.sale.length} sale offers and ${property.offers.rent.length} rent offers`;
       case "none":
       default:
-        return "This property has no offers.";
+        return "This property has no offers";
     }
   };
 
