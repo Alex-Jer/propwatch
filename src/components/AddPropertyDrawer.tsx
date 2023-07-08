@@ -82,14 +82,7 @@ const schema = z.object({
     })
     .optional()
     .nullable(),
-  latitude: z
-    .union([z.number().optional().nullable(), z.string().max(24)])
-    .optional()
-    .nullable(),
-  longitude: z
-    .union([z.number().optional().nullable(), z.string().max(24)])
-    .optional()
-    .nullable(),
+  coordinates: z.string().optional().nullable(),
   adm1_id: z.string().optional().nullable(),
   adm2_id: z.string().optional().nullable(),
   adm3_id: z.string().optional().nullable(),
@@ -114,8 +107,7 @@ const defaultValues: FormSchemaType = {
   characteristics: [{ name: "", type: "numerical", value: "" }],
   full_address: "",
   postal_code: "",
-  latitude: "",
-  longitude: "",
+  coordinates: "",
   adm1_id: null,
   adm2_id: null,
   adm3_id: null,
@@ -136,7 +128,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
   const { data: session } = useSession();
 
-  const { control, handleSubmit, reset, resetField, watch, trigger } = useForm<FormSchemaType>({
+  const { control, handleSubmit, reset, resetField, watch, trigger, setFocus } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
   });
@@ -145,6 +137,12 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     const isOutOfBounds = nextStep < 0 || nextStep > TOTAL_STEPS;
     if (isOutOfBounds) return;
     setStepperActive(nextStep);
+
+    if (nextStep === 1) {
+      // focus on first field
+      console.log("focus");
+      setFocus("full_address");
+    }
   };
 
   const resetForm = () => {
@@ -180,8 +178,12 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     appendIfNotNull("address[adm2_id]", data.adm2_id);
     appendIfNotNull("address[adm3_id]", data.adm3_id);
     appendIfNotNull("address[postal_code]", data.postal_code);
-    appendIfNotNull("address[latitude]", data.latitude);
-    appendIfNotNull("address[longitude]", data.longitude);
+
+    if (data.coordinates) {
+      const [latitude, longitude] = data.coordinates.split(",");
+      appendIfNotNull("address[latitude]", latitude);
+      appendIfNotNull("address[longitude]", longitude);
+    }
 
     data.tags.forEach((tag, index) => {
       appendIfNotNull(`tags[${index}]`, tag);

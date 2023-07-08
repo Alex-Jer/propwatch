@@ -4,9 +4,9 @@ import { type UseFormResetField, type Control, type UseFormTrigger } from "react
 import { useAdms, useAdms2, useAdms3 } from "~/hooks/useQueries";
 import { type AdministrativeDivision, type SelectOption } from "~/types";
 import { type FormSchemaType } from "./AddPropertyDrawer";
-import { NumberInput, Select, TextInput } from "react-hook-form-mantine";
+import { Select, TextInput } from "react-hook-form-mantine";
 import { Group, Loader } from "@mantine/core";
-import { IconTag, IconWorldLatitude, IconWorldLongitude } from "@tabler/icons-react";
+import { IconTag, IconWorld } from "@tabler/icons-react";
 
 type AddPropertyAddressProps = {
   control: Control<FormSchemaType>;
@@ -115,7 +115,7 @@ export function AddPropertyAddress({ control, trigger, resetField, disabled }: A
         </Group>
       )}
 
-      <Group className="mb-4" position="apart" grow>
+      <Group className="mb-6" position="apart" grow>
         <TextInput
           name="postal_code"
           label="Postal Code"
@@ -125,30 +125,12 @@ export function AddPropertyAddress({ control, trigger, resetField, disabled }: A
           disabled={disabled}
           onBlur={() => trigger && void trigger("postal_code")}
         />
-        <NumberInput
-          name="latitude"
-          label="Latitude"
-          placeholder="Latitude"
-          precision={6}
-          hideControls
-          decimalSeparator=","
+        <TextInput
+          name="coordinates"
+          label="Coordinates"
+          placeholder="38.69793338600741, -9.20669997333539"
           control={control}
-          icon={<IconWorldLatitude size="1rem" />}
-          min={-90}
-          max={90}
-          disabled={disabled}
-        />
-        <NumberInput
-          name="longitude"
-          label="Longitude"
-          placeholder="Longitude"
-          precision={6}
-          hideControls
-          decimalSeparator=","
-          control={control}
-          icon={<IconWorldLongitude size="1rem" />}
-          min={-180}
-          max={180}
+          icon={<IconWorld size="1rem" />}
           disabled={disabled}
         />
       </Group>
