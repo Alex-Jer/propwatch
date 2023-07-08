@@ -13,6 +13,9 @@ import {
   MediaQuery,
   Burger,
   useMantineTheme,
+  Modal,
+  Box,
+  Button,
 } from "@mantine/core";
 import {
   IconSearch,
@@ -23,23 +26,58 @@ import {
   IconFolder,
   IconBuildingEstate,
   IconMapSearch,
+  IconCheck,
+  IconX,
 } from "@tabler/icons-react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAllCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 import { UserButton } from "./UserButton";
 import { useEffect, useRef } from "react";
+import { useDisclosure } from "@mantine/hooks";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { logout, makeRequest } from "~/lib/requestHelper";
+import { useMutation } from "@tanstack/react-query";
+import { notifications } from "@mantine/notifications";
+import { type AxiosError } from "axios";
+import { Textarea, TextInput as TextInputForm } from "react-hook-form-mantine";
 
 type Props = {
   opened: boolean;
   setOpened: (opened: boolean) => void;
 };
 
+type CollectionResponse = {
+  message: string;
+  data: Collection;
+};
+
+const schema = z.object({
+  title: z
+    .string()
+    .nonempty({ message: "A title is required" })
+    .min(1, { message: "Title must be at least 1 character long" })
+    .max(100, { message: "Title must be at most 100 characters long" }),
+  description: z.string().max(5000, { message: "Description must be at most 5000 characters long" }),
+});
+
+const defaultValues: FormSchemaType = {
+  title: "",
+  description: "",
+};
+
+type FormSchemaType = z.infer<typeof schema>;
+
 export function NavbarDefault({ opened, setOpened }: Props) {
   const { classes } = useStyles();
   const theme = useMantineTheme();
+
+  const [newCollectionModalOpened, { open: openNewCollectionModal, close: closeNewCollectionModal }] =
+    useDisclosure(false);
 
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -111,53 +149,131 @@ export function NavbarDefault({ opened, setOpened }: Props) {
     </Link>
   ));
 
+  const { control, handleSubmit, reset, setError } = useForm<FormSchemaType>({
+    resolver: zodResolver(schema),
+    defaultValues,
+  });
+
+  const handleLogout = async () => {
+    if (!session) return;
+    await router.push("/");
+    await signOut({ redirect: false });
+    await logout(session.user.access_token);
+  };
+
+  const newCollection = async (data: FormSchemaType) => {
+    const formData = new FormData();
+
+    formData.append("name", data.title);
+
+    if (data.description) {
+      formData.append("description", data.description);
+    }
+
+    return (await makeRequest("me/lists", "POST", session?.user.access_token, formData)) as Promise<CollectionResponse>;
+  };
+
+  const { mutate } = useMutation({
+    mutationFn: newCollection,
+    onSuccess: () => {
+      reset(defaultValues);
+      closeNewCollectionModal();
+      notifications.show({
+        title: "Collection created",
+        message: "Collection created successfully",
+        color: "teal",
+        icon: <IconCheck size="1.5rem" />,
+        autoClose: 10000,
+      });
+    },
+    onError: (error: AxiosError) => {
+      if (error.response?.status === 409) {
+        setError("title", {
+          type: "custom",
+          message: "A collection with that name already exists",
+        });
+        return;
+      }
+
+      notifications.show({
+        title: "Error",
+        message: "An error occurred while creating the collection",
+        color: "red",
+        icon: <IconX size="1.5rem" />,
+        autoClose: 10000,
+      });
+    },
+  });
+
   return (
-    <Navbar width={{ sm: 300 }} p="md" pt={0} className={classes.navbar} hiddenBreakpoint="sm" hidden={!opened}>
-      <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-        <Burger opened={opened} onClick={() => setOpened(!opened)} size="sm" color={theme.colors.gray[6]} mr="xl" />
-      </MediaQuery>
+    <>
+      <Modal opened={newCollectionModalOpened} onClose={closeNewCollectionModal} title="New Collection">
+        <form
+          /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
+          onSubmit={handleSubmit(
+            (data) => mutate(data),
+            (error) => {
+              console.log({ error });
+            }
+          )}
+        >
+          <Box maw={320} mx="auto">
+            <TextInputForm label="Title" name="title" control={control} mb="xs" withAsterisk />
+            <Textarea label="Description" name="description" control={control} autosize minRows={2} maxRows={4} />
 
-      <Navbar.Section className={classes.section}>
-        <UserButton
-          image={session?.user?.photo_url || ""}
-          name={session?.user?.name || "User"}
-          icon={<IconSelector size="0.9rem" stroke={1.5} />}
+            <Group position="center" mt="lg">
+              <Button type="submit">Create Collection</Button>
+            </Group>
+          </Box>
+        </form>
+      </Modal>
+      <Navbar width={{ sm: 300 }} p="md" pt={0} className={classes.navbar} hiddenBreakpoint="sm" hidden={!opened}>
+        <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+          <Burger opened={opened} onClick={() => setOpened(!opened)} size="sm" color={theme.colors.gray[6]} mr="xl" />
+        </MediaQuery>
+
+        <Navbar.Section className={classes.section}>
+          <UserButton
+            image={session?.user?.photo_url || ""}
+            name={session?.user?.name || "User"}
+            icon={<IconSelector size="0.9rem" stroke={1.5} />}
+          />
+        </Navbar.Section>
+
+        <TextInput
+          placeholder="Search"
+          size="xs"
+          icon={<IconSearch size="0.8rem" stroke={1.5} />}
+          rightSectionWidth={70}
+          rightSection={<Code className={classes.searchCode}>Ctrl + K</Code>}
+          styles={{ rightSection: { pointerEvents: "none" } }}
+          mb="sm"
+          onFocus={() => {
+            //HACK: redirect to search page
+            void router.push("/properties");
+          }}
+          ref={searchInputRef}
         />
-      </Navbar.Section>
 
-      <TextInput
-        placeholder="Search"
-        size="xs"
-        icon={<IconSearch size="0.8rem" stroke={1.5} />}
-        rightSectionWidth={70}
-        rightSection={<Code className={classes.searchCode}>Ctrl + K</Code>}
-        styles={{ rightSection: { pointerEvents: "none" } }}
-        mb="sm"
-        onFocus={() => {
-          //HACK: redirect to search page
-          void router.push("/properties");
-        }}
-        ref={searchInputRef}
-      />
+        <Navbar.Section className={classes.section}>
+          <div className={classes.mainLinks}>{mainLinks}</div>
+        </Navbar.Section>
 
-      <Navbar.Section className={classes.section}>
-        <div className={classes.mainLinks}>{mainLinks}</div>
-      </Navbar.Section>
-
-      <Navbar.Section className={classes.section}>
-        <Group className={classes.sectionHeader} position="apart">
-          <Text size="xs" weight={500} color="dimmed">
-            My Collections
-          </Text>
-          <Tooltip color="gray" label="Create collection" withArrow position="right">
-            <ActionIcon variant="default" size={18}>
-              <IconPlus size="0.8rem" stroke={1.5} />
-            </ActionIcon>
-          </Tooltip>
-        </Group>
-        <div className={classes.sectionContent}>{collectionLinks}</div>
-      </Navbar.Section>
-    </Navbar>
+        <Navbar.Section className={classes.section}>
+          <Group className={classes.sectionHeader} position="apart">
+            <Text size="xs" weight={500} color="dimmed">
+              My Collections
+            </Text>
+            <Tooltip color="gray" label="Create collection" withArrow position="right">
+              <ActionIcon variant="default" size={18} onClick={openNewCollectionModal}>
+                <IconPlus size="0.8rem" stroke={1.5} />
+              </ActionIcon>
+            </Tooltip>
+          </Group>
+          <div className={classes.sectionContent}>{collectionLinks}</div>
+        </Navbar.Section>
+      </Navbar>
+    </>
   );
 }
 
