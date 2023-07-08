@@ -13,9 +13,9 @@ import DrawControl from "~/components/map/DrawControl";
 import type { DrawPolygon, DrawCreateEvent, DrawUpdateEvent } from "@mapbox/mapbox-gl-draw";
 import type MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useSession } from "next-auth/react";
-import { usePolygonProperties, useProperties } from "~/hooks/useQueries";
+import { usePolygonProperties } from "~/hooks/useQueries";
 
-const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, setSearch }) => {
+const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, filters }) => {
   const { data: session, status } = useSession();
   const [activePage, setPage] = useState(1);
 
@@ -25,7 +25,7 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, setSea
 
   useEffect(() => {
     setPage(1);
-  }, [search, polygon]);
+  }, [filters, polygon]);
 
   const {
     data: propData,
@@ -35,6 +35,7 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, setSea
     session,
     status,
     search,
+    filters,
     polygon,
     page: activePage,
   });

@@ -29,18 +29,19 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSidebarCollections, useTagsSidebar } from "~/hooks/useQueries";
-import type { SearchOptions, Collection, Tag } from "~/types";
+import type { FiltersOptions, Collection, Tag } from "~/types";
 import { UserButton } from "./UserButton";
 import { useEffect, useRef } from "react";
 
 type Props = {
   opened: boolean;
   setOpened: (opened: boolean) => void;
-  search: SearchOptions;
-  setSearch: (search: SearchOptions) => void;
+  setSearch?: (search: string) => void;
+  filters: FiltersOptions;
+  setFilters: (search: FiltersOptions) => void;
 };
 
-export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
+export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters }: Props) {
   const { classes } = useStyles();
   const theme = useMantineTheme();
   const { data: session, status } = useSession();
@@ -103,7 +104,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
           key={link.label}
           className={`${classes.mainLink} ${isActive ? classes.activeLink : ""}`}
           onClick={() => {
-            setSearch({});
+            setFilters({});
           }}
         >
           <div className={classes.mainLinkInner}>
@@ -121,15 +122,16 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   });
 
   const collectionLinks = collections?.map((collection: Collection) => {
-    const active = search.list == collection.id;
+    const active = filters.list == collection.id;
     const color = active ? classes.active : "";
+
     return (
       <UnstyledButton
         onClick={() => {
           if (!active) {
-            setSearch({ ...search, list: collection.id });
+            setFilters({ ...filters, list: collection.id });
           } else {
-            setSearch({ ...search, list: undefined });
+            setFilters({ ...filters, list: undefined });
           }
         }}
         key={collection.id}
@@ -156,22 +158,23 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
   };
 
   const tagLinks = tags?.map((tag: Tag) => {
-    const enabled = search.include_tags?.includes(tag.id.toString());
-    const disabled = search.exclude_tags?.includes(tag.id.toString());
+    const enabled = filters.include_tags?.includes(tag.id.toString());
+    const disabled = filters.exclude_tags?.includes(tag.id.toString());
     const color = enabled ? classes.enabled : disabled ? classes.disabled : "";
+
     return (
       <UnstyledButton
         onClick={() => {
           if (!enabled && !disabled) {
-            setSearch({ ...search, include_tags: addToList(search.include_tags, tag.id.toString()) });
+            setFilters({ ...filters, include_tags: addToList(filters.include_tags, tag.id.toString()) });
           } else if (enabled) {
-            setSearch({
-              ...search,
-              include_tags: removeFromList(search.include_tags, tag.id.toString()),
-              exclude_tags: addToList(search.exclude_tags, tag.id.toString()),
+            setFilters({
+              ...filters,
+              include_tags: removeFromList(filters.include_tags, tag.id.toString()),
+              exclude_tags: addToList(filters.exclude_tags, tag.id.toString()),
             });
           } else if (disabled) {
-            setSearch({ ...search, exclude_tags: removeFromList(search.exclude_tags, tag.id.toString()) });
+            setFilters({ ...filters, exclude_tags: removeFromList(filters.exclude_tags, tag.id.toString()) });
           }
         }}
         key={tag.id}
@@ -214,7 +217,7 @@ export function NavbarSearch({ opened, setOpened, search, setSearch }: Props) {
         rightSection={<Code className={classes.searchCode}>Ctrl + K</Code>}
         styles={{ rightSection: { pointerEvents: "none" } }}
         onChange={(event) => {
-          if (!!event.target) setSearch({ ...search, query: event.currentTarget.value });
+          if (!!event.target && setSearch) setSearch(event.target.value);
         }}
         defaultValue={query?.searchQuery ?? ""}
         mb="sm"

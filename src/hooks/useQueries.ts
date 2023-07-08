@@ -10,7 +10,7 @@ import type {
   CollectionWithProperties,
   CollectionProperty,
   Tag,
-  SearchOptions,
+  FiltersOptions,
   AdministrativeDivision,
 } from "~/types";
 
@@ -67,7 +67,8 @@ type UseElementWithPageNumber = {
 type UseProperties = {
   session: Session | null;
   status: string;
-  search: SearchOptions;
+  search: string;
+  filters: FiltersOptions;
   page: number;
 };
 
@@ -117,18 +118,18 @@ const fetchProperty = async (session: Session | null, id: string) => {
   return response.data;
 };
 
-const processSearch = (search: SearchOptions) => {
+const processSearch = (search: string, filters: FiltersOptions) => {
   let extraFields = "";
-  if (search.query) extraFields += `&query=${encodeURIComponent(search.query)}`;
-  if (search.list) extraFields += `&list_id=${encodeURIComponent(search.list)}`;
-  if (search.adm) extraFields += `&adm_id=${encodeURIComponent(search.adm)}`;
-  if (search.include_tags) extraFields += `&include_tags=${encodeURIComponent(JSON.stringify(search.include_tags))}`;
-  if (search.exclude_tags) extraFields += `&exclude_tags=${encodeURIComponent(JSON.stringify(search.exclude_tags))}`;
+  if (search) extraFields += `&query=${encodeURIComponent(search)}`;
+  if (filters.list) extraFields += `&list_id=${encodeURIComponent(filters.list)}`;
+  if (filters.adm) extraFields += `&adm_id=${encodeURIComponent(filters.adm)}`;
+  if (filters.include_tags) extraFields += `&include_tags=${encodeURIComponent(JSON.stringify(filters.include_tags))}`;
+  if (filters.exclude_tags) extraFields += `&exclude_tags=${encodeURIComponent(JSON.stringify(filters.exclude_tags))}`;
   return extraFields;
 };
 
-const fetchProperties = async (session: Session | null, search: SearchOptions = {}, page = 1) => {
-  const extraFields = processSearch(search);
+const fetchProperties = async (session: Session | null, search: string, filters: FiltersOptions = {}, page = 1) => {
+  const extraFields = processSearch(search, filters);
 
   const response = (await makeRequest(
     `me/properties?page=${page}${extraFields}`,
@@ -170,11 +171,12 @@ const fetchAdms = async (session: Session | null, level: number, parentId: strin
 
 const fetchPropertiesInPolygon = async (
   session: Session | null,
-  search: SearchOptions = {},
+  search: string,
+  filters: FiltersOptions = {},
   polygon: DrawPolygon | null,
   page = 1
 ) => {
-  let extraFields = processSearch(search);
+  let extraFields = processSearch(search, filters);
 
   if (polygon && polygon.coordinates.length > 0) {
     polygon.coordinates[0]?.forEach((coord, index) => {
@@ -230,10 +232,10 @@ export const useProperty = ({ session, status, elementId: propertyId }: UseEleme
   });
 };
 
-export const useProperties = ({ session, status, search, page }: UseProperties) => {
+export const useProperties = ({ session, status, search, filters, page }: UseProperties) => {
   return useQuery({
-    queryKey: ["properties", search, page] /* TODO: Is this worth it ? */,
-    queryFn: () => fetchProperties(session, search, page),
+    queryKey: ["properties", search, filters, page] /* TODO: Is this worth it ? */,
+    queryFn: () => fetchProperties(session, search, filters, page),
     enabled: status === "authenticated",
   });
 };
@@ -246,10 +248,10 @@ export const useTrashedProperties = ({ session, status, page }: UseElementWithPa
   });
 };
 
-export const usePolygonProperties = ({ session, status, search, polygon, page }: UsePolygonProperties) => {
+export const usePolygonProperties = ({ session, status, search, filters, polygon, page }: UsePolygonProperties) => {
   return useQuery({
-    queryKey: ["properties", polygon, search, page] /* TODO: Is this worth it ? */,
-    queryFn: () => fetchPropertiesInPolygon(session, search, polygon, page),
+    queryKey: ["properties", polygon, search, filters, page] /* TODO: Is this worth it ? */,
+    queryFn: () => fetchPropertiesInPolygon(session, search, filters, polygon, page),
     enabled: status === "authenticated",
   });
 };

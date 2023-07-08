@@ -7,13 +7,13 @@ import { DisplayProperties } from "~/components/DisplayProperties";
 import { useProperties } from "~/hooks/useQueries";
 import type { SearchPropertyProps } from "~/types";
 
-const Properties: NextPage<SearchPropertyProps> = ({ search, setSearch }) => {
+const Properties: NextPage<SearchPropertyProps> = ({ search, filters }) => {
   const { data: session, status } = useSession();
   const [activePage, setPage] = useState(1);
 
   useEffect(() => {
     setPage(1);
-  }, [search]);
+  }, [filters]);
 
   const {
     data: propData,
@@ -23,6 +23,7 @@ const Properties: NextPage<SearchPropertyProps> = ({ search, setSearch }) => {
     session,
     status,
     search,
+    filters,
     page: activePage,
   });
 
