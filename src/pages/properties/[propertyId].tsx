@@ -70,16 +70,31 @@ const Property: NextPage = () => {
   const blueprints = property?.media?.blueprints;
   const coordinates = property?.address?.coordinates;
 
+  const priceToString = (price: number) => {
+    //check if price has decimals
+    if (price % 1 == 0) price = Math.floor(price);
+    return price.toLocaleString("pt-PT") + " €";
+  };
+
+  const renderPrice = () => {
+    switch (property.listing_type) {
+      case "sale":
+        return priceToString(property.current_price_sale);
+      case "rent":
+        return priceToString(property.current_price_rent);
+      case "both":
+        return `${priceToString(property.current_price_sale)} / ${priceToString(property.current_price_rent)}`;
+      default:
+        return "";
+    }
+  };
+
   const renderHeader = () => {
     return (
       <>
         <div className="mb-2 flex justify-between">
           <h1 className="text-3xl">{property.title}</h1>
-          {property.current_price_sale ? (
-            <div className="text-3xl">{property.current_price_sale}€</div>
-          ) : (
-            <div className="text-3xl">{property.current_price_rent}€</div>
-          )}
+          <div className="text-3xl">{renderPrice()}</div>
         </div>
       </>
     );
