@@ -36,8 +36,8 @@ const useStyles = createStyles((theme) => ({
     },
 
     [theme.fn.largerThan("md")]: {
-      width: "844px",
-      height: "440px",
+      width: "calc(100% - 1px)",
+      height: "calc(100% - 20px)",
     },
   },
 }));

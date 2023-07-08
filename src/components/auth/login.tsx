@@ -1,15 +1,4 @@
-import {
-  Anchor,
-  Button,
-  Checkbox,
-  Container,
-  Group,
-  Paper,
-  PasswordInput,
-  Text,
-  TextInput,
-  Title,
-} from "@mantine/core";
+import { Anchor, Button, Container, Paper, PasswordInput, Text, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -70,9 +59,6 @@ export function LoginForm() {
             mt="md"
             {...form.getInputProps("password")}
           />
-          {/* <Anchor component="button" size="sm"> */}
-          {/*   Forgot password? */}
-          {/* </Anchor> */}
           <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
             Sign in
           </Button>
