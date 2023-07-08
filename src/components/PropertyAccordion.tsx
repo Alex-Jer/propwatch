@@ -1,20 +1,7 @@
 import { Group, Text, Accordion } from "@mantine/core";
-import {
-  Icon24Hours,
-  IconAddressBook,
-  IconClipboardList,
-  IconCurrentLocation,
-  IconListDetails,
-  IconMapPin,
-} from "@tabler/icons-react";
+import { Icon24Hours, IconListDetails, IconMapPin } from "@tabler/icons-react";
 import { type ReactNode } from "react";
-import {
-  completeAddress,
-  completeAdmAddress,
-  numberToString,
-  propertyDetailsResume,
-  ucfirst,
-} from "~/lib/propertyHelper";
+import { completeAddress, numberToString, propertyDetailsResume, ucfirst } from "~/lib/propertyHelper";
 import { type Property } from "~/types";
 
 interface AccordionLabelProps {

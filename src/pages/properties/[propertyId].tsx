@@ -5,21 +5,20 @@ import { useRouter } from "next/router";
 import { useProperty } from "~/hooks/useQueries";
 import { Property } from "~/types";
 import { CardsCarousel } from "~/components/CardsCarousel";
-import Map, { Marker } from "react-map-gl";
+import Map, { Marker, Popup } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { type FunctionComponent, type SVGProps, useEffect, useState, useRef } from "react";
 import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "public/icons";
 import { MainCarousel } from "~/components/MainCarousel";
 import { useDisclosure } from "@mantine/hooks";
-import { ActionIcon, Button, Drawer, Group, Rating, Title } from "@mantine/core";
+import { Button, Drawer, Group, Rating, Title, Tooltip } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
 import { IconPhoto, IconPhotoCheck, IconPhotoX, IconTrash, IconVideo, IconWallpaper } from "@tabler/icons-react";
 import { makeRequest } from "~/lib/requestHelper";
 import { errorNotification, successNotification } from "~/components/PropertyCard";
-import { completeAddress, completeAdmAddress, priceToString } from "~/lib/propertyHelper";
+import { priceToString } from "~/lib/propertyHelper";
 import { PropertyAccordion } from "~/components/PropertyAccordion";
-import { IconArrowBack } from "@tabler/icons-react";
 
 type MarkerIconComponent = FunctionComponent<SVGProps<SVGSVGElement>>;
 
@@ -170,6 +169,14 @@ const Property: NextPage = () => {
   const markerType = property?.type?.toLowerCase();
   const MarkerIcon = (markerIcons[markerType] as MarkerIconComponent) || markerIcons.default;
 
+  const onMarkerClick = () => {
+    if (coordinates?.latitude && coordinates?.longitude)
+      navigator.clipboard
+        .writeText(`${coordinates?.latitude}, ${coordinates?.longitude}`)
+        .then(() => successNotification("The coordinates have been copied to your clipboard.", "Coordinates copied"))
+        .catch(null);
+  };
+
   const renderMap = () => {
     if (coordinates == null) return <></>;
     const latitude = coordinates.latitude;
@@ -188,7 +195,7 @@ const Property: NextPage = () => {
             style={{ width: "100%", height: "400px", borderRadius: "12px" }}
             mapStyle="mapbox://styles/mapbox/streets-v11"
           >
-            <Marker longitude={longitude} latitude={latitude}>
+            <Marker onClick={onMarkerClick} longitude={longitude} latitude={latitude}>
               <MarkerIcon className="h-8" />
             </Marker>
           </Map>
