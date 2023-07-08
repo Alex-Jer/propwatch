@@ -23,8 +23,20 @@ const Collections: NextPage = () => {
     console.log("Error!");
   }
 
-  function renderCollections(collections: Collection[] | undefined) {
-    return (
+  return (
+    <>
+      <Head>
+        <title>All Collections</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <div className="mb-2 flex flex-row items-center">
+        <IconListNumbers className="-mt-1 mr-2" strokeWidth={1.5} />
+        <h1 className="pb-1 text-base font-semibold">All Collections</h1>
+      </div>
+
+      <div className="-mx-4 mb-4 border-b border-shark-700" />
+
       <span className="grid grid-cols-1 gap-4">
         {collections?.map((collection: Collection) => (
           <Link href={`/collections/${collection.id}`} key={collection.id}>
@@ -40,24 +52,6 @@ const Collections: NextPage = () => {
           </Link>
         ))}
       </span>
-    );
-  }
-
-  return (
-    <>
-      <Head>
-        <title>All Collections</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <div className="mb-2 flex flex-row items-center">
-        <IconListNumbers className="-mt-1 mr-2" strokeWidth={1.5} />
-        <h1 className="pb-1 text-base font-semibold">All Collections</h1>
-      </div>
-
-      <div className="-mx-4 mb-4 border-b border-shark-700" />
-
-      {renderCollections(collections)}
     </>
   );
 };
