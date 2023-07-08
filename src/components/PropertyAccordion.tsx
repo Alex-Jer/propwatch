@@ -1,8 +1,11 @@
 import { Group, Text, Accordion } from "@mantine/core";
-import { Icon24Hours, IconListDetails, IconMapPin } from "@tabler/icons-react";
-import { type ReactNode } from "react";
-import { completeAddress, numberToString, propertyDetailsResume, ucfirst } from "~/lib/propertyHelper";
-import { type Property } from "~/types";
+import { IconChartInfographic, IconChartLine, IconListDetails, IconMapPin } from "@tabler/icons-react";
+import { DataTable, type DataTableSortStatus } from "mantine-datatable";
+import Link from "next/link";
+import { useEffect, type ReactNode, useState } from "react";
+import { sortBy } from "remeda";
+import { completeAddress, numberToString, priceToString, propertyDetailsResume, ucfirst } from "~/lib/propertyHelper";
+import { type Offer, type Property } from "~/types";
 
 interface AccordionLabelProps {
   label: string;
@@ -13,7 +16,7 @@ interface AccordionLabelProps {
 function AccordionLabel({ label, icon: Icon, description }: AccordionLabelProps) {
   return (
     <Group noWrap>
-      <Icon size="2rem" />
+      <Icon size="2rem" stroke="1.5" />
       <div>
         <Text>{label}</Text>
         <Text size="sm" color="dimmed" weight={400}>
@@ -33,6 +36,35 @@ export type AccordionItem = {
   open?: boolean;
 };
 
+const offerTableColumns = [
+  {
+    accessor: "listing_type",
+    title: "Listing Type",
+    width: 100,
+    sortable: true,
+    cellsClassName: "capitalize",
+  },
+  {
+    accessor: "price_str",
+    title: "Price (€)",
+    width: 100,
+    sortable: true,
+  },
+  {
+    accessor: "description",
+    title: "Designation",
+    width: 200,
+    ellipsis: true,
+    sortable: true,
+  },
+  {
+    accessor: "url",
+    title: "URL",
+    width: 250,
+    ellipsis: true,
+  },
+];
+
 function LabelAndValue({ label, value }: { label: string; value: string | undefined }) {
   return value ? (
     <div>
@@ -47,6 +79,47 @@ function LabelAndValue({ label, value }: { label: string; value: string | undefi
 }
 
 export function PropertyAccordion({ property }: { property: Property }) {
+  const [offersSortStatus, setOffersSortStatus] = useState<DataTableSortStatus>({
+    columnAccessor: "name",
+    direction: "asc",
+  });
+  const [offerRecords, setOfferRecords] = useState<Offer[]>([]);
+
+  const sortOffers = (sortStatus: DataTableSortStatus) => {
+    // @ts-expect-error sortBy is not typed
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    const sortedOffers = sortBy(offerRecords, (offer) => offer[sortStatus.columnAccessor]);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const sortedData = sortStatus.direction === "asc" ? sortedOffers : [...sortedOffers].reverse();
+    setOfferRecords(sortedData);
+  };
+
+  useEffect(() => {
+    sortOffers(offersSortStatus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [offersSortStatus]);
+
+  useEffect(() => {
+    const offers = [
+      ...property.offers.sale.map((offer) => ({
+        ...offer,
+        price_str: offer.price ? priceToString(offer.price) : "N/A",
+        description: offer.description ? offer.description : "N/A",
+        url: <Link href={offer.url}>{offer.url}</Link>,
+        listing_type: "sale",
+      })),
+      ...property.offers.rent.map((offer) => ({
+        ...offer,
+        price_str: offer.price ? priceToString(offer.price) + "/month" : "N/A",
+        description: offer.description ? offer.description : "N/A",
+        url: <Link href={offer.url}>{offer.url}</Link>,
+        listing_type: "rent",
+      })),
+    ];
+
+    setOfferRecords(offers);
+  }, [property.offers.sale, property.offers.rent, setOfferRecords]);
+
   const convertCharacteristicValue = (value: string, type: string) => {
     switch (type) {
       case "numerical":
@@ -70,6 +143,20 @@ export function PropertyAccordion({ property }: { property: Property }) {
         />
       );
     });
+  };
+
+  const generateOffersDescription = (property: Property) => {
+    switch (property.listing_type) {
+      case "sale":
+        return `View ${property.offers.sale.length} sale offers.`;
+      case "rent":
+        return `View ${property.offers.rent.length} rent offers.`;
+      case "both":
+        return `View ${property.offers.sale.length} sale offers and ${property.offers.rent.length} rent offers.`;
+      case "none":
+      default:
+        return "This property has no offers.";
+    }
   };
 
   const itemList: AccordionItem[] = [
@@ -97,7 +184,29 @@ export function PropertyAccordion({ property }: { property: Property }) {
       ),
       open: true,
     },
-    { id: "ipsum", icon: Icon24Hours, label: "Lorem ipsum", description: "Lorem ipsum", content: <>Lorem ipsum</> },
+    {
+      id: "offers",
+      icon: IconChartLine,
+      label: "Offers",
+      description: generateOffersDescription(property),
+      content: (
+        <>
+          <DataTable
+            columns={offerTableColumns}
+            records={offerRecords}
+            sortStatus={offersSortStatus}
+            onSortStatusChange={setOffersSortStatus}
+          />
+        </>
+      ),
+    },
+    {
+      id: "offers_history",
+      icon: IconChartInfographic,
+      label: "Offers' History",
+      description: "Lorem ipsum",
+      content: <>Lorem ipsum</>,
+    },
     {
       id: "address",
       icon: IconMapPin,

@@ -157,7 +157,7 @@ const Property: NextPage = () => {
       <div className="mt-4">
         <div className="flex flex-wrap items-center">
           <Title className="mb-2" order={2}>
-            {property.title}
+            {property?.title}
           </Title>
           <Rating className="ml-3" value={rating} onChange={handleRatingChange} fractions={2} />
         </div>
@@ -249,7 +249,7 @@ const Property: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{property.title}</title>
+        <title>{property?.title}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
