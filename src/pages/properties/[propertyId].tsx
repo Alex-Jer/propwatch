@@ -253,14 +253,12 @@ const Property: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <CardBackground className="pt-6">
+      <CardBackground className="pt-6 xl:mx-12 2xl:mx-48">
         {renderCover()}
         {renderImageDrawer()}
         {renderVideoDrawer()}
         {renderBlueprintDrawer()}
-
         {/* TODO: Test Button */}
-
         <Group position="left" className="mt-4">
           <Button.Group>
             <Button
@@ -312,15 +310,10 @@ const Property: NextPage = () => {
             Delete
           </Button>
         </Group>
-
         {renderHeader(property)}
-
         <div className="-ml-6 -mr-6 mb-4  border-b border-shark-700 pb-4" />
-
         <PropertyAccordion property={property} />
-
         <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
-
         {coordinates && <>{renderMap()}</>}
       </CardBackground>
     </>

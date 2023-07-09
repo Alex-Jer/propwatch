@@ -192,6 +192,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
       content: (
         <>
           <DataTable
+            borderRadius="md"
             columns={offerTableColumns}
             records={offerRecords}
             sortStatus={offersSortStatus}
