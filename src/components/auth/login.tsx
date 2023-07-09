@@ -15,6 +15,10 @@ export function LoginForm() {
   const { status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
 
+  if (status === "authenticated") {
+    void router.push("/properties");
+  }
+
   const form = useForm<Inputs>({
     // TODO: Temp values
     initialValues: { email: "test123@example.com", password: "123456" },
@@ -70,7 +74,7 @@ export function LoginForm() {
       <Text color="dimmed" size="sm" align="center" mt={16}>
         <Link href="/">
           <Anchor size="sm" component="button">
-            Return to home page
+            Return to the home page
           </Anchor>
         </Link>
       </Text>

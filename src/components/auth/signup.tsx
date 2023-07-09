@@ -41,6 +41,10 @@ export function SignUpForm() {
   const router = useRouter();
   const { status } = useSession();
 
+  if (status === "authenticated") {
+    void router.push("/properties");
+  }
+
   const { control, handleSubmit, setError } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
@@ -126,7 +130,7 @@ export function SignUpForm() {
       <Text color="dimmed" size="sm" align="center" mt={16}>
         <Link href="/">
           <Anchor size="sm" component="button">
-            Return to home page
+            Return to the home page
           </Anchor>
         </Link>
       </Text>
