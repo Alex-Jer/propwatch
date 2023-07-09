@@ -60,3 +60,16 @@ export const propertyDetailsResume = (property: Property) => {
 
   return detailsStr;
 };
+
+export function getRandomHexColor() {
+  // Generate a random number between 0 and 16777215 (FFFFFF in hexadecimal)
+  let randomColor = Math.floor(Math.random() * 16777215).toString(16);
+
+  // Prepend zeros to the color code if necessary
+  while (randomColor.length < 6) {
+    randomColor = "0" + randomColor;
+  }
+
+  // Return the random color in hexadecimal format
+  return "#" + randomColor;
+}

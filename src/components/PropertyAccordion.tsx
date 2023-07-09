@@ -18,6 +18,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { makeRequest } from "~/lib/requestHelper";
 import { errorNotification, successNotification } from "./PropertyCard";
 import { useSession } from "next-auth/react";
+import { PropertyOfferHistoryChart } from "./PropertyOfferHistoryChart";
 
 interface AccordionLabelProps {
   label: string;
@@ -240,7 +241,12 @@ export function PropertyAccordion({ property }: { property: Property }) {
       icon: IconChartInfographic,
       label: "Offers' History",
       description: "Lorem ipsum",
-      content: <>Lorem ipsum</>,
+      content: (
+        <>
+          <PropertyOfferHistoryChart offers={property.offers.sale} />
+          <PropertyOfferHistoryChart offers={property.offers.rent} />
+        </>
+      ),
     },
     {
       id: "address",
