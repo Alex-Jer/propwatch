@@ -1,11 +1,23 @@
 import { Group, Text, Accordion, ActionIcon } from "@mantine/core";
-import { IconChartInfographic, IconChartLine, IconLink, IconListDetails, IconMapPin } from "@tabler/icons-react";
+import {
+  IconChartInfographic,
+  IconChartLine,
+  IconLink,
+  IconListDetails,
+  IconMapPin,
+  IconTrash,
+  IconX,
+} from "@tabler/icons-react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
-import Link from "next/link";
 import { useEffect, type ReactNode, useState } from "react";
 import { sortBy } from "remeda";
 import { completeAddress, numberToString, priceToString, propertyDetailsResume, ucfirst } from "~/lib/propertyHelper";
 import { type Offer, type Property } from "~/types";
+import { ConfirmationModal } from "./ConfirmationModal";
+import { useDisclosure } from "@mantine/hooks";
+import { makeRequest } from "~/lib/requestHelper";
+import { errorNotification, successNotification } from "./PropertyCard";
+import { useSession } from "next-auth/react";
 
 interface AccordionLabelProps {
   label: string;
@@ -36,39 +48,6 @@ export type AccordionItem = {
   open?: boolean;
 };
 
-const offerTableColumns = [
-  {
-    accessor: "listing_type",
-    title: "Listing Type",
-    width: 50,
-    sortable: true,
-    cellsClassName: "capitalize",
-  },
-  {
-    accessor: "price_str",
-    title: "Price (€)",
-    width: 75,
-    sortable: true,
-  },
-  {
-    accessor: "description",
-    title: "Designation",
-    width: 200,
-    ellipsis: true,
-    sortable: true,
-  },
-  {
-    accessor: "actions",
-    title: "URL",
-    width: 25,
-    render: (offer: Offer) => (
-      <ActionIcon onClick={() => window.open(offer.url, "_blank")}>
-        <IconLink size={16} />
-      </ActionIcon>
-    ),
-  },
-];
-
 function LabelAndValue({ label, value }: { label: string; value: string | undefined }) {
   return value ? (
     <div>
@@ -87,7 +66,11 @@ export function PropertyAccordion({ property }: { property: Property }) {
     columnAccessor: "name",
     direction: "asc",
   });
+
+  const [modalOpened, { open, close }] = useDisclosure(false);
+  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [offerRecords, setOfferRecords] = useState<Offer[]>([]);
+  const { data: session } = useSession();
 
   const sortOffers = (sortStatus: DataTableSortStatus) => {
     // @ts-expect-error sortBy is not typed
@@ -121,6 +104,52 @@ export function PropertyAccordion({ property }: { property: Property }) {
 
     setOfferRecords(offers);
   }, [property.offers.sale, property.offers.rent, setOfferRecords]);
+
+  const offerTableColumns = [
+    {
+      accessor: "listing_type",
+      title: "Listing Type",
+      width: 50,
+      sortable: true,
+      cellsClassName: "capitalize",
+    },
+    {
+      accessor: "price_str",
+      title: "Price (€)",
+      width: 75,
+      sortable: true,
+    },
+    {
+      accessor: "description",
+      title: "Designation",
+      width: 200,
+      ellipsis: true,
+      sortable: true,
+    },
+    {
+      accessor: "actions",
+      title: "URL",
+      width: 35,
+      render: (offer: Offer) => (
+        <>
+          <div className="flex flex-row items-center">
+            <ActionIcon onClick={() => window.open(offer.url, "_blank")}>
+              <IconLink size={16} />
+            </ActionIcon>
+            <ActionIcon
+              color="red"
+              onClick={() => {
+                setSelectedOffer(offer);
+                open();
+              }}
+            >
+              <IconX size={16} />
+            </ActionIcon>
+          </div>
+        </>
+      ),
+    },
+  ];
 
   const convertCharacteristicValue = (value: string, type: string) => {
     switch (type) {
@@ -242,9 +271,31 @@ export function PropertyAccordion({ property }: { property: Property }) {
     </Accordion.Item>
   ));
 
+  const deleteOffer = () => {
+    if (selectedOffer && selectedOffer.id) {
+      makeRequest(`me/offers/${selectedOffer.id.toString()}`, "DELETE", session?.user.access_token)
+        .then(() => {
+          setSelectedOffer(null);
+          successNotification("This offer has been removed", "Offer removed");
+        })
+        .catch(() => errorNotification("An unknown error occurred while removing this offer."));
+    }
+  };
+
   return (
-    <Accordion defaultValue={["details"]} chevronPosition="right" variant="contained" multiple>
-      {items}
-    </Accordion>
+    <>
+      <ConfirmationModal
+        opened={modalOpened}
+        close={close}
+        yesFunction={deleteOffer}
+        title="Remove offer"
+        text="Are you sure you want to remove this offer?"
+        yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
+        noBtn={{ text: "Cancel", variant: "default" }}
+      />
+      <Accordion defaultValue={["details"]} chevronPosition="right" variant="contained" multiple>
+        {items}
+      </Accordion>
+    </>
   );
 }
