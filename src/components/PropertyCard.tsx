@@ -141,23 +141,21 @@ export function PropertyCard({ property, id, trashButtons, refresh }: PropertyCa
                 </Center>
               )}
 
-              {property.current_price_rent && (
-                <Center>
-                  <Text size="sm" className={classes.bodyText}>
-                    {priceToString(property.current_price_rent)}
-                    <span className="text-xs">/month</span>
-                  </Text>
-                </Center>
-              )}
-
-              {property.current_price_sale && (
+              {property.current_price_sale ? (
                 <Center>
                   <IconHomeDollar size="1rem" stroke={1.5} />
                   <Text size="sm" className={classes.bodyText}>
                     {priceToString(property.current_price_sale)}
                   </Text>
                 </Center>
-              )}
+              ) : property.current_price_rent ? (
+                <Center>
+                  <Text size="sm" className={classes.bodyText}>
+                    {priceToString(property.current_price_rent)}
+                    <span className="text-xs">/month</span>
+                  </Text>
+                </Center>
+              ) : null}
             </Group>
           </Group>
         </div>
