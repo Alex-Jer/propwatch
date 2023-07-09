@@ -8,7 +8,7 @@ import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { type Offer, type Property } from "~/types";
+import { type Offer } from "~/types";
 import {
   AddPropertyAddress,
   AddPropertyCharacteristics,
@@ -21,11 +21,6 @@ interface AddPropertyDrawerProps {
   opened: boolean;
   close: () => void;
 }
-
-type PropertyResponse = {
-  message: string;
-  property: Property;
-};
 
 const TOTAL_STEPS = 5;
 
@@ -224,7 +219,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
       appendIfNotNull(`offers[${index}][price]`, offer.price);
     });
 
-    return makeRequest("me/properties", "POST", session?.user.access_token, formData) as Promise<PropertyResponse>;
+    return makeRequest("me/properties", "POST", session?.user.access_token, formData);
   };
 
   const { mutate, isLoading } = useMutation({

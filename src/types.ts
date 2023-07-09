@@ -1,4 +1,5 @@
 import { type UnstyledButtonProps } from "@mantine/core";
+import { AxiosError } from "axios";
 import { type ReactNode } from "react";
 import { type PropertiesResponse } from "./hooks/useQueries";
 
@@ -194,4 +195,15 @@ export type DisplayPropertiesProps = {
   isError: boolean;
   activePage: number;
   setPage: (page: number) => void;
+};
+
+export type AxiosErrorResponse = AxiosError & {
+  response: {
+    data: {
+      errors: {
+        [key: string]: string[];
+      };
+      message: string;
+    };
+  };
 };

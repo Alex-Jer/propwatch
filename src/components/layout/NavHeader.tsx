@@ -58,7 +58,9 @@ export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProp
         <Link href="/auth/login">
           <Button variant="default">Log in</Button>
         </Link>
-        <Button>Sign up</Button>
+        <Link href="/auth/signup">
+          <Button>Sign up</Button>
+        </Link>
       </>
     );
   };

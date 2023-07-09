@@ -16,6 +16,7 @@ const API_URL = env.NEXT_PUBLIC_API_URL;
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 type LoginResponseData = {
+  message: string;
   user: User;
   access_token: string;
 };
@@ -120,6 +121,32 @@ export const logout = async (accessToken: string) => {
   console.log("res.data", res.data);
 
   return res.data as LogoutResponseData;
+};
+
+export const register = async (
+  name: string,
+  email: string,
+  password: string,
+  passwordConfirmation: string,
+  deviceName: string
+) => {
+  const url = `${API_URL}/register`;
+  const formData = new FormData();
+
+  formData.append("name", name);
+  formData.append("email", email);
+  formData.append("password", password);
+  formData.append("password_confirmation", passwordConfirmation);
+  formData.append("device_name", deviceName);
+
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
+
+  const res = await axios.post(url, formData, { headers });
+
+  return res.data as LoginResponseData;
 };
 
 export const pageRequest = async (pageUrl: string) => {

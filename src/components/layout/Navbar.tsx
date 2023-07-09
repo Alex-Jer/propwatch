@@ -1,8 +1,6 @@
 import {
   createStyles,
   Navbar,
-  TextInput,
-  Code,
   UnstyledButton,
   Badge,
   Text,
@@ -18,7 +16,6 @@ import {
   Button,
 } from "@mantine/core";
 import {
-  IconSearch,
   IconPlus,
   IconSelector,
   IconListNumbers,
@@ -29,18 +26,18 @@ import {
   IconCheck,
   IconX,
 } from "@tabler/icons-react";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAllCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 import { UserButton } from "./UserButton";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { logout, makeRequest } from "~/lib/requestHelper";
+import { makeRequest } from "~/lib/requestHelper";
 import { useMutation } from "@tanstack/react-query";
 import { notifications } from "@mantine/notifications";
 import { type AxiosError } from "axios";
@@ -151,13 +148,6 @@ export function NavbarDefault({ opened, setOpened }: Props) {
     resolver: zodResolver(schema),
     defaultValues,
   });
-
-  const handleLogout = async () => {
-    if (!session) return;
-    await router.push("/");
-    await signOut({ redirect: false });
-    await logout(session.user.access_token);
-  };
 
   const newCollection = async (data: FormSchemaType) => {
     const formData = new FormData();

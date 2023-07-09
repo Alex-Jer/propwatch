@@ -1,6 +1,7 @@
 import { Anchor, Button, Container, Paper, PasswordInput, Text, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { signIn, useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -45,9 +46,11 @@ export function LoginForm() {
       </Title>
       <Text color="dimmed" size="sm" align="center" mt={5}>
         {"Don't have an account yet? "}
-        <Anchor size="sm" component="button">
-          Create account
-        </Anchor>
+        <Link href="/auth/signup">
+          <Anchor size="sm" component="button">
+            Create account
+          </Anchor>
+        </Link>
       </Text>
       <form onSubmit={form.onSubmit((values) => void (async () => await handleSubmit(values))())}>
         <Paper withBorder shadow="md" p={30} mt={30} radius="md">
