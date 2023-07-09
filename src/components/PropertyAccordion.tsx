@@ -1,4 +1,4 @@
-import { Group, Text, Accordion, ActionIcon } from "@mantine/core";
+import { Group, Text, Accordion, ActionIcon, Tooltip } from "@mantine/core";
 import {
   IconChartInfographic,
   IconChartLine,
@@ -128,14 +128,16 @@ export function PropertyAccordion({ property }: { property: Property }) {
     },
     {
       accessor: "actions",
-      title: "URL",
+      title: "Actions",
       width: 35,
       render: (offer: Offer) => (
         <>
           <div className="flex flex-row items-center">
-            <ActionIcon onClick={() => window.open(offer.url, "_blank")}>
-              <IconLink size={16} />
-            </ActionIcon>
+            <Tooltip label="Visit offer" color="gray" position="bottom" withArrow>
+              <ActionIcon onClick={() => window.open(offer.url, "_blank")}>
+                <IconLink size={16} />
+              </ActionIcon>
+            </Tooltip>
             <ActionIcon
               color="red"
               onClick={() => {
@@ -276,6 +278,11 @@ export function PropertyAccordion({ property }: { property: Property }) {
       makeRequest(`me/offers/${selectedOffer.id.toString()}`, "DELETE", session?.user.access_token)
         .then(() => {
           setSelectedOffer(null);
+          close();
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          property.offers[selectedOffer.listing_type] = property.offers[selectedOffer.listing_type].filter(
+            (offer) => offer.id !== selectedOffer.id
+          );
           successNotification("This offer has been removed", "Offer removed");
         })
         .catch(() => errorNotification("An unknown error occurred while removing this offer."));
@@ -289,8 +296,8 @@ export function PropertyAccordion({ property }: { property: Property }) {
         close={close}
         yesFunction={deleteOffer}
         title="Remove offer"
-        text="Are you sure you want to remove this offer?"
-        yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
+        text="Are you sure you want to remove this offer? This will also remove the full history for this offer."
+        yesBtn={{ text: "Remove", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
       />
       <Accordion defaultValue={["details"]} chevronPosition="right" variant="contained" multiple>
