@@ -1,4 +1,5 @@
 import type { Property, Address } from "~/types";
+import seedrandom from "seedrandom";
 
 export const priceToString = (price: number) => {
   // check if price is a decimal number
@@ -61,9 +62,10 @@ export const propertyDetailsResume = (property: Property) => {
   return detailsStr;
 };
 
-export function getRandomHexColor() {
+export function getRandomHexColor(seed: string) {
   // Generate a random number between 0 and 16777215 (FFFFFF in hexadecimal)
-  let randomColor = Math.floor(Math.random() * 16777215).toString(16);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  let randomColor = Math.floor(seedrandom(seed)() * 16777215).toString(16);
 
   // Prepend zeros to the color code if necessary
   while (randomColor.length < 6) {

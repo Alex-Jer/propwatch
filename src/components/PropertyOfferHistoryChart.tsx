@@ -60,8 +60,10 @@ export function PropertyOfferHistoryChart({ offers }: { offers: Offer[] }) {
   const renderLines = () => {
     const linesArr: JSX.Element[] = [];
     lines.forEach((line) => {
-      const rndColor = getRandomHexColor();
-      linesArr.push(<Line connectNulls type="monotone" dataKey={line} strokeWidth={3} />);
+      const rndColor = getRandomHexColor(line);
+      linesArr.push(
+        <Line connectNulls type="monotone" stroke={rndColor} fill={rndColor} dataKey={line} strokeWidth={3} />
+      );
     });
     return linesArr;
   };
