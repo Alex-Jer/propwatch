@@ -1,5 +1,5 @@
-import { Group, Text, Accordion } from "@mantine/core";
-import { IconChartInfographic, IconChartLine, IconListDetails, IconMapPin } from "@tabler/icons-react";
+import { Group, Text, Accordion, ActionIcon } from "@mantine/core";
+import { IconChartInfographic, IconChartLine, IconLink, IconListDetails, IconMapPin } from "@tabler/icons-react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import Link from "next/link";
 import { useEffect, type ReactNode, useState } from "react";
@@ -40,14 +40,14 @@ const offerTableColumns = [
   {
     accessor: "listing_type",
     title: "Listing Type",
-    width: 100,
+    width: 50,
     sortable: true,
     cellsClassName: "capitalize",
   },
   {
     accessor: "price_str",
     title: "Price (€)",
-    width: 100,
+    width: 75,
     sortable: true,
   },
   {
@@ -58,10 +58,14 @@ const offerTableColumns = [
     sortable: true,
   },
   {
-    accessor: "url",
+    accessor: "actions",
     title: "URL",
-    width: 250,
-    ellipsis: true,
+    width: 25,
+    render: (offer: Offer) => (
+      <ActionIcon onClick={() => window.open(offer.url, "_blank")}>
+        <IconLink size={16} />
+      </ActionIcon>
+    ),
   },
 ];
 
@@ -105,14 +109,12 @@ export function PropertyAccordion({ property }: { property: Property }) {
         ...offer,
         price_str: offer.price ? priceToString(offer.price) : "N/A",
         description: offer.description ? offer.description : "N/A",
-        url: <Link href={offer.url}>{offer.url}</Link>,
         listing_type: "sale",
       })),
       ...property.offers.rent.map((offer) => ({
         ...offer,
         price_str: offer.price ? priceToString(offer.price) + "/month" : "N/A",
         description: offer.description ? offer.description : "N/A",
-        url: <Link href={offer.url}>{offer.url}</Link>,
         listing_type: "rent",
       })),
     ];
