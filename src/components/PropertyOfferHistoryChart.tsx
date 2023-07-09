@@ -29,7 +29,7 @@ export function PropertyOfferHistoryChart({ offers }: { offers: Offer[] }) {
     const offerMap = new Map();
     const linesArr: string[] = [];
     offers.forEach((offer) => {
-      offer?.price_history?.forEach((price) => {
+      offer?.price_history?.reverse().forEach((price) => {
         const dDate = discretizeDate(price.datetime);
         if (offer.id) {
           const priceTag = `price_${offer.id}`;
