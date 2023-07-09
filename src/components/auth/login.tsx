@@ -15,6 +15,10 @@ export function LoginForm() {
   const { status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
 
+  if (status === "authenticated") {
+    void router.push("/properties");
+  }
+
   const form = useForm<Inputs>({
     // TODO: Temp values
     initialValues: { email: "test123@example.com", password: "123456" },
@@ -52,8 +56,8 @@ export function LoginForm() {
           </Anchor>
         </Link>
       </Text>
-      <form onSubmit={form.onSubmit((values) => void (async () => await handleSubmit(values))())}>
-        <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+        <form onSubmit={form.onSubmit((values) => void (async () => await handleSubmit(values))())}>
           <TextInput label="Email" placeholder="you@mantine.dev" required {...form.getInputProps("email")} />
           <PasswordInput
             label="Password"
@@ -65,8 +69,15 @@ export function LoginForm() {
           <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
             Sign in
           </Button>
-        </Paper>
-      </form>
+        </form>
+      </Paper>
+      <Text color="dimmed" size="sm" align="center" mt={16}>
+        <Link href="/">
+          <Anchor size="sm" component="button">
+            Return to the home page
+          </Anchor>
+        </Link>
+      </Text>
     </Container>
   );
 }

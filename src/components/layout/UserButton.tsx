@@ -25,9 +25,9 @@ export function UserButton({ image, name, icon, ...others }: UserButtonProps) {
 
   const handleLogout = async () => {
     if (!session) return;
-    await router.push("/");
     await signOut({ redirect: false });
     await logout(session.user.access_token);
+    await router.push("/");
   };
 
   return (

@@ -1,8 +1,16 @@
 import { createStyles, Container, Text, Button, Group, rem } from "@mantine/core";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export function HeroTitle() {
   const { classes } = useStyles();
+  const router = useRouter();
+  const { status } = useSession();
+
+  if (status === "authenticated") {
+    void router.push("/properties");
+  }
 
   return (
     <div className={classes.wrapper}>
@@ -10,8 +18,8 @@ export function HeroTitle() {
         <h1 className={classes.title}>
           An{" "}
           <Text component="span" variant="gradient" gradient={{ from: "blue", to: "cyan" }} inherit>
-            all-in-one
-          </Text>{" "}
+            all-in-one{" "}
+          </Text>
           real estate manager
         </h1>
 
