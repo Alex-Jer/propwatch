@@ -3,7 +3,7 @@ import { Anchor, Button, Container, Paper, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
@@ -12,12 +12,20 @@ import { z } from "zod";
 import { register } from "~/lib/requestHelper";
 import { type AxiosErrorResponse } from "~/types";
 
-const schema = z.object({
-  name: z.string(),
-  email: z.string().email(),
-  password: z.string().min(6),
-  password_confirmation: z.string().min(6),
-});
+const schema = z
+  .object({
+    name: z.string(),
+    email: z.string().email(),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters long" })
+      .max(128, { message: "Password exceeds maximum length of 128 characters" }),
+    password_confirmation: z.string(),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: "Passwords do not match",
+    path: ["password_confirmation"],
+  });
 
 const defaultValues: FormSchemaType = {
   // TODO: Temp values
@@ -33,7 +41,7 @@ export function SignUpForm() {
   const router = useRouter();
   const { status } = useSession();
 
-  const { control, handleSubmit } = useForm<FormSchemaType>({
+  const { control, handleSubmit, setError } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
   });
@@ -76,12 +84,7 @@ export function SignUpForm() {
       void router.push("/properties");
     },
     onError: (error: AxiosErrorResponse) => {
-      notifications.show({
-        title: "Error",
-        message: error.response.data.message,
-        color: "red",
-        icon: <IconX size="1.5rem" />,
-      });
+      setError("email", { message: error.response.data.message });
     },
   });
 
@@ -102,30 +105,17 @@ export function SignUpForm() {
 
       <form
         /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-        onSubmit={handleSubmit(
-          (data) => mutate(data, {}),
-          (error) => {
-            console.log({ error });
-          }
-        )}
+        onSubmit={handleSubmit((data) => mutate(data, {}))}
       >
         <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-          <TextInput name="name" label="Name" control={control} placeholder="Your name" required />
-          <TextInput name="email" label="Email" control={control} placeholder="you@mantine.dev" mt="md" required />
-          <PasswordInput
-            name="password"
-            label="Password"
-            control={control}
-            placeholder="Your password"
-            required
-            mt="md"
-          />
+          <TextInput name="name" label="Name" control={control} placeholder="Your name" />
+          <TextInput name="email" label="Email" control={control} placeholder="you@mantine.dev" mt="md" />
+          <PasswordInput name="password" label="Password" control={control} placeholder="Your password" mt="md" />
           <PasswordInput
             name="password_confirmation"
             label="Confirm password"
             control={control}
             placeholder="Your password"
-            required
             mt="md"
           />
           <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
