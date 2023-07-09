@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Anchor, Button, Container, Paper, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconCheck, IconX } from "@tabler/icons-react";
+import { IconCheck } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -105,7 +105,7 @@ export function SignUpForm() {
 
       <form
         /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-        onSubmit={handleSubmit((data) => mutate(data, {}))}
+        onSubmit={handleSubmit((data) => mutate(data))}
       >
         <Paper withBorder shadow="md" p={30} mt={30} radius="md">
           <TextInput name="name" label="Name" control={control} placeholder="Your name" />
@@ -123,6 +123,13 @@ export function SignUpForm() {
           </Button>
         </Paper>
       </form>
+      <Text color="dimmed" size="sm" align="center" mt={16}>
+        <Link href="/">
+          <Anchor size="sm" component="button">
+            Return to home page
+          </Anchor>
+        </Link>
+      </Text>
     </Container>
   );
 }
