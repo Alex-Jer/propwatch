@@ -22,6 +22,7 @@ import { useInputState } from "@mantine/hooks";
 interface PropertyFormProps {
   property?: Partial<Property>;
   close?: () => void;
+  mode?: "add" | "edit";
 }
 
 type PropertyType = "house" | "apartment" | "office" | "shop" | "warehouse" | "garage" | "land" | "other";
@@ -89,7 +90,7 @@ const schema = z.object({
 
 export type FormSchemaType = z.infer<typeof schema>;
 
-export function PropertyForm({ property = {}, close }: PropertyFormProps) {
+export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFormProps) {
   const [stepperActive, setStepperActive] = useState(0);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
@@ -101,7 +102,12 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
   const [countAdmFetches, setCountAdmFetches] = useState(0);
 
   if (property.offers && offers.length === 0) {
-    setOffers([...property.offers.rent, ...property.offers.sale]);
+    /* setOffers([...property.offers.rent, ...property.offers.sale]); */
+    setOffers(
+      property.offers.rent
+        .map((offer) => ({ ...offer, listing_type: "rent" }))
+        .concat(property.offers.sale.map((offer) => ({ ...offer, listing_type: "sale" })))
+    );
   }
 
   const { data: session, status } = useSession();
@@ -298,8 +304,78 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
     return makeRequest("me/properties", "POST", session?.user.access_token, formData);
   };
 
+  const editProperty = async (data: FormSchemaType) => {
+    const formData = new FormData();
+
+    function appendIfNotNull(key: string, value: unknown) {
+      if (value !== null && value !== undefined && value !== "") {
+        formData.append(key, value as string);
+      }
+    }
+
+    appendIfNotNull("title", data.title);
+    appendIfNotNull("description", data.description);
+    appendIfNotNull("type", data.type);
+    appendIfNotNull("typology", data.typology);
+    appendIfNotNull("status", data.status);
+    appendIfNotNull("gross_area", data.gross_area);
+    appendIfNotNull("useful_area", data.useful_area);
+    appendIfNotNull("wc", data.wc);
+    appendIfNotNull("rating", data.rating ? data.rating * 2 : null);
+    appendIfNotNull("address[full_address]", data.full_address);
+    appendIfNotNull("address[adm1_id]", data.adm1_id);
+    appendIfNotNull("address[adm2_id]", data.adm2_id);
+    appendIfNotNull("address[adm3_id]", data.adm3_id);
+    appendIfNotNull("address[postal_code]", data.postal_code);
+
+    if (data.coordinates) {
+      const [latitude, longitude] = data.coordinates.split(",");
+      appendIfNotNull("address[latitude]", latitude);
+      appendIfNotNull("address[longitude]", longitude);
+    }
+
+    data.tags.forEach((tag, index) => {
+      appendIfNotNull(`tags[${index}]`, tag);
+    });
+
+    data.lists.forEach((list, index) => {
+      appendIfNotNull(`lists[${index}]`, list);
+    });
+
+    data.images.forEach((image, index) => {
+      appendIfNotNull(`media[images][${index}]`, image);
+    });
+
+    data.blueprints.forEach((blueprint, index) => {
+      appendIfNotNull(`media[blueprints][${index}]`, blueprint);
+    });
+
+    data.videos.forEach((video, index) => {
+      appendIfNotNull(`media[videos][${index}]`, video);
+    });
+
+    data.characteristics.forEach((characteristic, index) => {
+      if (characteristic?.name === "" || characteristic?.value === "") {
+        return;
+      }
+
+      appendIfNotNull(`characteristics[${index}][name]`, characteristic?.name);
+      appendIfNotNull(`characteristics[${index}][type]`, characteristic?.type);
+      appendIfNotNull(`characteristics[${index}][value]`, characteristic?.value);
+    });
+
+    offers.forEach((offer, index) => {
+      appendIfNotNull(`offers[${index}][listing_type]`, offer.listing_type);
+      appendIfNotNull(`offers[${index}][url]`, offer.url);
+      appendIfNotNull(`offers[${index}][description]`, offer.description);
+      appendIfNotNull(`offers[${index}][price]`, offer.price);
+    });
+
+    return makeRequest(`me/properties/${property.id}`, "PUT", session?.user.access_token, formData);
+  };
+
   const { mutate, isLoading } = useMutation({
-    mutationFn: addProperty,
+    mutationFn: mode === "add" ? addProperty : editProperty,
     onSuccess: () => {
       close && close();
       notifications.show({
@@ -460,7 +536,7 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
                 Next
               </Button>
               <Button type="submit" loading={isLoading} disabled={stepperActive !== TOTAL_STEPS}>
-                Add Property
+                {mode === "add" ? "Add Property" : "Update Property"}
               </Button>
             </div>
           </form>
