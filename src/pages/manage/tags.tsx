@@ -4,38 +4,32 @@ import { IconTrash, IconX } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import CardBackground from "~/components/CardBackground";
 import { ConfirmationModal } from "~/components/ConfirmationModal";
 import { ManagingTable } from "~/components/ManagingTable";
 import { errorNotification, successNotification } from "~/components/PropertyCard";
-import { EditCollection } from "~/components/collections/EditCollection";
-import { useCollections } from "~/hooks/useQueries";
+import { useTagsManage } from "~/hooks/useQueries";
 import { makeRequest } from "~/lib/requestHelper";
-import { type Collection } from "~/types";
+import { type TagManage } from "~/types";
 
-const ManageCollections: NextPage = () => {
+const ManageTags: NextPage = () => {
   const { data: session, status } = useSession();
   const [activePage, setPage] = useState(1);
   const {
-    data: colData,
+    data: tagData,
     isLoading,
     isError,
-    refetch: refreshCollections,
-  } = useCollections({ session, status, page: activePage });
-  const [collections, setCollections] = useState<Collection[]>([]);
-  const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
-
-  const [editModalOpened, { open: editOpen, close: editClose }] = useDisclosure(false);
+    refetch: refreshTags,
+  } = useTagsManage({ session, status, page: activePage });
+  const [tags, setTags] = useState<TagManage[]>([]);
+  const [selectedTag, setSelectedTags] = useState<TagManage | null>(null);
 
   const [delModOpened, { open: delOpen, close: delClose }] = useDisclosure(false);
 
-  const router = useRouter();
-
   useEffect(() => {
-    setCollections(colData?.data ?? []);
-  }, [colData?.data]);
+    setTags(tagData?.data ?? []);
+  }, [tagData?.data]);
 
   useEffect(() => {
     if (isError) {
@@ -56,38 +50,38 @@ const ManageCollections: NextPage = () => {
     return <div>Error loading collection.</div>;
   }
 
-  const deleteCollection = () => {
-    if (selectedCollection && selectedCollection.id) {
-      makeRequest(`me/lists/${selectedCollection.id.toString()}`, "DELETE", session?.user.access_token)
+  const deleteTag = () => {
+    if (selectedTag && selectedTag.id) {
+      makeRequest(`me/tags/${selectedTag.id.toString()}`, "DELETE", session?.user.access_token)
         .then(() => {
-          setSelectedCollection(null);
+          setSelectedTags(null);
           delClose();
-          successNotification("This collection has been deleted.", "Collection deleted");
-          refreshCollections().then().catch(null);
+          successNotification("This tag has been deleted.", "Tag deleted");
+          refreshTags().then().catch(null);
         })
-        .catch(() => errorNotification("An unknown error occurred while deleting this collection."));
+        .catch(() => errorNotification("An unknown error occurred while deleting this tag."));
     }
   };
 
-  const deleteMultipleFunction = async (cols: Collection[]) => {
-    if (cols.length > 0) {
-      const ids = cols.map((col) => col.id);
+  const deleteMultipleFunction = async (tags: TagManage[]) => {
+    if (tags.length > 0) {
+      const ids = tags.map((tag) => tag.id);
       const formData = new FormData();
 
       ids.forEach((id, index) => {
-        formData.append(`lists[${index}]`, id);
+        formData.append(`tags[${index}]`, id.toString());
       });
 
       //HACK: Laravel doesn't support DELETE requests with a body, so we have to use a POST request with a _method=DELETE parameter
       formData.append("_method", "DELETE");
       try {
-        await makeRequest(`me/lists/`, "POST", session?.user.access_token, formData);
+        await makeRequest(`me/tags/`, "POST", session?.user.access_token, formData);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        await refreshCollections();
-        successNotification("The selected collections have been deleted.", "Selected collections were deleted");
+        await refreshTags();
+        successNotification("The selected tags have been deleted.", "Selected tags were deleted");
         return;
       } catch (e) {
-        errorNotification("An unknown error occurred while deleting the selected collections.");
+        errorNotification("An unknown error occurred while deleting the selected tags.");
       }
     }
   };
@@ -96,7 +90,7 @@ const ManageCollections: NextPage = () => {
     {
       accessor: "id",
       title: "ID",
-      width: 50,
+      width: 75,
       sortable: true,
     },
     {
@@ -104,7 +98,7 @@ const ManageCollections: NextPage = () => {
       title: "Name",
       sortable: true,
       ellipsis: true,
-      width: 300,
+      width: 150,
     },
     {
       accessor: "num_properties",
@@ -117,36 +111,25 @@ const ManageCollections: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Manage Collections</title>
+        <title>Manage Tags</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <EditCollection
-        collections={collections}
-        collection={selectedCollection}
-        modalOpened={editModalOpened}
-        close={editClose}
-      />
       <ConfirmationModal
         opened={delModOpened}
         close={delClose}
-        yesFunction={deleteCollection}
-        title="Delete collection"
-        text="Are you sure you want to delete this collection?"
+        yesFunction={deleteTag}
+        title="Delete tag"
+        text="Are you sure you want to delete this tag?"
         yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
       />
       <CardBackground className="pt-4">
-        <h1 className="mb-2">Manage Collections</h1>
+        <h1 className="mb-2">Manage Tags</h1>
         <ManagingTable
-          records={collections}
+          records={tags}
           tableColumns={tableColumns}
-          viewFunction={(col: Collection) => void router.push(`/collections/${col.id}`)}
-          editFunction={(col: Collection) => {
-            setSelectedCollection(col);
-            editOpen();
-          }}
-          deleteFunction={(col: Collection) => {
-            setSelectedCollection(col);
+          deleteFunction={(tag: TagManage) => {
+            setSelectedTags(tag);
             delOpen();
           }}
           deleteMultipleFunction={deleteMultipleFunction}
@@ -154,11 +137,11 @@ const ManageCollections: NextPage = () => {
             columnAccessor: "name",
             direction: "asc",
           }}
-          pagination={{ activePage, setPage, total: colData?.meta.last_page ?? 1 }}
+          pagination={{ activePage, setPage, total: tagData?.meta.last_page ?? 1 }}
         />
       </CardBackground>
     </>
   );
 };
 
-export default ManageCollections;
+export default ManageTags;

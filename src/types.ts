@@ -63,6 +63,12 @@ export type Tag = {
   name: string;
 };
 
+export type TagManage = {
+  id: number;
+  name: string;
+  num_properties: number;
+};
+
 type List = {
   id: number;
   name: string;

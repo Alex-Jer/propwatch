@@ -74,7 +74,7 @@ export function ManagingTable<T extends { id: any }>({
         {
           accessor: "actions",
           title: "Actions",
-          width: 75,
+          width: viewFunction && deleteFunction && editFunction ? 75 : 50,
           render: (record: T) => (
             <div className="flex flex-row items-center">
               {viewFunction && (

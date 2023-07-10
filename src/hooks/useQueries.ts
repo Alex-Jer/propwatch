@@ -46,6 +46,8 @@ type TagsResponse = {
 
 type TagsManageResponse = {
   data: TagManage[];
+  links: Links;
+  meta: Meta;
 };
 
 type AdmsResponse = {
@@ -167,7 +169,7 @@ const fetchAllTags = async (session: Session | null) => {
 
 const fetchTagsManage = async (session: Session | null, page = 1) => {
   const response = (await makeRequest(`me/tags?page=${page}`, "GET", session?.user.access_token)) as TagsManageResponse;
-  return response.data;
+  return response;
 };
 
 const fetchTagsSidebar = async (session: Session | null) => {
