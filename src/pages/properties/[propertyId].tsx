@@ -14,7 +14,16 @@ import { useDisclosure } from "@mantine/hooks";
 import { Badge, Button, Drawer, Group, Rating, Text, Title } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
-import { IconPhoto, IconPhotoCheck, IconPhotoX, IconTrash, IconVideo, IconWallpaper } from "@tabler/icons-react";
+import {
+  IconCalendarDollar,
+  IconHomeDollar,
+  IconPhoto,
+  IconPhotoCheck,
+  IconPhotoX,
+  IconTrash,
+  IconVideo,
+  IconWallpaper,
+} from "@tabler/icons-react";
 import { makeRequest } from "~/lib/requestHelper";
 import { errorNotification, successNotification } from "~/components/PropertyCard";
 import { priceToString } from "~/lib/propertyHelper";
@@ -84,13 +93,45 @@ const Property: NextPage = () => {
   const coordinates = property?.address?.coordinates;
 
   const renderPrice = () => {
+    if (!property) return "";
     switch (property.listing_type) {
       case "sale":
-        return priceToString(property.current_price_sale);
+        return (
+          <>
+            <IconHomeDollar size="1.5rem" stroke={1.5} className="-mr-3" />
+            <Title order={3} style={{ fontWeight: "normal" }}>
+              {priceToString(property.current_price_sale)}
+            </Title>
+          </>
+        );
       case "rent":
-        return priceToString(property.current_price_rent);
+        return (
+          <>
+            <IconCalendarDollar size="1.5rem" stroke={1.5} className="-mr-3" />
+            <Title order={3} style={{ fontWeight: "normal" }}>
+              {priceToString(property.current_price_rent)}
+            </Title>
+            <Text size="sm" className="-ml-4">
+              /month
+            </Text>
+          </>
+        );
       case "both":
-        return `${priceToString(property.current_price_sale)} / ${priceToString(property.current_price_rent)}`;
+        return (
+          <>
+            <IconCalendarDollar size="1.5rem" stroke={1.5} className="-mr-3" />
+            <Title order={3} style={{ fontWeight: "normal" }}>
+              {priceToString(property.current_price_rent)}
+            </Title>
+            <Text size="sm" className="-ml-4">
+              /month
+            </Text>
+            <IconHomeDollar size="1.5rem" stroke={1.5} className="-mr-3" />
+            <Title order={3} style={{ fontWeight: "normal" }}>
+              {priceToString(property.current_price_sale)}
+            </Title>
+          </>
+        );
       default:
         return "";
     }
@@ -165,7 +206,7 @@ const Property: NextPage = () => {
         <Group noWrap spacing="xs" className="mt-2">
           <Text size="xs" color="dimmed">
             {property?.tags?.map((tag) => (
-              <Badge key={tag.id} color="blue" variant="light" className="mr-2">
+              <Badge key={tag.id} color="blue" variant="light" className="mb-2 mr-2">
                 #{tag.name}
               </Badge>
             ))}
@@ -318,9 +359,11 @@ const Property: NextPage = () => {
           >
             Delete
           </Button>
+          <div style={{ flex: 1 }}></div>
+          <Group>{renderPrice()}</Group>
         </Group>
         {renderHeader(property)}
-        <div className="-ml-6 -mr-6 mb-4  border-b border-shark-700 pb-4" />
+        <div className="-ml-6 -mr-6 -mt-2 mb-4 border-b border-shark-700 pb-4" />
         <PropertyAccordion property={property} />
         <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
         {coordinates && <>{renderMap()}</>}
