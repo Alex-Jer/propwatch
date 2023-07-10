@@ -98,6 +98,7 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
+  const [countAdmFetches, setCountAdmFetches] = useState(0);
 
   if (property.offers && offers.length === 0) {
     setOffers([...property.offers.rent, ...property.offers.sale]);
@@ -325,14 +326,16 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
   }, [isTagsSuccess, isCollectionsSuccess, property]);
 
   useEffect(() => {
-    if (isAdm1Success && isAdm2Success && isAdm3Success && Object.keys(property).length > 0) {
+    if (isAdm1Success && isAdm2Success && isAdm3Success && Object.keys(property).length > 0 && countAdmFetches === 0) {
       const adm1 = property.address?.adm1_id;
       const adm2 = property.address?.adm2_id;
       const adm3 = property.address?.adm3_id;
       setValue("adm1_id", adm1?.toString());
       setValue("adm2_id", adm2?.toString());
       setValue("adm3_id", adm3?.toString());
+      setCountAdmFetches(countAdmFetches + 1);
     }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [isAdm1Success, isAdm2Success, isAdm3Success, property]);
 
   return (
