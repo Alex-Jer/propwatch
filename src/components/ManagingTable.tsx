@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Tooltip } from "@mantine/core";
+import { ActionIcon, Button } from "@mantine/core";
 import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { useEffect, useState } from "react";
@@ -52,12 +52,6 @@ export function ManagingTable<T extends { id: any }>({
 
   useEffect(() => {
     const newCols = [
-      {
-        accessor: "id",
-        title: "ID",
-        width: 50,
-        sortable: true,
-      },
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       ...tableColumns,
     ];
@@ -69,7 +63,7 @@ export function ManagingTable<T extends { id: any }>({
         {
           accessor: "actions",
           title: "Actions",
-          width: 50,
+          width: 75,
           render: (record: T) => (
             <div className="flex flex-row items-center">
               {viewFunction && (
@@ -121,22 +115,26 @@ export function ManagingTable<T extends { id: any }>({
         yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
       />
-      <Button
-        onClick={open}
-        color="red"
-        variant="filled"
-        disabled={selectedRecords.length == 0}
-        leftIcon={<IconTrash size="1rem" className="-mr-1" />}
-      >
-        Delete selected records
-      </Button>
+      {deleteMultipleFunction && (
+        <Button
+          onClick={open}
+          color="red"
+          variant="filled"
+          disabled={selectedRecords.length == 0}
+          leftIcon={<IconTrash size="1rem" className="-mr-1" />}
+        >
+          Delete selected records
+        </Button>
+      )}
       <DataTable
         withBorder={false}
         borderRadius="md"
         columns={dataTableColumns}
         records={tableRecords}
-        selectedRecords={selectedRecords}
-        onSelectedRecordsChange={setSelectedRecords}
+        {...(deleteMultipleFunction && {
+          selectedRecords,
+          onSelectedRecordsChange: setSelectedRecords,
+        })}
         sortStatus={sortStatus}
         onSortStatusChange={setSortStatus}
       />

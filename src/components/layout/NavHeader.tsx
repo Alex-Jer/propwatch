@@ -1,7 +1,7 @@
 import { Burger, Button, Container, Group, Header, createStyles, rem, Drawer } from "@mantine/core";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { IconHomePlus, IconSearch } from "@tabler/icons-react";
+import { IconAlertTriangle, IconHomePlus, IconSearch } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import { PropertyForm } from "~/components/property";
@@ -35,6 +35,17 @@ export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProp
     if (session) {
       return (
         <>
+          <Button
+            className="mr-1"
+            color="gray"
+            onClick={() => {
+              //TODO: remove this
+              void router.push("/manage/collections");
+            }}
+            leftIcon={<IconAlertTriangle size="1rem" className="-mr-1" />}
+          >
+            Temporary
+          </Button>
           <Button
             className="mr-1"
             color="gray"
