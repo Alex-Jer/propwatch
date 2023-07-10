@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Drawer, Stepper, Paper } from "@mantine/core";
+import { Button, Stepper, Paper } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,7 @@ import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { type Offer } from "~/types";
+import { type Property, type Offer } from "~/types";
 import {
   AddPropertyAddress,
   AddPropertyCharacteristics,
@@ -17,9 +17,9 @@ import {
   AddPropertyOffers,
 } from "~/components/property";
 
-interface AddPropertyDrawerProps {
-  opened: boolean;
-  close: () => void;
+interface PropertyFormProps {
+  property?: Property;
+  close?: () => void;
 }
 
 const TOTAL_STEPS = 5;
@@ -113,7 +113,7 @@ const defaultValues: FormSchemaType = {
 
 export type FormSchemaType = z.infer<typeof schema>;
 
-export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
+export function PropertyForm({ property = {}, close }: PropertyFormProps) {
   const [stepperActive, setStepperActive] = useState(0);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
@@ -225,7 +225,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const { mutate, isLoading } = useMutation({
     mutationFn: addProperty,
     onSuccess: () => {
-      close();
+      close && close();
       notifications.show({
         title: "Property added",
         message: "Your property was added successfully",
@@ -247,113 +247,85 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
   return (
     <>
-      <Drawer
-        title="Add Property"
-        opened={opened}
-        onClose={close}
-        position="right"
-        size="75%"
-        overlayProps={{ opacity: 0.5, blur: 4 }}
-        keepMounted
-        styles={{
-          header: {
-            display: "flex",
-            flexDirection: "column",
-            padding: "1rem 1.5rem",
-          },
-          title: {
-            marginBottom: "1rem",
-            fontSize: "1.5rem",
-            fontWeight: 700,
-          },
-          close: {
-            position: "absolute",
-            top: 0,
-            right: 0,
-            margin: "1rem",
-          },
-        }}
-      >
-        <div className="container mx-auto px-8">
-          <div className="grid grid-cols-1 gap-6">
-            <form
-              /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-              onSubmit={handleSubmit(
-                (data) =>
-                  mutate(data, {
-                    onSuccess: () => resetForm(),
-                  }),
-                (error) => {
-                  console.log({ error });
-                  notifications.show({
-                    title: "Error",
-                    message: "Please fill in the required fields or fix the errors.",
-                    icon: <IconX size="1.1rem" />,
-                    color: "red",
-                    autoClose: 5000,
-                  });
-                }
-              )}
-            >
-              <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
-                <Stepper.Step label="Main Info">
-                  <AddPropertyMainInfo control={control} resetField={resetField} />
-                </Stepper.Step>
+      <div className="container mx-auto px-8">
+        <div className="grid grid-cols-1 gap-6">
+          <form
+            /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
+            onSubmit={handleSubmit(
+              (data) =>
+                mutate(data, {
+                  onSuccess: () => resetForm(),
+                }),
+              (error) => {
+                console.log({ error });
+                notifications.show({
+                  title: "Error",
+                  message: "Please fill in the required fields or fix the errors.",
+                  icon: <IconX size="1.1rem" />,
+                  color: "red",
+                  autoClose: 5000,
+                });
+              }
+            )}
+          >
+            <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
+              <Stepper.Step label="Main Info">
+                <AddPropertyMainInfo control={control} resetField={resetField} />
+              </Stepper.Step>
 
-                <Stepper.Step label="Address">
-                  <AddPropertyAddress control={control} resetField={resetField} />
-                </Stepper.Step>
+              <Stepper.Step label="Address">
+                <AddPropertyAddress control={control} resetField={resetField} />
+              </Stepper.Step>
 
-                <Stepper.Step label="Characteristics">
-                  <AddPropertyCharacteristics control={control} watch={watch} />
-                </Stepper.Step>
+              <Stepper.Step label="Characteristics">
+                <AddPropertyCharacteristics control={control} watch={watch} />
+              </Stepper.Step>
 
-                <Stepper.Step label="Media">
-                  <AddPropertyMedia
-                    control={control}
-                    selectedImages={selectedImages}
-                    setSelectedImages={setSelectedImages}
-                    selectedBlueprints={selectedBlueprints}
-                    setSelectedBlueprints={setSelectedBlueprints}
-                    selectedVideos={selectedVideos}
-                    setSelectedVideos={setSelectedVideos}
-                  />
-                </Stepper.Step>
+              <Stepper.Step label="Media">
+                <AddPropertyMedia
+                  control={control}
+                  selectedImages={selectedImages}
+                  setSelectedImages={setSelectedImages}
+                  selectedBlueprints={selectedBlueprints}
+                  setSelectedBlueprints={setSelectedBlueprints}
+                  selectedVideos={selectedVideos}
+                  setSelectedVideos={setSelectedVideos}
+                />
+              </Stepper.Step>
 
-                <Stepper.Step label="Offers">
-                  <AddPropertyOffers offers={offers} setOffers={setOffers} />
-                </Stepper.Step>
+              <Stepper.Step label="Offers">
+                <AddPropertyOffers offers={offers} setOffers={setOffers} />
+              </Stepper.Step>
 
-                <Stepper.Step label="Summary">
-                  {/* TODO: Extract to a component */}
-                  {/* <AddPropertySummary />  */}
-                  <h1 className="mb-2 text-2xl font-semibold">Summary</h1>
-                  <Paper className="mb-4" shadow="xs" p="md" withBorder>
-                    <AddPropertyMainInfo control={control} trigger={trigger} />
-                    <AddPropertyAddress control={control} trigger={trigger} resetField={resetField} />
-                  </Paper>
-                </Stepper.Step>
-              </Stepper>
+              <Stepper.Step label="Summary">
+                {/* TODO: Extract to a component */}
+                {/* <AddPropertySummary />  */}
+                <h1 className="mb-2 text-2xl font-semibold">Summary</h1>
+                <Paper className="mb-4" shadow="xs" p="md" withBorder>
+                  <AddPropertyMainInfo control={control} trigger={trigger} />
+                  <AddPropertyAddress control={control} trigger={trigger} resetField={resetField} />
+                </Paper>
+              </Stepper.Step>
+            </Stepper>
 
-              <div className="flex justify-end space-x-2">
-                <Button
-                  variant="default"
-                  onClick={() => handleStepChange(stepperActive - 1)}
-                  disabled={stepperActive === 0}
-                >
-                  Back
-                </Button>
-                <Button onClick={() => handleStepChange(stepperActive + 1)} disabled={stepperActive === TOTAL_STEPS}>
-                  Next
-                </Button>
-                <Button type="submit" loading={isLoading} disabled={stepperActive !== TOTAL_STEPS}>
-                  Add Property
-                </Button>
-              </div>
-            </form>
-          </div>
+            <div className="flex justify-end space-x-2">
+              <Button
+                variant="default"
+                onClick={() => handleStepChange(stepperActive - 1)}
+                disabled={stepperActive === 0}
+              >
+                Back
+              </Button>
+              <Button onClick={() => handleStepChange(stepperActive + 1)} disabled={stepperActive === TOTAL_STEPS}>
+                Next
+              </Button>
+              <Button type="submit" loading={isLoading} disabled={stepperActive !== TOTAL_STEPS}>
+                Add Property
+              </Button>
+            </div>
+          </form>
         </div>
-      </Drawer>
+      </div>
     </>
   );
 }

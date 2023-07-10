@@ -3,7 +3,7 @@ import { IconAlertCircle } from "@tabler/icons-react";
 import { useState } from "react";
 import { useFieldArray, type UseFormWatch, type Control } from "react-hook-form";
 import { SegmentedControl, TextInput } from "react-hook-form-mantine";
-import { type FormSchemaType } from "./AddPropertyDrawer";
+import { type FormSchemaType } from "./PropertyForm";
 
 type AddPropertyCharacteristicsProps = {
   control: Control<FormSchemaType>;

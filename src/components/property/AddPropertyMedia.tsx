@@ -1,6 +1,6 @@
 import { createStyles, Divider } from "@mantine/core";
 import { Controller, type Control } from "react-hook-form";
-import { type FormSchemaType } from "./AddPropertyDrawer";
+import { type FormSchemaType } from "./PropertyForm";
 import { FilePond, registerPlugin } from "react-filepond";
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
