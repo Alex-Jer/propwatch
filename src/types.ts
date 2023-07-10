@@ -54,7 +54,7 @@ export type Address = {
 type Characteristic = {
   id: number;
   name: string;
-  type: string;
+  type: "numerical" | "textual";
   value: string;
 };
 

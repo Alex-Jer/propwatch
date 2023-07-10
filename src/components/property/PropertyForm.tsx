@@ -20,7 +20,7 @@ import { useAdms, useAdms2, useAdms3, useAllCollections, useTags } from "~/hooks
 import { useInputState } from "@mantine/hooks";
 
 interface PropertyFormProps {
-  property?: Property;
+  property?: Partial<Property>;
   close?: () => void;
 }
 
@@ -185,7 +185,12 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
     images: [],
     blueprints: [],
     videos: [],
-    characteristics: [{ name: "", type: "numerical", value: "" }],
+    characteristics: property.characteristics
+      ? property.characteristics.map((characteristic) => ({
+          ...characteristic,
+          id: undefined,
+        }))
+      : [{ name: "", type: "numerical", value: "" }],
     full_address: property.address?.full_address || "",
     postal_code: property.address?.postal_code || "",
     coordinates: property.address?.coordinates
@@ -194,7 +199,7 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
     adm1_id: null,
     adm2_id: null,
     adm3_id: null,
-    rating: property.rating / 2 || null,
+    rating: (property.rating && property.rating / 2) || null,
   };
 
   const { control, handleSubmit, reset, resetField, watch, trigger, setFocus, setValue } = useForm<FormSchemaType>({
@@ -320,8 +325,8 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
     if (isTagsSuccess && isCollectionsSuccess && Object.keys(property).length > 0) {
       const tags = property.tags?.map((tag) => tag.name);
       const collections = property.lists?.map((list) => list.id.toString());
-      setValue("tags", tags);
-      setValue("lists", collections);
+      tags && setValue("tags", tags);
+      collections && setValue("lists", collections);
     }
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [isTagsSuccess, isCollectionsSuccess, property]);
