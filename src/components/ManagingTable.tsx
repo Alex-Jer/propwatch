@@ -13,6 +13,7 @@ type TableProps<T extends { id: any }> = {
   editFunction?: (record: T) => void;
   deleteFunction?: (record: T) => void;
   deleteMultipleFunction?: (records: T[]) => boolean;
+  defaultSortStatus?: DataTableSortStatus;
 };
 
 export function ManagingTable<T extends { id: any }>({
@@ -22,11 +23,14 @@ export function ManagingTable<T extends { id: any }>({
   editFunction,
   deleteFunction,
   deleteMultipleFunction,
+  defaultSortStatus,
 }: TableProps<T>) {
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-    columnAccessor: "id",
-    direction: "asc",
-  });
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>(
+    defaultSortStatus ?? {
+      columnAccessor: "id",
+      direction: "asc",
+    }
+  );
 
   const [tableRecords, setTableRecords] = useState<T[]>([]);
 

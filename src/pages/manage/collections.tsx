@@ -85,6 +85,10 @@ const ManageCollections: NextPage = () => {
           deleteMultipleFunction={(cols: Collection[]) => {
             return false;
           }}
+          defaultSortStatus={{
+            columnAccessor: "name",
+            direction: "asc",
+          }}
         />
       </CardBackground>
     </>
