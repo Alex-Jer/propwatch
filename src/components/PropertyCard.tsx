@@ -1,6 +1,14 @@
-import { Card, Text, Group, createStyles, getStylesRef, rem, Tooltip, Center } from "@mantine/core";
+import { Card, Text, Group, createStyles, getStylesRef, rem, Tooltip, Center, Skeleton } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconArrowBackUp, IconBed, IconCheck, IconHomeDollar, IconTrash, IconX } from "@tabler/icons-react";
+import {
+  IconArrowBackUp,
+  IconBed,
+  IconCalendarDollar,
+  IconCheck,
+  IconHomeDollar,
+  IconTrash,
+  IconX,
+} from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
 import { priceToString } from "~/lib/propertyHelper";
@@ -12,6 +20,7 @@ interface PropertyCardProps {
   id?: string | undefined;
   trashButtons?: boolean | undefined;
   refresh?: () => void;
+  isLoading?: boolean;
 }
 
 export const errorNotification = (message: string, title = "Error") => {
@@ -32,7 +41,7 @@ export const successNotification = (message: string, title = "Success") => {
   });
 };
 
-export function PropertyCard({ property, id, trashButtons, refresh }: PropertyCardProps) {
+export function PropertyCard({ property, id, trashButtons, refresh, isLoading = false }: PropertyCardProps) {
   const { classes } = useStyles();
 
   const [isHovered, setIsHovered] = useState(false);
@@ -116,43 +125,75 @@ export function PropertyCard({ property, id, trashButtons, refresh }: PropertyCa
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
     >
-      <div className={classes.image} style={{ backgroundImage: `url(${property?.cover_url})` }} />
-      <div className={classes.overlay} />
+      {!isLoading && (
+        <>
+          <div className={classes.image} style={{ backgroundImage: `url(${property?.cover_url})` }} />
+          <div className={classes.overlay} />
+        </>
+      )}
+
       <div className={classes.content}>
+        {isLoading && <Skeleton width="100%" height="100%" mb="xs" />}
         {shouldDisplay && renderTrashButtons(id, trashButtons)}
         <div>
-          <Text size="lg" className={classes.title} weight={500}>
-            {property.title}
-          </Text>
+          {!isLoading ? (
+            <Text size="lg" className={classes.title} weight={500}>
+              {property.title}
+            </Text>
+          ) : (
+            <Skeleton width="100%" height={40} mb="xs" />
+          )}
 
           <Group position="apart" spacing="xs">
-            <Text size="sm" className={`${classes.propertyType} capitalize`}>
-              {property.type}
-            </Text>
+            {!isLoading ? (
+              <Text size="sm" className={`${classes.propertyType} capitalize`}>
+                {property.type}
+              </Text>
+            ) : (
+              <Skeleton width={80} height={15} />
+            )}
 
             <Group spacing="lg">
-              {property.typology && (
+              {property.typology ? (
                 <Center>
                   <IconBed size="1rem" stroke={1.5} />
                   <Text size="sm" className={classes.bodyText}>
                     {property.typology.slice(1)}
                   </Text>
                 </Center>
+              ) : (
+                isLoading && (
+                  <Center>
+                    <Skeleton width={80} height={15} />
+                  </Center>
+                )
               )}
-
-              {property.current_price_sale ? (
+              {property.current_price_sale || isLoading ? (
                 <Center>
-                  <IconHomeDollar size="1rem" stroke={1.5} />
-                  <Text size="sm" className={classes.bodyText}>
-                    {priceToString(property.current_price_sale)}
-                  </Text>
+                  {!isLoading && property.current_price_sale ? (
+                    <>
+                      <IconHomeDollar size="1rem" stroke={1.5} />
+                      <Text size="sm" className={classes.bodyText}>
+                        {priceToString(property.current_price_sale)}
+                      </Text>
+                    </>
+                  ) : (
+                    <Skeleton width={80} height={15} />
+                  )}
                 </Center>
-              ) : property.current_price_rent ? (
+              ) : property.current_price_rent || isLoading ? (
                 <Center>
-                  <Text size="sm" className={classes.bodyText}>
-                    {priceToString(property.current_price_rent)}
-                    <span className="text-xs">/month</span>
-                  </Text>
+                  {!isLoading && property.current_price_rent ? (
+                    <>
+                      <IconCalendarDollar size="1rem" stroke={1.5} />
+                      <Text size="sm" className={classes.bodyText}>
+                        {priceToString(property.current_price_rent)}
+                        <span className="text-xs">/month</span>
+                      </Text>
+                    </>
+                  ) : (
+                    <Skeleton width={80} height={15} />
+                  )}
                 </Center>
               ) : null}
             </Group>

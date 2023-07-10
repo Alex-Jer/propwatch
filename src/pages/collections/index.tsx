@@ -8,6 +8,7 @@ import { type Collection } from "~/types";
 import { IconListNumbers, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useEffect } from "react";
+import { generateLoadingElements } from "~/lib/propertyHelper";
 
 const Collections: NextPage = () => {
   const { data: session, status } = useSession();
@@ -25,15 +26,6 @@ const Collections: NextPage = () => {
     }
   }, [isError]);
 
-  const generateLoadingCards = (count: number) => {
-    const loadingCards = [];
-    for (let i = 0; i < count; i++) {
-      loadingCards.push(<CollectionCard key={i} covers={[]} title={""} description={""} date={""} isLoading />);
-    }
-
-    return loadingCards;
-  };
-
   return (
     <>
       <Head>
@@ -48,9 +40,11 @@ const Collections: NextPage = () => {
 
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
-      {isLoading ? <span className="grid grid-cols-1 gap-4">{generateLoadingCards(10)}</span> : null}
-
       <span className="grid grid-cols-1 gap-4">
+        {isLoading
+          ? generateLoadingElements(10, <CollectionCard covers={[]} title={""} description={""} date={""} isLoading />)
+          : null}
+
         {collections?.map((collection: Collection) => (
           <Link href={`/collections/${collection.id}`} key={collection.id}>
             <CollectionCard
