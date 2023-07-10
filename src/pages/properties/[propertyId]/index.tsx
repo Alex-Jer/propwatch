@@ -395,24 +395,12 @@ const Property: NextPage = () => {
           </Button>
           <Button.Group>
             <Button
-              onClick={() =>
-                void router.push({
-                  pathname: `/properties/${property?.id}/edit`,
-                  query: { property: JSON.stringify(property) },
-                })
-              }
+              onClick={() => void router.push(`/properties/${property?.id}/edit`)}
               color="yellow"
               variant="light"
               leftIcon={<IconEdit size="1rem" className="-mr-1" />}
             >
-              <Link
-                href={{
-                  pathname: `/properties/${property?.id}/edit`,
-                  query: { property: JSON.stringify(property) },
-                }}
-              >
-                Edit
-              </Link>
+              <Link href={`/properties/${property?.id}/edit`}>Edit</Link>
             </Button>
             <Button
               onClick={delConfirmOpen}
