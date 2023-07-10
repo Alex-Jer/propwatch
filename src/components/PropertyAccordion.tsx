@@ -252,8 +252,11 @@ export function PropertyAccordion({ property }: { property: Property }) {
     {
       id: "offers_history",
       icon: IconChartInfographic,
-      label: "Offers' History",
-      description: "Lorem ipsum",
+      label: "Offers' Price History",
+      description:
+        "View the price history of " +
+        ((property?.offers?.sale?.length ?? 0) + (property?.offers?.rent?.length ?? 0)).toString() +
+        " offers",
       content: (
         <>
           {property.offers.sale.length > 0 && (
