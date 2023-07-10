@@ -1,11 +1,9 @@
 import { ActionIcon, Group, Loader, Text } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import { IconArrowBack, IconBathFilled } from "@tabler/icons-react";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { type UseFormTrigger, type Control, type UseFormResetField } from "react-hook-form";
 import { TextInput, Select, MultiSelect, NumberInput, Rating, Textarea } from "react-hook-form-mantine";
-import { useAllCollections, useTags } from "~/hooks/useQueries";
 import { type SelectOption } from "~/types";
 import { type FormSchemaType } from "./PropertyForm";
 

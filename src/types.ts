@@ -95,8 +95,8 @@ export type Property = {
   title: string;
   description: string;
   cover_url: string;
-  useful_area: number;
-  gross_area: number;
+  useful_area: string;
+  gross_area: string;
   type: string;
   typology: string;
   wc: number;
