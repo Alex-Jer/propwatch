@@ -22,6 +22,9 @@ interface PropertyFormProps {
   close?: () => void;
 }
 
+type PropertyType = "house" | "apartment" | "office" | "shop" | "warehouse" | "garage" | "land" | "other";
+type PropertyStatus = "available" | "unavailable" | "unknown";
+
 const TOTAL_STEPS = 5;
 
 const schema = z.object({
@@ -43,10 +46,6 @@ const schema = z.object({
     .nullable(),
   wc: z
     .union([z.number().int().nonnegative().optional().nullable(), z.string().max(16)])
-    .optional()
-    .nullable(),
-  current_price: z
-    .union([z.number().nonnegative().optional().nullable(), z.string().max(16)])
     .optional()
     .nullable(),
   tags: z.array(z.string().max(32, { message: "Tag must be at most 32 characters long" })),
@@ -86,31 +85,6 @@ const schema = z.object({
   rating: z.number().optional().nullable(),
 });
 
-const defaultValues: FormSchemaType = {
-  title: "",
-  description: "",
-  type: null,
-  typology: "",
-  status: null,
-  gross_area: "",
-  useful_area: "",
-  wc: "",
-  current_price: "",
-  tags: [],
-  lists: [],
-  images: [],
-  blueprints: [],
-  videos: [],
-  characteristics: [{ name: "", type: "numerical", value: "" }],
-  full_address: "",
-  postal_code: "",
-  coordinates: "",
-  adm1_id: null,
-  adm2_id: null,
-  adm3_id: null,
-  rating: 0,
-};
-
 export type FormSchemaType = z.infer<typeof schema>;
 
 export function PropertyForm({ property = {}, close }: PropertyFormProps) {
@@ -123,7 +97,37 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
 
+  if (property.offers && offers.length === 0) {
+    setOffers([...property.offers.rent, ...property.offers.sale]);
+  }
+
   const { data: session } = useSession();
+
+  const defaultValues: FormSchemaType = {
+    title: property.title || "",
+    description: property.description || "",
+    type: (property.type as PropertyType) || null,
+    typology: property.typology || "",
+    status: (property.status as PropertyStatus) || null,
+    gross_area: "",
+    useful_area: "",
+    wc: property.wc || "",
+    // TODO: tags, lists, images, bps, videos
+    tags: [],
+    lists: [],
+    images: [],
+    blueprints: [],
+    videos: [],
+    characteristics: [{ name: "", type: "numerical", value: "" }],
+    full_address: property.address?.full_address || "",
+    postal_code: property.address?.postal_code || "",
+    // TODO: coords, adm
+    coordinates: property.address?.coordinates || "",
+    adm1_id: property.address?.adm1_id || null,
+    adm2_id: null,
+    adm3_id: null,
+    rating: property.rating / 2 || null,
+  };
 
   const { control, handleSubmit, reset, resetField, watch, trigger, setFocus } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
@@ -168,7 +172,6 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
     appendIfNotNull("gross_area", data.gross_area);
     appendIfNotNull("useful_area", data.useful_area);
     appendIfNotNull("wc", data.wc);
-    appendIfNotNull("current_price", data.current_price);
     appendIfNotNull("rating", data.rating ? data.rating * 2 : null);
     appendIfNotNull("address[full_address]", data.full_address);
     appendIfNotNull("address[adm1_id]", data.adm1_id);
