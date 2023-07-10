@@ -278,7 +278,7 @@ const useStyles = createStyles((theme) => ({
     "&::-webkit-scrollbar": {
       display: "none" /* Chromium */,
     },
-    "scrollbar-width": "none" /* Firefox */,
+    scrollbarWidth: "none" /* Firefox */,
   },
 
   section: {

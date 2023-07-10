@@ -1,5 +1,6 @@
 import type { Property, Address } from "~/types";
 import seedrandom from "seedrandom";
+import { cloneElement, ReactElement } from "react";
 
 export const priceToString = (price: number) => {
   // check if price is a decimal number
@@ -96,3 +97,12 @@ export function getRandomHexColor(seed: string) {
   // Return the random color in hexadecimal format
   return "#" + randomColor;
 }
+
+export const generateLoadingElements = (count: number, component: ReactElement) => {
+  const loadingElements = [];
+  for (let i = 0; i < count; i++) {
+    loadingElements.push(cloneElement(component, { key: i }));
+  }
+
+  return loadingElements;
+};

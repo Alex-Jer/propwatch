@@ -1,22 +1,30 @@
 import { Group, Pagination } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { IconX } from "@tabler/icons-react";
 import Link from "next/link";
+import { useEffect } from "react";
 import { PropertyCard } from "~/components/PropertyCard";
+import { generateLoadingElements } from "~/lib/propertyHelper";
 import type { CollectionProperty, DisplayPropertiesProps } from "~/types";
 
 export function DisplayProperties({ propData, isLoading, isError, activePage, setPage }: DisplayPropertiesProps) {
   const properties = propData?.data;
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error loading properties.</div>;
-  }
+  useEffect(() => {
+    if (isError) {
+      notifications.show({
+        title: "Error",
+        message: "There was an error loading your properties.",
+        color: "red",
+        icon: <IconX size="1.5rem" />,
+      });
+    }
+  }, [isError]);
 
   return (
     <>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+        {isLoading ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />) : null}
         {properties?.map((property: CollectionProperty) => (
           <Link href={`/properties/${property.id}`} key={property.id}>
             <PropertyCard property={property} />
