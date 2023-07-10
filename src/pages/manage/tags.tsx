@@ -4,6 +4,7 @@ import { IconTrash, IconX } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import CardBackground from "~/components/CardBackground";
 import { ConfirmationModal } from "~/components/ConfirmationModal";
@@ -72,10 +73,8 @@ const ManageTags: NextPage = () => {
         formData.append(`tags[${index}]`, id.toString());
       });
 
-      //HACK: Laravel doesn't support DELETE requests with a body, so we have to use a POST request with a _method=DELETE parameter
-      formData.append("_method", "DELETE");
       try {
-        await makeRequest(`me/tags/`, "POST", session?.user.access_token, formData);
+        await makeRequest(`me/tags/`, "DELETE", session?.user.access_token, formData);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         await refreshTags();
         successNotification("The selected tags have been deleted.", "Selected tags were deleted");

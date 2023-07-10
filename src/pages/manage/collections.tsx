@@ -78,10 +78,8 @@ const ManageCollections: NextPage = () => {
         formData.append(`lists[${index}]`, id);
       });
 
-      //HACK: Laravel doesn't support DELETE requests with a body, so we have to use a POST request with a _method=DELETE parameter
-      formData.append("_method", "DELETE");
       try {
-        await makeRequest(`me/lists/`, "POST", session?.user.access_token, formData);
+        await makeRequest(`me/lists/`, "DELETE", session?.user.access_token, formData);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         await refreshCollections();
         successNotification("The selected collections have been deleted.", "Selected collections were deleted");
