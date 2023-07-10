@@ -201,20 +201,20 @@ const Property: NextPage = () => {
     switch (status) {
       case "available":
         return (
-          <Badge color="green" variant="light" className="mb-2 mr-2">
+          <Badge color="green" variant="filled" className="mb-2 mr-2">
             Available
           </Badge>
         );
       case "unavailable":
         return (
-          <Badge color="red" variant="light" className="mb-2 mr-2">
+          <Badge color="red" variant="filled" className="mb-2 mr-2">
             Unavailable
           </Badge>
         );
       case "unknown":
       default:
         return (
-          <Badge color="gray" variant="light" className="mb-2 mr-2">
+          <Badge color="gray" variant="filled" className="mb-2 mr-2">
             Unknown Status
           </Badge>
         );
