@@ -16,6 +16,7 @@ import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
 import {
   IconCalendarDollar,
+  IconEdit,
   IconHomeDollar,
   IconPhoto,
   IconPhotoCheck,
@@ -193,6 +194,10 @@ const Property: NextPage = () => {
       .catch(() => errorNotification("An error as occurred while rating this property."));
   };
 
+  const renderStatus = (status: string) => {
+    return "aa";
+  };
+
   const renderHeader = (property: Property) => {
     return (
       <div className="mt-4">
@@ -205,6 +210,7 @@ const Property: NextPage = () => {
         <div className="mt-1">{property.description}</div>
         <Group noWrap spacing="xs" className="mt-2">
           <Text size="xs" color="dimmed">
+            {renderStatus(property.status)}
             {property?.tags?.map((tag) => (
               <Badge key={tag.id} color="blue" variant="light" className="mb-2 mr-2">
                 #{tag.name}
@@ -268,6 +274,22 @@ const Property: NextPage = () => {
         //TODO
         console.log("Error: ", err, " when trashing property.");
       });
+  };
+
+  const editProperty = () => {
+    /*if (!property?.id) return;
+    makeRequest(`me/properties/${property.id}`, "DELETE", session?.user.access_token)
+      .then(() => {
+        const sendSuccess = () => {
+          successNotification("This property has been sent to trash!", "Property deleted");
+        };
+        router.push("/properties").then(sendSuccess).catch(sendSuccess); //TODO: Should we redirect to trash?
+      })
+      .catch((err) => {
+        errorNotification("An unknown error occurred while deleting this property.");
+        //TODO
+        console.log("Error: ", err, " when trashing property.");
+      });*/
   };
 
   const coverButtonClick = () => {
@@ -351,14 +373,24 @@ const Property: NextPage = () => {
           >
             {isCurrentCover ? "Set as cover" : "Remove cover"}
           </Button>
-          <Button
-            onClick={trashProperty}
-            color="red"
-            variant="light"
-            leftIcon={<IconTrash size="1rem" className="-mr-1" />}
-          >
-            Delete
-          </Button>
+          <Button.Group>
+            <Button
+              onClick={editProperty}
+              color="yellow"
+              variant="light"
+              leftIcon={<IconEdit size="1rem" className="-mr-1" />}
+            >
+              Edit
+            </Button>
+            <Button
+              onClick={trashProperty}
+              color="red"
+              variant="light"
+              leftIcon={<IconTrash size="1rem" className="-mr-1" />}
+            >
+              Delete
+            </Button>
+          </Button.Group>
           <div style={{ flex: 1 }}></div>
           <Group>{renderPrice()}</Group>
         </Group>
