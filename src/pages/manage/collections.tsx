@@ -1,4 +1,5 @@
 import { Group, Pagination, Text, Tooltip } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconX } from "@tabler/icons-react";
 import { type NextPage } from "next";
@@ -8,6 +9,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import CardBackground from "~/components/CardBackground";
 import { ManagingTable } from "~/components/ManagingTable";
+import { EditCollection } from "~/components/collections/EditCollection";
 import { useCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 
@@ -16,6 +18,9 @@ const ManageCollections: NextPage = () => {
   const [activePage, setPage] = useState(1);
   const { data: colData, isLoading, isError } = useCollections({ session, status, page: activePage });
   const [collections, setCollections] = useState<Collection[]>([]);
+  const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
+
+  const [editModalOpened, { open: editOpen, close: editClose }] = useDisclosure(false);
 
   const router = useRouter();
 
@@ -70,7 +75,7 @@ const ManageCollections: NextPage = () => {
         <title>Manage Collections</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
+      <EditCollection collection={selectedCollection} modalOpened={editModalOpened} close={editClose} />
       <CardBackground className="pt-4">
         <h1 className="mb-2">Manage Collections</h1>
         <ManagingTable
@@ -78,7 +83,8 @@ const ManageCollections: NextPage = () => {
           tableColumns={tableColumns}
           viewFunction={(col: Collection) => void router.push(`/collections/${col.id}`)}
           editFunction={(col: Collection) => {
-            return;
+            setSelectedCollection(col);
+            editOpen();
           }}
           deleteFunction={(col: Collection) => {
             return;
