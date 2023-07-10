@@ -117,7 +117,7 @@ export function ManagingTable<T extends { id: any }>({
         close={close}
         yesFunction={deleteSelectedRecords}
         title="Delete selected records"
-        text={`Are you sure you want the ${selectedRecords.length} selected records?`}
+        text={`Are you sure you want to delete the ${selectedRecords.length} selected records?`}
         yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
       />
