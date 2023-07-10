@@ -9,27 +9,27 @@ import CardBackground from "~/components/CardBackground";
 import { ConfirmationModal } from "~/components/ConfirmationModal";
 import { ManagingTable } from "~/components/ManagingTable";
 import { errorNotification, successNotification } from "~/components/PropertyCard";
-import { useTagsManage } from "~/hooks/useQueries";
+import { useCharacteristicsPaginated } from "~/hooks/useQueries";
 import { makeRequest } from "~/lib/requestHelper";
-import { type TagManage } from "~/types";
+import { type BareCharacteristic } from "~/types";
 
-const ManageTags: NextPage = () => {
+const ManageCharacteristics: NextPage = () => {
   const { data: session, status } = useSession();
   const [activePage, setPage] = useState(1);
   const {
-    data: tagData,
+    data: crcData,
     isLoading,
     isError,
-    refetch: refreshTags,
-  } = useTagsManage({ session, status, page: activePage });
-  const [tags, setTags] = useState<TagManage[]>([]);
-  const [selectedTag, setSelectedTags] = useState<TagManage | null>(null);
+    refetch: refreshCharacteristics,
+  } = useCharacteristicsPaginated({ session, status, page: activePage });
+  const [crcs, setCrcs] = useState<BareCharacteristic[]>([]);
+  const [selectedCrcs, setSelectedCrcs] = useState<BareCharacteristic | null>(null);
 
   const [delModOpened, { open: delOpen, close: delClose }] = useDisclosure(false);
 
   useEffect(() => {
-    setTags(tagData?.data ?? []);
-  }, [tagData?.data]);
+    setCrcs(crcData?.data ?? []);
+  }, [crcData?.data]);
 
   useEffect(() => {
     if (isError) {
@@ -50,36 +50,36 @@ const ManageTags: NextPage = () => {
     return <div>Error loading collection.</div>;
   }
 
-  const deleteTag = () => {
-    if (selectedTag && selectedTag.id) {
-      makeRequest(`me/tags/${selectedTag.id.toString()}`, "DELETE", session?.user.access_token)
+  const deleteCharacteristic = () => {
+    if (selectedCrcs && selectedCrcs.id) {
+      makeRequest(`me/characteristics/${selectedCrcs.id.toString()}`, "DELETE", session?.user.access_token)
         .then(() => {
-          setSelectedTags(null);
+          setSelectedCrcs(null);
           delClose();
-          successNotification("This tag has been deleted.", "Tag deleted");
-          refreshTags().then().catch(null);
+          successNotification("This characteristic has been deleted.", "Characteristic deleted");
+          refreshCharacteristics().then().catch(null);
         })
-        .catch(() => errorNotification("An unknown error occurred while deleting this tag."));
+        .catch(() => errorNotification("An unknown error occurred while deleting this characteristic."));
     }
   };
 
-  const deleteMultipleFunction = async (tags: TagManage[]) => {
-    if (tags.length > 0) {
-      const ids = tags.map((tag) => tag.id);
+  const deleteMultipleFunction = async (crcs: BareCharacteristic[]) => {
+    if (crcs.length > 0) {
+      const ids = crcs.map((crc) => crc.id);
       const formData = new FormData();
 
       ids.forEach((id, index) => {
-        formData.append(`tags[${index}]`, id.toString());
+        formData.append(`characteristics[${index}]`, id.toString());
       });
 
       try {
-        await makeRequest(`me/tags/`, "DELETE", session?.user.access_token, formData);
+        await makeRequest(`me/characteristics/`, "DELETE", session?.user.access_token, formData);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        await refreshTags();
-        successNotification("The selected tags have been deleted.", "Selected tags were deleted");
+        await refreshCharacteristics();
+        successNotification("The selected characteristics have been deleted.", "Selected characteristics were deleted");
         return;
       } catch (e) {
-        errorNotification("An unknown error occurred while deleting the selected tags.");
+        errorNotification("An unknown error occurred while deleting the selected characteristics.");
       }
     }
   };
@@ -99,9 +99,9 @@ const ManageTags: NextPage = () => {
       width: 150,
     },
     {
-      accessor: "num_properties",
-      title: "Properties",
-      width: 100,
+      accessor: "type",
+      title: "Type",
+      width: 75,
       sortable: true,
     },
   ];
@@ -109,25 +109,25 @@ const ManageTags: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Manage Tags</title>
+        <title>Manage Characteristics</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ConfirmationModal
         opened={delModOpened}
         close={delClose}
-        yesFunction={deleteTag}
-        title="Delete tag"
-        text="Are you sure you want to delete this tag?"
+        yesFunction={deleteCharacteristic}
+        title="Delete characteristic"
+        text="Are you sure you want to delete this characteristic?"
         yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
       />
       <CardBackground className="pt-4">
-        <h1 className="mb-2">Manage Tags</h1>
+        <h1 className="mb-2">Manage Characteristics</h1>
         <ManagingTable
-          records={tags}
+          records={crcs}
           tableColumns={tableColumns}
-          deleteFunction={(tag: TagManage) => {
-            setSelectedTags(tag);
+          deleteFunction={(tag: BareCharacteristic) => {
+            setSelectedCrcs(tag);
             delOpen();
           }}
           deleteMultipleFunction={deleteMultipleFunction}
@@ -135,11 +135,11 @@ const ManageTags: NextPage = () => {
             columnAccessor: "name",
             direction: "asc",
           }}
-          pagination={{ activePage, setPage, total: tagData?.meta.last_page ?? 1 }}
+          pagination={{ activePage, setPage, total: crcData?.meta.last_page ?? 1 }}
         />
       </CardBackground>
     </>
   );
 };
 
-export default ManageTags;
+export default ManageCharacteristics;

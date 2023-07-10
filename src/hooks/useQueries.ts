@@ -13,6 +13,7 @@ import type {
   FiltersOptions,
   AdministrativeDivision,
   TagManage,
+  BareCharacteristic,
 } from "~/types";
 
 type CollectionsResponse = {
@@ -36,6 +37,12 @@ type PropertyResponse = {
 
 export type PropertiesResponse = {
   data: CollectionProperty[];
+  links: Links;
+  meta: Meta;
+};
+
+export type CharacteristicsResponse = {
+  data: BareCharacteristic[];
   links: Links;
   meta: Meta;
 };
@@ -158,6 +165,16 @@ const fetchTrashedProperties = async (session: Session | null, page = 1) => {
     "GET",
     session?.user.access_token
   )) as PropertiesResponse;
+
+  return response;
+};
+
+const fetchCharacteristicsPaginated = async (session: Session | null, page = 1) => {
+  const response = (await makeRequest(
+    `me/characteristics/paginated?page=${page}`,
+    "GET",
+    session?.user.access_token
+  )) as CharacteristicsResponse;
 
   return response;
 };
@@ -285,6 +302,14 @@ export const useTagsManage = ({ session, status, page }: UseElementWithPageNumbe
   return useQuery({
     queryKey: ["tagsManage", page],
     queryFn: () => fetchTagsManage(session, page),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useCharacteristicsPaginated = ({ session, status, page }: UseElementWithPageNumber) => {
+  return useQuery({
+    queryKey: ["characteristicsPaginated", page],
+    queryFn: () => fetchCharacteristicsPaginated(session, page),
     enabled: status === "authenticated",
   });
 };

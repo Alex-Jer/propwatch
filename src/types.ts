@@ -58,6 +58,12 @@ type Characteristic = {
   value: string;
 };
 
+export type BareCharacteristic = {
+  id: number;
+  name: string;
+  type: "numerical" | "textual";
+};
+
 export type Tag = {
   id: number;
   name: string;
