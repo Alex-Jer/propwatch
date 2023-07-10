@@ -75,6 +75,7 @@ const Collection: NextPage = () => {
             </Link>
           ))}
         </div>
+        {collection?.properties?.data.length === 0 && <Text>There are no properties in this collection.</Text>}
       </CardBackground>
     </>
   );
