@@ -11,7 +11,7 @@ import { type FunctionComponent, type SVGProps, useEffect, useState, useRef } fr
 import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "public/icons";
 import { MainCarousel } from "~/components/MainCarousel";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, Drawer, Group, Rating, Title } from "@mantine/core";
+import { Badge, Button, Drawer, Group, Rating, Text, Title } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
 import { IconPhoto, IconPhotoCheck, IconPhotoX, IconTrash, IconVideo, IconWallpaper } from "@tabler/icons-react";
@@ -162,6 +162,15 @@ const Property: NextPage = () => {
           <Rating className="ml-3" value={rating} onChange={handleRatingChange} fractions={2} />
         </div>
         <div className="mt-1">{property.description}</div>
+        <Group noWrap spacing="xs" className="mt-2">
+          <Text size="xs" color="dimmed">
+            {property?.tags?.map((tag) => (
+              <Badge key={tag.id} color="blue" variant="light" className="mr-2">
+                #{tag.name}
+              </Badge>
+            ))}
+          </Text>
+        </Group>
       </div>
     );
   };
