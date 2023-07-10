@@ -1,50 +1,53 @@
-import { useInputState } from "@mantine/hooks";
-import { useSession } from "next-auth/react";
 import { type UseFormResetField, type Control, type UseFormTrigger } from "react-hook-form";
-import { useAdms, useAdms2, useAdms3 } from "~/hooks/useQueries";
 import { type AdministrativeDivision, type SelectOption } from "~/types";
 import { type FormSchemaType } from "./PropertyForm";
 import { Select, TextInput } from "react-hook-form-mantine";
 import { Group, Loader } from "@mantine/core";
 import { IconTag, IconWorld } from "@tabler/icons-react";
 
+const formatAdmData = (data: AdministrativeDivision[]) => {
+  return data.map((adm) => ({
+    value: adm.id.toString(),
+    label: adm.name,
+  }));
+};
+
 type AddPropertyAddressProps = {
+  adm1Data: AdministrativeDivision[] | undefined;
+  adm2Data: AdministrativeDivision[] | undefined;
+  adm3Data: AdministrativeDivision[] | undefined;
+  adm1IsLoading: boolean;
+  adm2IsLoading: boolean;
+  adm3IsLoading: boolean;
+  selectedAdm1: string;
+  selectedAdm2: string;
+  setSelectedAdm1: (value: string | null) => void;
+  setSelectedAdm2: (value: string | null) => void;
   control: Control<FormSchemaType>;
   trigger?: UseFormTrigger<FormSchemaType>;
   resetField: UseFormResetField<FormSchemaType>;
   disabled?: boolean;
 };
 
-export function AddPropertyAddress({ control, trigger, resetField, disabled }: AddPropertyAddressProps) {
-  const { data: session, status } = useSession();
-
-  const [selectedAdm1, setSelectedAdm1] = useInputState("");
-  const [selectedAdm2, setSelectedAdm2] = useInputState("");
-
-  const { data: adm1Data, isLoading: adm1IsLoading } = useAdms({ session, status });
-
-  const { data: adm2Data, isLoading: adm2IsLoading } = useAdms2({
-    session,
-    status,
-    parentId: selectedAdm1 ? selectedAdm1 : "1",
-  });
-
-  const { data: adm3Data, isLoading: adm3IsLoading } = useAdms3({
-    session,
-    status,
-    parentId: selectedAdm2 ? selectedAdm2 : "2",
-  });
-
+export function AddPropertyAddress({
+  adm1Data,
+  adm2Data,
+  adm3Data,
+  adm1IsLoading,
+  adm2IsLoading,
+  adm3IsLoading,
+  selectedAdm1,
+  selectedAdm2,
+  setSelectedAdm1,
+  setSelectedAdm2,
+  control,
+  trigger,
+  resetField,
+  disabled,
+}: AddPropertyAddressProps) {
   let adm1 = [] as SelectOption[];
   let adm2 = [] as SelectOption[];
   let adm3 = [] as SelectOption[];
-
-  const formatAdmData = (data: AdministrativeDivision[]) => {
-    return data.map((adm) => ({
-      value: adm.id.toString(),
-      label: adm.name,
-    }));
-  };
 
   if (adm1Data) adm1 = formatAdmData(adm1Data);
   if (adm2Data) adm2 = formatAdmData(adm2Data);

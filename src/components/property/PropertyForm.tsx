@@ -16,7 +16,8 @@ import {
   AddPropertyMedia,
   AddPropertyOffers,
 } from "~/components/property";
-import { useAllCollections, useTags } from "~/hooks/useQueries";
+import { useAdms, useAdms2, useAdms3, useAllCollections, useTags } from "~/hooks/useQueries";
+import { useInputState } from "@mantine/hooks";
 
 interface PropertyFormProps {
   property?: Property;
@@ -104,11 +105,55 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
 
   const { data: session, status } = useSession();
 
-  const { data: tagsData, isLoading: tagsLoading, isSuccess } = useTags({ session, status });
-  const { data: collectionsData, isLoading: collectionsLoading } = useAllCollections({ session, status });
+  const { data: tagsData, isLoading: tagsLoading, isSuccess: isTagsSuccess } = useTags({ session, status });
+  const {
+    data: collectionsData,
+    isLoading: collectionsLoading,
+    isSuccess: isCollectionsSuccess,
+  } = useAllCollections({ session, status });
 
   let tags = [] as SelectOption[];
   let collections = [] as SelectOption[];
+
+  const { data: adm1Data, isLoading: adm1IsLoading, isSuccess: isAdm1Success } = useAdms({ session, status });
+
+  const [selectedAdm1, setSelectedAdm1] = useInputState("");
+
+  useEffect(() => {
+    if (isAdm1Success && adm1Data) {
+      setSelectedAdm1(property?.address?.adm1_id?.toString());
+    }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [isAdm1Success, adm1Data]);
+
+  const {
+    data: adm2Data,
+    isLoading: adm2IsLoading,
+    isSuccess: isAdm2Success,
+  } = useAdms2({
+    session,
+    status,
+    parentId: selectedAdm1 ? selectedAdm1 : "1",
+  });
+
+  const [selectedAdm2, setSelectedAdm2] = useInputState("");
+
+  useEffect(() => {
+    if (isAdm2Success && adm2Data) {
+      setSelectedAdm2(property?.address?.adm2_id?.toString());
+    }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [isAdm2Success, adm2Data]);
+
+  const {
+    data: adm3Data,
+    isLoading: adm3IsLoading,
+    isSuccess: isAdm3Success,
+  } = useAdms3({
+    session,
+    status,
+    parentId: selectedAdm2 ? selectedAdm2 : "2",
+  });
 
   if (tagsData) {
     tags = tagsData.map((tag) => ({
@@ -270,14 +315,25 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
   });
 
   useEffect(() => {
-    if (isSuccess && Object.keys(property).length > 0) {
+    if (isTagsSuccess && isCollectionsSuccess && Object.keys(property).length > 0) {
       const tags = property.tags?.map((tag) => tag.name);
       const collections = property.lists?.map((list) => list.id.toString());
       setValue("tags", tags);
       setValue("lists", collections);
     }
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, [isSuccess, property]);
+  }, [isTagsSuccess, isCollectionsSuccess, property]);
+
+  useEffect(() => {
+    if (isAdm1Success && isAdm2Success && isAdm3Success && Object.keys(property).length > 0) {
+      const adm1 = property.address?.adm1_id;
+      const adm2 = property.address?.adm2_id;
+      const adm3 = property.address?.adm3_id;
+      setValue("adm1_id", adm1?.toString());
+      setValue("adm2_id", adm2?.toString());
+      setValue("adm3_id", adm3?.toString());
+    }
+  }, [isAdm1Success, isAdm2Success, isAdm3Success, property]);
 
   return (
     <>
@@ -315,7 +371,20 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
               </Stepper.Step>
 
               <Stepper.Step label="Address">
-                <AddPropertyAddress control={control} resetField={resetField} />
+                <AddPropertyAddress
+                  adm1Data={adm1Data}
+                  adm2Data={adm2Data}
+                  adm3Data={adm3Data}
+                  adm1IsLoading={adm1IsLoading}
+                  adm2IsLoading={adm2IsLoading}
+                  adm3IsLoading={adm3IsLoading}
+                  selectedAdm1={selectedAdm1}
+                  selectedAdm2={selectedAdm2}
+                  setSelectedAdm1={setSelectedAdm1}
+                  setSelectedAdm2={setSelectedAdm2}
+                  control={control}
+                  resetField={resetField}
+                />
               </Stepper.Step>
 
               <Stepper.Step label="Characteristics">
@@ -351,7 +420,21 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
                     control={control}
                     trigger={trigger}
                   />
-                  <AddPropertyAddress control={control} trigger={trigger} resetField={resetField} />
+                  <AddPropertyAddress
+                    adm1Data={adm1Data}
+                    adm2Data={adm2Data}
+                    adm3Data={adm3Data}
+                    adm1IsLoading={adm1IsLoading}
+                    adm2IsLoading={adm2IsLoading}
+                    adm3IsLoading={adm3IsLoading}
+                    selectedAdm1={selectedAdm1}
+                    selectedAdm2={selectedAdm2}
+                    setSelectedAdm1={setSelectedAdm1}
+                    setSelectedAdm2={setSelectedAdm2}
+                    control={control}
+                    trigger={trigger}
+                    resetField={resetField}
+                  />
                 </Paper>
               </Stepper.Step>
             </Stepper>
