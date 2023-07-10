@@ -76,8 +76,8 @@ export const propertyDetailsResume = (property: Property) => {
   if (property.typology) detailsStr += property.typology + _sep; // The "T" comes from the database!!
   if (property.wc) detailsStr += property.wc.toString() + " bathroom" + (property.wc > 1 ? "s" : "") + _sep;
   // Areas
-  if (property.gross_area) detailsStr += numberToString(property.gross_area) + " m²" + _sep;
-  else if (property.useful_area) detailsStr += numberToString(property.useful_area) + " m²" + _sep;
+  if (property.gross_area) detailsStr += numberToString(parseInt(property.gross_area)) + " m²" + _sep;
+  else if (property.useful_area) detailsStr += numberToString(parseInt(property.useful_area)) + " m²" + _sep;
 
   if (detailsStr.endsWith(_sep)) detailsStr = detailsStr.slice(0, -_sep.length);
 

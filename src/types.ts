@@ -63,6 +63,11 @@ export type Tag = {
   name: string;
 };
 
+type List = {
+  id: number;
+  name: string;
+};
+
 type Media = {
   photos: { url: string }[];
   videos: { url: string }[];
@@ -90,8 +95,8 @@ export type Property = {
   title: string;
   description: string;
   cover_url: string;
-  useful_area: number;
-  gross_area: number;
+  useful_area: string;
+  gross_area: string;
   type: string;
   typology: string;
   wc: number;
@@ -102,6 +107,7 @@ export type Property = {
   address: Address;
   characteristics: Characteristic[];
   tags: Tag[];
+  lists: List[];
   media: Media;
   offers: {
     sale: Offer[];

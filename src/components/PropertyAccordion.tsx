@@ -219,10 +219,10 @@ export function PropertyAccordion({ property }: { property: Property }) {
             <LabelAndValue label="Typology" value={property.typology?.toString()} />
             <LabelAndValue label="Bathrooms" value={property.wc?.toString()} />
             {property.gross_area && (
-              <LabelAndValue label="Gross Area" value={numberToString(property.gross_area) + " m²"} />
+              <LabelAndValue label="Gross Area" value={numberToString(parseInt(property.gross_area)) + " m²"} />
             )}
             {property.useful_area && (
-              <LabelAndValue label="Net Area" value={numberToString(property.useful_area) + " m²"} />
+              <LabelAndValue label="Net Area" value={numberToString(parseInt(property.useful_area)) + " m²"} />
             )}
             {/* TODO: should go to another category?? */}
             {renderCharacteristics()}

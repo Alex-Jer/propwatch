@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Stepper, Paper } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
@@ -8,7 +8,7 @@ import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { type Property, type Offer } from "~/types";
+import { type Property, type Offer, type SelectOption } from "~/types";
 import {
   AddPropertyAddress,
   AddPropertyCharacteristics,
@@ -16,6 +16,7 @@ import {
   AddPropertyMedia,
   AddPropertyOffers,
 } from "~/components/property";
+import { useAllCollections, useTags } from "~/hooks/useQueries";
 
 interface PropertyFormProps {
   property?: Property;
@@ -101,7 +102,27 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
     setOffers([...property.offers.rent, ...property.offers.sale]);
   }
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  const { data: tagsData, isLoading: tagsLoading, isSuccess } = useTags({ session, status });
+  const { data: collectionsData, isLoading: collectionsLoading } = useAllCollections({ session, status });
+
+  let tags = [] as SelectOption[];
+  let collections = [] as SelectOption[];
+
+  if (tagsData) {
+    tags = tagsData.map((tag) => ({
+      value: tag.name,
+      label: tag.name,
+    }));
+  }
+
+  if (collectionsData) {
+    collections = collectionsData.data.map((collection) => ({
+      value: collection.id.toString(),
+      label: collection.name,
+    }));
+  }
 
   const defaultValues: FormSchemaType = {
     title: property.title || "",
@@ -109,12 +130,12 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
     type: (property.type as PropertyType) || null,
     typology: property.typology || "",
     status: (property.status as PropertyStatus) || null,
-    gross_area: "",
-    useful_area: "",
+    gross_area: property.gross_area ? parseInt(property.gross_area) : "",
+    useful_area: property.useful_area ? parseInt(property.useful_area) : "",
     wc: property.wc || "",
-    // TODO: tags, lists, images, bps, videos
     tags: [],
     lists: [],
+    // TODO: images, bps, videos
     images: [],
     blueprints: [],
     videos: [],
@@ -129,7 +150,7 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
     rating: property.rating / 2 || null,
   };
 
-  const { control, handleSubmit, reset, resetField, watch, trigger, setFocus } = useForm<FormSchemaType>({
+  const { control, handleSubmit, reset, resetField, watch, trigger, setFocus, setValue } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
   });
@@ -248,6 +269,16 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
     },
   });
 
+  useEffect(() => {
+    if (isSuccess && Object.keys(property).length > 0) {
+      const tags = property.tags?.map((tag) => tag.name);
+      const collections = property.lists?.map((list) => list.id.toString());
+      setValue("tags", tags);
+      setValue("lists", collections);
+    }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [isSuccess, property]);
+
   return (
     <>
       <div className="container mx-auto px-8">
@@ -273,7 +304,14 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
           >
             <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
               <Stepper.Step label="Main Info">
-                <AddPropertyMainInfo control={control} resetField={resetField} />
+                <AddPropertyMainInfo
+                  tags={tags}
+                  collections={collections}
+                  tagsLoading={tagsLoading}
+                  collectionsLoading={collectionsLoading}
+                  control={control}
+                  resetField={resetField}
+                />
               </Stepper.Step>
 
               <Stepper.Step label="Address">
@@ -305,7 +343,14 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
                 {/* <AddPropertySummary />  */}
                 <h1 className="mb-2 text-2xl font-semibold">Summary</h1>
                 <Paper className="mb-4" shadow="xs" p="md" withBorder>
-                  <AddPropertyMainInfo control={control} trigger={trigger} />
+                  <AddPropertyMainInfo
+                    tags={tags}
+                    collections={collections}
+                    tagsLoading={tagsLoading}
+                    collectionsLoading={collectionsLoading}
+                    control={control}
+                    trigger={trigger}
+                  />
                   <AddPropertyAddress control={control} trigger={trigger} resetField={resetField} />
                 </Paper>
               </Stepper.Step>

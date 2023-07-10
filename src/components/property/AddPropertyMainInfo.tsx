@@ -1,11 +1,9 @@
 import { ActionIcon, Group, Loader, Text } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import { IconArrowBack, IconBathFilled } from "@tabler/icons-react";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { type UseFormTrigger, type Control, type UseFormResetField } from "react-hook-form";
 import { TextInput, Select, MultiSelect, NumberInput, Rating, Textarea } from "react-hook-form-mantine";
-import { useAllCollections, useTags } from "~/hooks/useQueries";
 import { type SelectOption } from "~/types";
 import { type FormSchemaType } from "./PropertyForm";
 
@@ -41,36 +39,28 @@ const currentStatuses = [
 ];
 
 type AddPropertyMainInfoProps = {
+  tags: SelectOption[];
+  collections: SelectOption[];
+  tagsLoading: boolean;
+  collectionsLoading: boolean;
   control: Control<FormSchemaType>;
   trigger?: UseFormTrigger<FormSchemaType>;
   disabled?: boolean;
   resetField?: UseFormResetField<FormSchemaType>;
 };
 
-export function AddPropertyMainInfo({ control, trigger, disabled, resetField }: AddPropertyMainInfoProps) {
-  const { data: session, status } = useSession();
-  const { data: tagsData, isLoading: tagsIsLoading } = useTags({ session, status });
-  const { data: collectionsData, isLoading: collectionsIsLoading } = useAllCollections({ session, status });
-
+export function AddPropertyMainInfo({
+  tags,
+  collections,
+  tagsLoading,
+  collectionsLoading,
+  control,
+  trigger,
+  disabled,
+  resetField,
+}: AddPropertyMainInfoProps) {
   const [selectedPropertyType, setSelectedPropertyType] = useInputState("");
   const [isUndoRatingVisible, setIsUndoRatingVisible] = useState(false);
-
-  let tags = [] as SelectOption[];
-  let collections = [] as SelectOption[];
-
-  if (tagsData) {
-    tags = tagsData.map((tag) => ({
-      value: tag.name,
-      label: tag.name,
-    }));
-  }
-
-  if (collectionsData) {
-    collections = collectionsData.data.map((collection) => ({
-      value: collection.id.toString(),
-      label: collection.name,
-    }));
-  }
 
   return (
     <div>
@@ -179,7 +169,7 @@ export function AddPropertyMainInfo({ control, trigger, disabled, resetField }: 
           label="Tags"
           placeholder="Tags"
           control={control}
-          icon={tagsIsLoading && <Loader size="1rem" />}
+          icon={tagsLoading && <Loader size="1rem" />}
           maxSelectedValues={10}
           searchable
           clearable
@@ -199,7 +189,7 @@ export function AddPropertyMainInfo({ control, trigger, disabled, resetField }: 
           label="Collections"
           placeholder="Collections"
           control={control}
-          icon={collectionsIsLoading && <Loader size="1rem" />}
+          icon={collectionsLoading && <Loader size="1rem" />}
           searchable
           clearable
           disabled={disabled}
