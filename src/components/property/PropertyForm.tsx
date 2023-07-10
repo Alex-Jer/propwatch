@@ -188,9 +188,10 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
     characteristics: [{ name: "", type: "numerical", value: "" }],
     full_address: property.address?.full_address || "",
     postal_code: property.address?.postal_code || "",
-    // TODO: coords, adm
-    coordinates: property.address?.coordinates || "",
-    adm1_id: property.address?.adm1_id || null,
+    coordinates: property.address?.coordinates
+      ? `${property.address.coordinates.latitude},${property.address.coordinates.longitude}`
+      : "",
+    adm1_id: null,
     adm2_id: null,
     adm3_id: null,
     rating: property.rating / 2 || null,
