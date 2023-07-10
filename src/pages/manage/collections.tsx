@@ -68,7 +68,7 @@ const ManageCollections: NextPage = () => {
       </Head>
 
       <CardBackground className="pt-4">
-        <h1>Manage Collections</h1>
+        <h1 className="mb-2">Manage Collections</h1>
         <ManagingTable
           records={collections}
           tableColumns={tableColumns}
@@ -80,6 +80,9 @@ const ManageCollections: NextPage = () => {
           }}
           deleteFunction={(r) => {
             return;
+          }}
+          deleteMultipleFunction={(r) => {
+            return false;
           }}
         />
       </CardBackground>

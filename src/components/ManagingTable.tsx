@@ -121,17 +121,6 @@ export function ManagingTable<T extends { id: any }>({
         yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
       />
-      {deleteMultipleFunction && (
-        <Button
-          onClick={open}
-          color="red"
-          variant="filled"
-          disabled={selectedRecords.length == 0}
-          leftIcon={<IconTrash size="1rem" className="-mr-1" />}
-        >
-          Delete selected records
-        </Button>
-      )}
       <DataTable
         withBorder={false}
         borderRadius="md"
@@ -144,6 +133,18 @@ export function ManagingTable<T extends { id: any }>({
         sortStatus={sortStatus}
         onSortStatusChange={setSortStatus}
       />
+      {deleteMultipleFunction && (
+        <Button
+          onClick={open}
+          color="red"
+          variant="filled"
+          className="mt-2"
+          disabled={selectedRecords.length == 0}
+          leftIcon={<IconTrash size="1rem" className="-mr-1" />}
+        >
+          Delete selected records
+        </Button>
+      )}
     </>
   );
 }
