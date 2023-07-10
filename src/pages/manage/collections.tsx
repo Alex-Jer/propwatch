@@ -13,7 +13,7 @@ import { type Collection } from "~/types";
 
 const ManageCollections: NextPage = () => {
   const { data: session, status } = useSession();
-  const { data: colData, isLoading, isError } = useCollections({ session, status });
+  const { data: colData, isLoading, isError } = useCollections({ session, status, page: 1 });
   const [collections, setCollections] = useState<Collection[]>([]);
 
   const router = useRouter();

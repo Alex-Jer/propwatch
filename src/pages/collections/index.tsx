@@ -15,7 +15,7 @@ const Collections: NextPage = () => {
   const { data: session, status } = useSession();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [activePage, setPage] = useState(1);
-  const { data: colData, isLoading, isError } = useCollections({ session, status, activePage });
+  const { data: colData, isLoading, isError } = useCollections({ session, status, page: activePage });
 
   useEffect(() => {
     setCollections(colData?.data ?? []);
