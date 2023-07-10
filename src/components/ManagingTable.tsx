@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Tooltip } from "@mantine/core";
+import { ActionIcon, Button, Group, Pagination, Tooltip } from "@mantine/core";
 import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { useEffect, useState } from "react";
@@ -14,6 +14,11 @@ type TableProps<T extends { id: any }> = {
   deleteFunction?: (record: T) => void;
   deleteMultipleFunction?: (records: T[]) => boolean;
   defaultSortStatus?: DataTableSortStatus;
+  pagination?: {
+    activePage: number;
+    setPage: (page: number) => void;
+    total: number;
+  };
 };
 
 export function ManagingTable<T extends { id: any }>({
@@ -24,6 +29,7 @@ export function ManagingTable<T extends { id: any }>({
   deleteFunction,
   deleteMultipleFunction,
   defaultSortStatus,
+  pagination,
 }: TableProps<T>) {
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>(
     defaultSortStatus ?? {
@@ -114,6 +120,21 @@ export function ManagingTable<T extends { id: any }>({
     }
   };
 
+  const renderDeleteMultipleRecordsBtn = () => (
+    <Group position="center">
+      <Button
+        onClick={open}
+        color="red"
+        variant="filled"
+        className="mt-2"
+        disabled={selectedRecords.length == 0}
+        leftIcon={<IconTrash size="1rem" className="-mr-1" />}
+      >
+        Delete selected records
+      </Button>
+    </Group>
+  );
+
   return (
     <>
       <ConfirmationModal
@@ -125,6 +146,19 @@ export function ManagingTable<T extends { id: any }>({
         yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
       />
+      {pagination && pagination.total > 1 && (
+        <>
+          <Pagination.Root value={pagination.activePage} onChange={pagination.setPage} total={pagination.total}>
+            <Group spacing={5} position="center" className="mt-4">
+              <Pagination.First />
+              <Pagination.Previous />
+              <Pagination.Items />
+              <Pagination.Next />
+              <Pagination.Last />
+            </Group>
+          </Pagination.Root>
+        </>
+      )}
       <DataTable
         withBorder={false}
         borderRadius="md"
@@ -137,18 +171,7 @@ export function ManagingTable<T extends { id: any }>({
         sortStatus={sortStatus}
         onSortStatusChange={setSortStatus}
       />
-      {deleteMultipleFunction && (
-        <Button
-          onClick={open}
-          color="red"
-          variant="filled"
-          className="mt-2"
-          disabled={selectedRecords.length == 0}
-          leftIcon={<IconTrash size="1rem" className="-mr-1" />}
-        >
-          Delete selected records
-        </Button>
-      )}
+      {deleteMultipleFunction && renderDeleteMultipleRecordsBtn()}
     </>
   );
 }

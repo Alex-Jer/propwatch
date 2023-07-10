@@ -1,4 +1,4 @@
-import { Text, Tooltip } from "@mantine/core";
+import { Group, Pagination, Text, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconX } from "@tabler/icons-react";
 import { type NextPage } from "next";
@@ -13,7 +13,8 @@ import { type Collection } from "~/types";
 
 const ManageCollections: NextPage = () => {
   const { data: session, status } = useSession();
-  const { data: colData, isLoading, isError } = useCollections({ session, status, page: 1 });
+  const [activePage, setPage] = useState(1);
+  const { data: colData, isLoading, isError } = useCollections({ session, status, page: activePage });
   const [collections, setCollections] = useState<Collection[]>([]);
 
   const router = useRouter();
@@ -89,6 +90,7 @@ const ManageCollections: NextPage = () => {
             columnAccessor: "name",
             direction: "asc",
           }}
+          pagination={{ activePage, setPage, total: colData?.meta.last_page ?? 1 }}
         />
       </CardBackground>
     </>
