@@ -108,6 +108,12 @@ export function PropertyAccordion({ property }: { property: Property }) {
 
   const offerTableColumns = [
     {
+      accessor: "id",
+      title: "ID",
+      width: 40,
+      sortable: true,
+    },
+    {
       accessor: "listing_type",
       title: "Listing Type",
       width: 50,
@@ -117,7 +123,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
     {
       accessor: "price_str",
       title: "Price (€)",
-      width: 75,
+      width: 70,
       sortable: true,
     },
     {
@@ -126,6 +132,13 @@ export function PropertyAccordion({ property }: { property: Property }) {
       width: 200,
       ellipsis: true,
       sortable: true,
+      render: (offer: Offer) => (
+        <>
+          <Tooltip label={offer.description} color="gray" position="bottom" withArrow>
+            <Text style={{ textOverflow: "ellipsis", overflow: "hidden" }}>{offer.description}</Text>
+          </Tooltip>
+        </>
+      ),
     },
     {
       accessor: "actions",

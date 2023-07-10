@@ -1,17 +1,7 @@
-import { JSX, useEffect, useState } from "react";
+import { type JSX, useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { getRandomHexColor, priceToString, priceToStringShort } from "~/lib/propertyHelper";
 import type { Offer } from "~/types";
-
-const data = [
-  { name: "Page A", uv: 4000 },
-  { name: "Page B", uv: 3000 },
-  { name: "Page C", uv: 2000 },
-  { name: "Page D" },
-  { name: "Page E", uv: 1890 },
-  { name: "Page F", uv: 2390 },
-  { name: "Page G", uv: 3490 },
-];
 
 export function PropertyOfferHistoryChart({ offers, extra }: { offers: Offer[]; extra: number }) {
   const [data, setData] = useState([]);
@@ -32,7 +22,7 @@ export function PropertyOfferHistoryChart({ offers, extra }: { offers: Offer[]; 
       offer?.price_history?.reverse().forEach((price) => {
         const dDate = discretizeDate(price.datetime);
         if (offer.id) {
-          const priceTag = `price_${offer.id}`;
+          const priceTag = `Offer ${offer.id}`;
           if (!linesArr.includes(priceTag)) linesArr.push(priceTag);
           offerMap.set(dDate, { ...offerMap.get(dDate), [priceTag]: price.price });
         }
@@ -91,7 +81,7 @@ export function PropertyOfferHistoryChart({ offers, extra }: { offers: Offer[]; 
           }}
         >
           <CartesianGrid stroke={"#909296"} strokeDasharray="3 3" />
-          <XAxis dataKey="date" tick={{ fill: "#909296" }} />
+          <XAxis dataKey="date" tick={{ fill: "#909296", style: { fontSize: "0.8rem" } }} />
           <YAxis
             domain={["dataMin-" + extra.toString(), "dataMax+" + extra.toString()]}
             tick={{ fill: "#909296", style: { fontSize: "0.8rem" } }}
