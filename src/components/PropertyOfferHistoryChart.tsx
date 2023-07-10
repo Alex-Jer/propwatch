@@ -1,6 +1,6 @@
 import { JSX, useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { getRandomHexColor } from "~/lib/propertyHelper";
+import { getRandomHexColor, priceToString, priceToStringShort } from "~/lib/propertyHelper";
 import type { Offer } from "~/types";
 
 const data = [
@@ -13,7 +13,7 @@ const data = [
   { name: "Page G", uv: 3490 },
 ];
 
-export function PropertyOfferHistoryChart({ offers }: { offers: Offer[] }) {
+export function PropertyOfferHistoryChart({ offers, extra }: { offers: Offer[]; extra: number }) {
   const [data, setData] = useState([]);
   const [lines, setLines] = useState<string[]>([]);
 
@@ -68,6 +68,14 @@ export function PropertyOfferHistoryChart({ offers }: { offers: Offer[] }) {
     return linesArr;
   };
 
+  const formatValue = (value: number) => {
+    return priceToStringShort(value);
+  };
+
+  const formatValueTooltip = (value: number) => {
+    return priceToString(value);
+  };
+
   return (
     <div style={{ width: "100%" }}>
       <ResponsiveContainer width="100%" height={200}>
@@ -82,10 +90,22 @@ export function PropertyOfferHistoryChart({ offers }: { offers: Offer[] }) {
             bottom: 0,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
+          <CartesianGrid stroke={"#909296"} strokeDasharray="3 3" />
+          <XAxis dataKey="date" tick={{ fill: "#909296" }} />
+          <YAxis
+            domain={["dataMin-" + extra.toString(), "dataMax+" + extra.toString()]}
+            tick={{ fill: "#909296", style: { fontSize: "0.8rem" } }}
+            tickFormatter={formatValue}
+            label={{
+              value: "Price (€)",
+              position: "insideLeft",
+              angle: -90,
+              dy: -10,
+              style: { textAnchor: "middle", fill: "#909296" },
+            }}
+            width={90}
+          />
+          <Tooltip formatter={formatValueTooltip} />
           {renderLines()}
         </LineChart>
       </ResponsiveContainer>

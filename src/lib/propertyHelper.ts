@@ -11,6 +11,27 @@ export const priceToString = (price: number) => {
   });
 };
 
+export const priceToStringShort = (price: number) => {
+  // check if price is a decimal number
+  if (price % 1 == 0) price = Math.floor(price);
+  let short = "";
+  if (price >= 1000000) {
+    price = price / 1000000;
+    short = "M";
+  } else if (price > 9999) {
+    price = price / 1000;
+    short = "K";
+  }
+  if (short != "") price = Math.round(price);
+  return price
+    .toLocaleString("pt-PT", {
+      style: "currency",
+      currency: "EUR",
+      minimumFractionDigits: 0,
+    })
+    .replaceAll(/.€/g, short + " €");
+};
+
 export const numberToString = (number: number) => {
   if (number % 1 == 0) number = Math.floor(number);
   return number.toLocaleString("pt-PT");

@@ -1,4 +1,4 @@
-import { Group, Text, Accordion, ActionIcon, Tooltip } from "@mantine/core";
+import { Group, Text, Accordion, ActionIcon, Tooltip, Title } from "@mantine/core";
 import {
   IconChartInfographic,
   IconChartLine,
@@ -243,8 +243,26 @@ export function PropertyAccordion({ property }: { property: Property }) {
       description: "Lorem ipsum",
       content: (
         <>
-          <PropertyOfferHistoryChart offers={property.offers.sale} />
-          <PropertyOfferHistoryChart offers={property.offers.rent} />
+          {property.offers.sale.length > 0 && (
+            <>
+              <Title order={4}>Sale offers:</Title>
+              <PropertyOfferHistoryChart
+                offers={property.offers.sale}
+                extra={(property.current_price_sale ?? 0) / 10}
+              />
+            </>
+          )}
+          {property.offers.rent.length > 0 && (
+            <>
+              <Title className="pt-1" order={4}>
+                Rent offers:
+              </Title>
+              <PropertyOfferHistoryChart
+                offers={property.offers.rent}
+                extra={(property.current_price_rent ?? 0) / 10}
+              />
+            </>
+          )}
         </>
       ),
     },
