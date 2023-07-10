@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import { type UseFormResetField, type Control, type UseFormTrigger } from "react-hook-form";
 import { useAdms, useAdms2, useAdms3 } from "~/hooks/useQueries";
 import { type AdministrativeDivision, type SelectOption } from "~/types";
-import { type FormSchemaType } from "./AddPropertyDrawer";
+import { type FormSchemaType } from "./PropertyForm";
 import { Select, TextInput } from "react-hook-form-mantine";
 import { Group, Loader } from "@mantine/core";
 import { IconTag, IconWorld } from "@tabler/icons-react";

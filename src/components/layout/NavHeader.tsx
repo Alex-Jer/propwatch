@@ -1,10 +1,10 @@
-import { Burger, Button, Container, Group, Header, createStyles, rem } from "@mantine/core";
+import { Burger, Button, Container, Group, Header, createStyles, rem, Drawer } from "@mantine/core";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { IconHomePlus, IconSearch } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
-import { AddPropertyDrawer } from "~/components/property";
+import { PropertyForm } from "~/components/property";
 
 type HeaderActionProps = {
   links?: { link: string; label: string }[];
@@ -21,7 +21,7 @@ export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProp
 
   const router = useRouter();
 
-  const [drawerOpened, { open, close }] = useDisclosure(false);
+  const [drawerOpened, { open: openDrawer, close: closeDrawer }] = useDisclosure(false);
 
   const items = links?.map((link) => {
     return (
@@ -46,7 +46,7 @@ export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProp
           >
             Search
           </Button>
-          <Button onClick={open} leftIcon={<IconHomePlus size="1rem" className="-mr-1" />}>
+          <Button onClick={openDrawer} leftIcon={<IconHomePlus size="1rem" className="-mr-1" />}>
             Add Property
           </Button>
         </>
@@ -96,7 +96,35 @@ export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProp
         </Container>
       </Header>
 
-      <AddPropertyDrawer opened={drawerOpened} close={close} />
+      <Drawer
+        title="Add Property"
+        opened={drawerOpened}
+        onClose={closeDrawer}
+        position="right"
+        size="75%"
+        overlayProps={{ opacity: 0.5, blur: 4 }}
+        keepMounted
+        styles={{
+          header: {
+            display: "flex",
+            flexDirection: "column",
+            padding: "1rem 1.5rem",
+          },
+          title: {
+            marginBottom: "1rem",
+            fontSize: "1.5rem",
+            fontWeight: 700,
+          },
+          close: {
+            position: "absolute",
+            top: 0,
+            right: 0,
+            margin: "1rem",
+          },
+        }}
+      >
+        <PropertyForm close={closeDrawer} />
+      </Drawer>
     </>
   );
 }

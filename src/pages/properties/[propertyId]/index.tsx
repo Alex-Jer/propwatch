@@ -30,6 +30,7 @@ import { errorNotification, successNotification } from "~/components/PropertyCar
 import { priceToString } from "~/lib/propertyHelper";
 import { PropertyAccordion } from "~/components/PropertyAccordion";
 import { ConfirmationModal } from "~/components/ConfirmationModal";
+import Link from "next/link";
 
 type MarkerIconComponent = FunctionComponent<SVGProps<SVGSVGElement>>;
 
@@ -301,22 +302,6 @@ const Property: NextPage = () => {
       });
   };
 
-  const editProperty = () => {
-    /*if (!property?.id) return;
-    makeRequest(`me/properties/${property.id}`, "DELETE", session?.user.access_token)
-      .then(() => {
-        const sendSuccess = () => {
-          successNotification("This property has been sent to trash!", "Property deleted");
-        };
-        router.push("/properties").then(sendSuccess).catch(sendSuccess); //TODO: Should we redirect to trash?
-      })
-      .catch((err) => {
-        errorNotification("An unknown error occurred while deleting this property.");
-        //TODO
-        console.log("Error: ", err, " when trashing property.");
-      });*/
-  };
-
   const coverButtonClick = () => {
     if (!property?.id) return;
     if (selectedUrl == "" || !selectedUrl) return;
@@ -410,12 +395,24 @@ const Property: NextPage = () => {
           </Button>
           <Button.Group>
             <Button
-              onClick={editProperty}
+              onClick={() =>
+                void router.push({
+                  pathname: `/properties/${property?.id}/edit`,
+                  query: { property: JSON.stringify(property) },
+                })
+              }
               color="yellow"
               variant="light"
               leftIcon={<IconEdit size="1rem" className="-mr-1" />}
             >
-              Edit
+              <Link
+                href={{
+                  pathname: `/properties/${property?.id}/edit`,
+                  query: { property: JSON.stringify(property) },
+                }}
+              >
+                Edit
+              </Link>
             </Button>
             <Button
               onClick={delConfirmOpen}

@@ -7,7 +7,7 @@ import { type UseFormTrigger, type Control, type UseFormResetField } from "react
 import { TextInput, Select, MultiSelect, NumberInput, Rating, Textarea } from "react-hook-form-mantine";
 import { useAllCollections, useTags } from "~/hooks/useQueries";
 import { type SelectOption } from "~/types";
-import { type FormSchemaType } from "./AddPropertyDrawer";
+import { type FormSchemaType } from "./PropertyForm";
 
 const propertyTypes = [
   { value: "house", label: "House" },

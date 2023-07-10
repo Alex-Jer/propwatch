@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Drawer, Stepper, Paper } from "@mantine/core";
+import { Button, Stepper, Paper } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,7 @@ import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { type Offer } from "~/types";
+import { type Property, type Offer } from "~/types";
 import {
   AddPropertyAddress,
   AddPropertyCharacteristics,
@@ -17,10 +17,13 @@ import {
   AddPropertyOffers,
 } from "~/components/property";
 
-interface AddPropertyDrawerProps {
-  opened: boolean;
-  close: () => void;
+interface PropertyFormProps {
+  property?: Property;
+  close?: () => void;
 }
+
+type PropertyType = "house" | "apartment" | "office" | "shop" | "warehouse" | "garage" | "land" | "other";
+type PropertyStatus = "available" | "unavailable" | "unknown";
 
 const TOTAL_STEPS = 5;
 
@@ -43,10 +46,6 @@ const schema = z.object({
     .nullable(),
   wc: z
     .union([z.number().int().nonnegative().optional().nullable(), z.string().max(16)])
-    .optional()
-    .nullable(),
-  current_price: z
-    .union([z.number().nonnegative().optional().nullable(), z.string().max(16)])
     .optional()
     .nullable(),
   tags: z.array(z.string().max(32, { message: "Tag must be at most 32 characters long" })),
@@ -86,34 +85,9 @@ const schema = z.object({
   rating: z.number().optional().nullable(),
 });
 
-const defaultValues: FormSchemaType = {
-  title: "",
-  description: "",
-  type: null,
-  typology: "",
-  status: null,
-  gross_area: "",
-  useful_area: "",
-  wc: "",
-  current_price: "",
-  tags: [],
-  lists: [],
-  images: [],
-  blueprints: [],
-  videos: [],
-  characteristics: [{ name: "", type: "numerical", value: "" }],
-  full_address: "",
-  postal_code: "",
-  coordinates: "",
-  adm1_id: null,
-  adm2_id: null,
-  adm3_id: null,
-  rating: 0,
-};
-
 export type FormSchemaType = z.infer<typeof schema>;
 
-export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
+export function PropertyForm({ property = {}, close }: PropertyFormProps) {
   const [stepperActive, setStepperActive] = useState(0);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
@@ -123,7 +97,37 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
 
+  if (property.offers && offers.length === 0) {
+    setOffers([...property.offers.rent, ...property.offers.sale]);
+  }
+
   const { data: session } = useSession();
+
+  const defaultValues: FormSchemaType = {
+    title: property.title || "",
+    description: property.description || "",
+    type: (property.type as PropertyType) || null,
+    typology: property.typology || "",
+    status: (property.status as PropertyStatus) || null,
+    gross_area: "",
+    useful_area: "",
+    wc: property.wc || "",
+    // TODO: tags, lists, images, bps, videos
+    tags: [],
+    lists: [],
+    images: [],
+    blueprints: [],
+    videos: [],
+    characteristics: [{ name: "", type: "numerical", value: "" }],
+    full_address: property.address?.full_address || "",
+    postal_code: property.address?.postal_code || "",
+    // TODO: coords, adm
+    coordinates: property.address?.coordinates || "",
+    adm1_id: property.address?.adm1_id || null,
+    adm2_id: null,
+    adm3_id: null,
+    rating: property.rating / 2 || null,
+  };
 
   const { control, handleSubmit, reset, resetField, watch, trigger, setFocus } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
@@ -168,7 +172,6 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
     appendIfNotNull("gross_area", data.gross_area);
     appendIfNotNull("useful_area", data.useful_area);
     appendIfNotNull("wc", data.wc);
-    appendIfNotNull("current_price", data.current_price);
     appendIfNotNull("rating", data.rating ? data.rating * 2 : null);
     appendIfNotNull("address[full_address]", data.full_address);
     appendIfNotNull("address[adm1_id]", data.adm1_id);
@@ -225,7 +228,7 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
   const { mutate, isLoading } = useMutation({
     mutationFn: addProperty,
     onSuccess: () => {
-      close();
+      close && close();
       notifications.show({
         title: "Property added",
         message: "Your property was added successfully",
@@ -247,113 +250,85 @@ export function AddPropertyDrawer({ opened, close }: AddPropertyDrawerProps) {
 
   return (
     <>
-      <Drawer
-        title="Add Property"
-        opened={opened}
-        onClose={close}
-        position="right"
-        size="75%"
-        overlayProps={{ opacity: 0.5, blur: 4 }}
-        keepMounted
-        styles={{
-          header: {
-            display: "flex",
-            flexDirection: "column",
-            padding: "1rem 1.5rem",
-          },
-          title: {
-            marginBottom: "1rem",
-            fontSize: "1.5rem",
-            fontWeight: 700,
-          },
-          close: {
-            position: "absolute",
-            top: 0,
-            right: 0,
-            margin: "1rem",
-          },
-        }}
-      >
-        <div className="container mx-auto px-8">
-          <div className="grid grid-cols-1 gap-6">
-            <form
-              /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-              onSubmit={handleSubmit(
-                (data) =>
-                  mutate(data, {
-                    onSuccess: () => resetForm(),
-                  }),
-                (error) => {
-                  console.log({ error });
-                  notifications.show({
-                    title: "Error",
-                    message: "Please fill in the required fields or fix the errors.",
-                    icon: <IconX size="1.1rem" />,
-                    color: "red",
-                    autoClose: 5000,
-                  });
-                }
-              )}
-            >
-              <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
-                <Stepper.Step label="Main Info">
-                  <AddPropertyMainInfo control={control} resetField={resetField} />
-                </Stepper.Step>
+      <div className="container mx-auto px-8">
+        <div className="grid grid-cols-1 gap-6">
+          <form
+            /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
+            onSubmit={handleSubmit(
+              (data) =>
+                mutate(data, {
+                  onSuccess: () => resetForm(),
+                }),
+              (error) => {
+                console.log({ error });
+                notifications.show({
+                  title: "Error",
+                  message: "Please fill in the required fields or fix the errors.",
+                  icon: <IconX size="1.1rem" />,
+                  color: "red",
+                  autoClose: 5000,
+                });
+              }
+            )}
+          >
+            <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
+              <Stepper.Step label="Main Info">
+                <AddPropertyMainInfo control={control} resetField={resetField} />
+              </Stepper.Step>
 
-                <Stepper.Step label="Address">
-                  <AddPropertyAddress control={control} resetField={resetField} />
-                </Stepper.Step>
+              <Stepper.Step label="Address">
+                <AddPropertyAddress control={control} resetField={resetField} />
+              </Stepper.Step>
 
-                <Stepper.Step label="Characteristics">
-                  <AddPropertyCharacteristics control={control} watch={watch} />
-                </Stepper.Step>
+              <Stepper.Step label="Characteristics">
+                <AddPropertyCharacteristics control={control} watch={watch} />
+              </Stepper.Step>
 
-                <Stepper.Step label="Media">
-                  <AddPropertyMedia
-                    control={control}
-                    selectedImages={selectedImages}
-                    setSelectedImages={setSelectedImages}
-                    selectedBlueprints={selectedBlueprints}
-                    setSelectedBlueprints={setSelectedBlueprints}
-                    selectedVideos={selectedVideos}
-                    setSelectedVideos={setSelectedVideos}
-                  />
-                </Stepper.Step>
+              <Stepper.Step label="Media">
+                <AddPropertyMedia
+                  control={control}
+                  selectedImages={selectedImages}
+                  setSelectedImages={setSelectedImages}
+                  selectedBlueprints={selectedBlueprints}
+                  setSelectedBlueprints={setSelectedBlueprints}
+                  selectedVideos={selectedVideos}
+                  setSelectedVideos={setSelectedVideos}
+                />
+              </Stepper.Step>
 
-                <Stepper.Step label="Offers">
-                  <AddPropertyOffers offers={offers} setOffers={setOffers} />
-                </Stepper.Step>
+              <Stepper.Step label="Offers">
+                <AddPropertyOffers offers={offers} setOffers={setOffers} />
+              </Stepper.Step>
 
-                <Stepper.Step label="Summary">
-                  {/* TODO: Extract to a component */}
-                  {/* <AddPropertySummary />  */}
-                  <h1 className="mb-2 text-2xl font-semibold">Summary</h1>
-                  <Paper className="mb-4" shadow="xs" p="md" withBorder>
-                    <AddPropertyMainInfo control={control} trigger={trigger} />
-                    <AddPropertyAddress control={control} trigger={trigger} resetField={resetField} />
-                  </Paper>
-                </Stepper.Step>
-              </Stepper>
+              <Stepper.Step label="Summary">
+                {/* TODO: Extract to a component */}
+                {/* <AddPropertySummary />  */}
+                <h1 className="mb-2 text-2xl font-semibold">Summary</h1>
+                <Paper className="mb-4" shadow="xs" p="md" withBorder>
+                  <AddPropertyMainInfo control={control} trigger={trigger} />
+                  <AddPropertyAddress control={control} trigger={trigger} resetField={resetField} />
+                </Paper>
+              </Stepper.Step>
+            </Stepper>
 
-              <div className="flex justify-end space-x-2">
-                <Button
-                  variant="default"
-                  onClick={() => handleStepChange(stepperActive - 1)}
-                  disabled={stepperActive === 0}
-                >
-                  Back
-                </Button>
-                <Button onClick={() => handleStepChange(stepperActive + 1)} disabled={stepperActive === TOTAL_STEPS}>
-                  Next
-                </Button>
-                <Button type="submit" loading={isLoading} disabled={stepperActive !== TOTAL_STEPS}>
-                  Add Property
-                </Button>
-              </div>
-            </form>
-          </div>
+            <div className="flex justify-end space-x-2">
+              <Button
+                variant="default"
+                onClick={() => handleStepChange(stepperActive - 1)}
+                disabled={stepperActive === 0}
+              >
+                Back
+              </Button>
+              <Button onClick={() => handleStepChange(stepperActive + 1)} disabled={stepperActive === TOTAL_STEPS}>
+                Next
+              </Button>
+              <Button type="submit" loading={isLoading} disabled={stepperActive !== TOTAL_STEPS}>
+                Add Property
+              </Button>
+            </div>
+          </form>
         </div>
-      </Drawer>
+      </div>
     </>
   );
 }

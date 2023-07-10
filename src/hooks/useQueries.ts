@@ -56,6 +56,7 @@ type UseElementWithElementId = {
   session: Session | null;
   status: string;
   elementId: string;
+  enabled?: boolean;
 };
 
 type UseElementWithPageNumber = {
@@ -224,11 +225,11 @@ export const useAllCollections = ({ session, status }: UseElement) => {
   });
 };
 
-export const useProperty = ({ session, status, elementId: propertyId }: UseElementWithElementId) => {
+export const useProperty = ({ session, status, elementId: propertyId, enabled = true }: UseElementWithElementId) => {
   return useQuery<Property>({
     queryKey: ["property", propertyId],
     queryFn: () => fetchProperty(session, propertyId),
-    enabled: status === "authenticated",
+    enabled: status === "authenticated" && enabled,
   });
 };
 
