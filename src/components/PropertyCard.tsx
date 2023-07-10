@@ -60,7 +60,7 @@ export function PropertyCard({ property, id, trashButtons, refresh }: PropertyCa
       })
       .catch((err) => {
         errorNotification("An unknown error occurred while restoring this property.");
-        //TODO:
+        // TODO:
         console.log("Error: ", err, " when restoring property.");
       })
       .finally(() => {
@@ -76,7 +76,7 @@ export function PropertyCard({ property, id, trashButtons, refresh }: PropertyCa
       })
       .catch((err) => {
         errorNotification("An unknown error occurred while permanently deleting this property.");
-        //TODO
+        // TODO:
         console.log("Error: ", err, " when permanently deleting property.");
       })
       .finally(() => {
@@ -111,7 +111,6 @@ export function PropertyCard({ property, id, trashButtons, refresh }: PropertyCa
       shadow="lg"
       className={classes.card}
       radius="md"
-      component="a"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocus={() => setIsFocused(true)}
