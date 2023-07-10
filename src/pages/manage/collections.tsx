@@ -51,13 +51,6 @@ const ManageCollections: NextPage = () => {
       sortable: true,
       ellipsis: true,
       width: 300,
-      render: (col: Collection) => (
-        <>
-          <Tooltip label={col.name} color="gray" position="bottom" withArrow>
-            <Text style={{ textOverflow: "ellipsis", overflow: "hidden" }}>{col.name}</Text>
-          </Tooltip>
-        </>
-      ),
     },
     {
       accessor: "num_properties",

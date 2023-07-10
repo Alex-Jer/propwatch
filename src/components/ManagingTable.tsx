@@ -1,4 +1,4 @@
-import { ActionIcon, Button } from "@mantine/core";
+import { ActionIcon, Button, Tooltip } from "@mantine/core";
 import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { useEffect, useState } from "react";
@@ -67,19 +67,25 @@ export function ManagingTable<T extends { id: any }>({
           render: (record: T) => (
             <div className="flex flex-row items-center">
               {viewFunction && (
-                <ActionIcon onClick={() => viewFunction(record)}>
-                  <IconEye size={16} />
-                </ActionIcon>
+                <Tooltip label="View" color="gray" position="bottom" withArrow>
+                  <ActionIcon color="blue" onClick={() => viewFunction(record)}>
+                    <IconEye size={16} />
+                  </ActionIcon>
+                </Tooltip>
               )}
               {editFunction && (
-                <ActionIcon onClick={() => editFunction(record)}>
-                  <IconEdit size={16} />
-                </ActionIcon>
+                <Tooltip label="Edit" color="gray" position="bottom" withArrow>
+                  <ActionIcon color="yellow" onClick={() => editFunction(record)}>
+                    <IconEdit size={16} />
+                  </ActionIcon>
+                </Tooltip>
               )}
               {deleteFunction && (
-                <ActionIcon color="red" onClick={() => deleteFunction(record)}>
-                  <IconTrash size={16} />
-                </ActionIcon>
+                <Tooltip label="Delete" color="gray" position="bottom" withArrow>
+                  <ActionIcon color="red" onClick={() => deleteFunction(record)}>
+                    <IconTrash size={16} />
+                  </ActionIcon>
+                </Tooltip>
               )}
             </div>
           ),
