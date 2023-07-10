@@ -102,6 +102,8 @@ export function EditCollection({ collection: collectionInput, collections, modal
 
     if (data.description) {
       formData.append("description", data.description);
+    } else {
+      formData.append("description", "");
     }
 
     setDataProcesing(data);
@@ -119,7 +121,7 @@ export function EditCollection({ collection: collectionInput, collections, modal
     onSuccess: () => {
       if (collection?.id) {
         const col = collections.findIndex((col) => col.id === collection.id);
-        if (col != -1) {
+        if (col != -1 && collections && collections[col]) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           collections[col].name = dataProcessing?.title ?? "";
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
