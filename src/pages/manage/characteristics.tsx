@@ -71,7 +71,7 @@ const ManageCharacteristics: NextPage = () => {
       ids.forEach((id, index) => {
         formData.append(`characteristics[${index}]`, id.toString());
       });
-
+      console.log(formData);
       try {
         await makeRequest(`me/characteristics/`, "DELETE", session?.user.access_token, formData);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access

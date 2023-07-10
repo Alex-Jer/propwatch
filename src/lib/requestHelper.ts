@@ -72,9 +72,13 @@ export const makeRequest = async (
       res = await axios.post(url, formData, { headers });
       break;
     case "DELETE":
-      res = await axios.delete(url, { headers }).catch((error: AxiosError) => {
-        return error.response;
-      });
+      if (!formData) {
+        res = await axios.delete(url, { headers });
+        break;
+      }
+
+      formData.append("_method", method.toUpperCase());
+      res = await axios.post(url, formData, { headers });
       break;
     case "GET":
     default:
