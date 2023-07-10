@@ -5,23 +5,34 @@ import Link from "next/link";
 import { CollectionCard } from "~/components/CollectionCard";
 import { useCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
-import { IconListNumbers } from "@tabler/icons-react";
+import { IconListNumbers, IconX } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { useEffect } from "react";
 
 const Collections: NextPage = () => {
   const { data: session, status } = useSession();
-  const { data: colData, isLoading, isFetching, error } = useCollections({ session, status });
+  const { data: colData, isLoading, isError } = useCollections({ session, status });
   const collections = colData?.data;
-  if (isLoading) {
-    console.log("Loading...");
-  }
 
-  if (isFetching) {
-    console.log("Fetching...");
-  }
+  useEffect(() => {
+    if (isError) {
+      notifications.show({
+        title: "Error",
+        message: "There was an error loading your collections.",
+        color: "red",
+        icon: <IconX size="1.5rem" />,
+      });
+    }
+  }, [isError]);
 
-  if (error) {
-    console.log("Error!");
-  }
+  const generateLoadingCards = (count: number) => {
+    const loadingCards = [];
+    for (let i = 0; i < count; i++) {
+      loadingCards.push(<CollectionCard key={i} covers={[]} title={""} description={""} date={""} isLoading />);
+    }
+
+    return loadingCards;
+  };
 
   return (
     <>
@@ -37,6 +48,8 @@ const Collections: NextPage = () => {
 
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
+      {isLoading ? <span className="grid grid-cols-1 gap-4">{generateLoadingCards(10)}</span> : null}
+
       <span className="grid grid-cols-1 gap-4">
         {collections?.map((collection: Collection) => (
           <Link href={`/collections/${collection.id}`} key={collection.id}>
@@ -45,7 +58,6 @@ const Collections: NextPage = () => {
               covers={collection.covers}
               title={collection.name}
               description={collection.description}
-              tags={collection.tags}
               date={collection.num_properties.toString() + " properties"}
             />
             <div className="border-b border-shark-700 pb-4" />

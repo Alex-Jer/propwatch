@@ -1,4 +1,4 @@
-import { createStyles, Card, Image, Text, Group, Badge } from "@mantine/core";
+import { createStyles, Card, Image, Text, Group, Badge, Skeleton } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
   title: {
@@ -29,15 +29,15 @@ interface CollectionCardProps {
   covers: string[];
   title: string;
   description: string;
-  tags: string[];
   date: string;
+  isLoading?: boolean;
 }
 
 type ThumbnailCollageProps = {
   covers: string[];
 };
 
-export function CollectionCard({ covers, description, title, tags, date }: CollectionCardProps) {
+export function CollectionCard({ covers, description, title, date, isLoading = false }: CollectionCardProps) {
   const { classes } = useStyles();
 
   const ThumbnailCollage = ({ covers }: ThumbnailCollageProps) => {
@@ -81,38 +81,47 @@ export function CollectionCard({ covers, description, title, tags, date }: Colle
     <Card radius={0} padding={0}>
       <Group noWrap spacing={0}>
         <div>
-          {covers.length === 0 ? (
+          {covers.length === 0 && !isLoading ? (
             <div className={`flex items-center justify-center  ${classes.placeholder}`}>
               <span>No covers</span>
             </div>
-          ) : (
+          ) : !isLoading ? (
             <ThumbnailCollage covers={covers} />
+          ) : (
+            <div className={`flex items-center justify-center  ${classes.placeholder}`}>
+              <Skeleton width={144} height={144} />
+            </div>
           )}
         </div>
 
         <div className={classes.body}>
-          <Text className={classes.title} mb="xs">
-            {title}
-          </Text>
+          {!isLoading ? (
+            <Text className={classes.title} mb="xs">
+              {title}
+            </Text>
+          ) : (
+            <Skeleton width={144} height={24} />
+          )}
 
-          <Text size="sm" color="dimmed">
-            {description}
-          </Text>
+          {!isLoading ? (
+            <Text size="sm" color="dimmed">
+              {description}
+            </Text>
+          ) : (
+            <>
+              <Skeleton width={600} height={16} className="mt-2" />
+              <Skeleton width={600} height={16} className="mt-2" />
+            </>
+          )}
 
           <Group noWrap spacing="xs" className="mt-2">
-            <Text size="xs" color="dimmed">
-              {tags.map((tag) => (
-                <Badge key={tag} color="violet" variant="light" className="mr-2">
-                  #{tag}
-                </Badge>
-              ))}
-            </Text>
-          </Group>
-
-          <Group noWrap spacing="xs" className="mt-2">
-            <Text size="xs" color="dimmed">
-              {date}
-            </Text>
+            {!isLoading ? (
+              <Text size="xs" color="dimmed">
+                {date}
+              </Text>
+            ) : (
+              <Skeleton width={116} height={12} />
+            )}
           </Group>
         </div>
       </Group>
