@@ -40,7 +40,7 @@ const EditProperty: NextPage = () => {
             Editing Property
           </Text>
         </Center>
-        <PropertyForm property={property} />
+        <PropertyForm property={property} mode="edit" />
       </CardBackground>
     </>
   );
