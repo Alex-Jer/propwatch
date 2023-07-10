@@ -7,13 +7,17 @@ import { useCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 import { IconListNumbers, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { generateLoadingElements } from "~/lib/propertyHelper";
 
 const Collections: NextPage = () => {
   const { data: session, status } = useSession();
   const { data: colData, isLoading, isError } = useCollections({ session, status });
-  const collections = colData?.data;
+  const [collections, setCollections] = useState<Collection[]>([]);
+
+  useEffect(() => {
+    setCollections(colData?.data ?? []);
+  }, [colData?.data]);
 
   useEffect(() => {
     if (isError) {

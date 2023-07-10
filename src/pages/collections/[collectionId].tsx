@@ -36,8 +36,6 @@ const Collection: NextPage = () => {
   const TRIMMING_LENGTH = (window.innerWidth ?? 33) / 18;
   const descriptionNeedsTrimming = collection?.description?.length > TRIMMING_LENGTH;
 
-  console.log("properties", data);
-
   return (
     <>
       <Head>
