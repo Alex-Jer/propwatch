@@ -1,16 +1,19 @@
 import { Group, Pagination, Text, Tooltip } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconX } from "@tabler/icons-react";
+import { IconTrash, IconX } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import CardBackground from "~/components/CardBackground";
+import { ConfirmationModal } from "~/components/ConfirmationModal";
 import { ManagingTable } from "~/components/ManagingTable";
+import { errorNotification, successNotification } from "~/components/PropertyCard";
 import { EditCollection } from "~/components/collections/EditCollection";
 import { useCollections } from "~/hooks/useQueries";
+import { makeRequest } from "~/lib/requestHelper";
 import { type Collection } from "~/types";
 
 const ManageCollections: NextPage = () => {
@@ -21,6 +24,8 @@ const ManageCollections: NextPage = () => {
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
 
   const [editModalOpened, { open: editOpen, close: editClose }] = useDisclosure(false);
+
+  const [delModOpened, { open: delOpen, close: delClose }] = useDisclosure(false);
 
   const router = useRouter();
 
@@ -46,6 +51,20 @@ const ManageCollections: NextPage = () => {
   if (isError) {
     return <div>Error loading collection.</div>;
   }
+
+  const deleteCollection = () => {
+    if (selectedCollection && selectedCollection.id) {
+      makeRequest(`me/lists/${selectedCollection.id.toString()}`, "DELETE", session?.user.access_token)
+        .then(() => {
+          setSelectedCollection(null);
+          delClose();
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          colData.data = collections.filter((col) => col.id !== selectedCollection.id);
+          successNotification("This collection has been deleted", "Collection deleted");
+        })
+        .catch(() => errorNotification("An unknown error occurred while deleting this collection."));
+    }
+  };
 
   const tableColumns = [
     {
@@ -81,6 +100,15 @@ const ManageCollections: NextPage = () => {
         modalOpened={editModalOpened}
         close={editClose}
       />
+      <ConfirmationModal
+        opened={delModOpened}
+        close={delClose}
+        yesFunction={deleteCollection}
+        title="Delete collection"
+        text="Are you sure you want to delete this collection?"
+        yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
+        noBtn={{ text: "Cancel", variant: "default" }}
+      />
       <CardBackground className="pt-4">
         <h1 className="mb-2">Manage Collections</h1>
         <ManagingTable
@@ -92,7 +120,8 @@ const ManageCollections: NextPage = () => {
             editOpen();
           }}
           deleteFunction={(col: Collection) => {
-            return;
+            setSelectedCollection(col);
+            delOpen();
           }}
           deleteMultipleFunction={(cols: Collection[]) => {
             return false;
