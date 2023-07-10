@@ -75,7 +75,12 @@ const ManageCollections: NextPage = () => {
         <title>Manage Collections</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <EditCollection collection={selectedCollection} modalOpened={editModalOpened} close={editClose} />
+      <EditCollection
+        collections={collections}
+        collection={selectedCollection}
+        modalOpened={editModalOpened}
+        close={editClose}
+      />
       <CardBackground className="pt-4">
         <h1 className="mb-2">Manage Collections</h1>
         <ManagingTable
