@@ -79,7 +79,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const { data: colData, isLoading, isError } = useAllCollections({ session, status });
+  const { data: colData, isLoading, isError, refetch } = useAllCollections({ session, status });
   const collections = colData?.data;
 
   useEffect(() => {
@@ -166,6 +166,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
     onSuccess: () => {
       reset(defaultValues);
       closeNewCollectionModal();
+      refetch().then().catch(null);
       notifications.show({
         title: "Collection created",
         message: "Collection created successfully",
