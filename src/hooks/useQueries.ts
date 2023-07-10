@@ -95,8 +95,12 @@ const fetchCollection = async (session: Session | null, id: string) => {
 };
 
 /* Keep this one to paginate the collections page? */
-const fetchCollections = async (session: Session | null) => {
-  const response = (await makeRequest("me/lists", "GET", session?.user.access_token)) as CollectionsResponse;
+const fetchCollections = async (session: Session | null, page = 1) => {
+  const response = (await makeRequest(
+    `me/lists?page=${page}`,
+    "GET",
+    session?.user.access_token
+  )) as CollectionsResponse;
   return response;
 };
 
@@ -201,17 +205,17 @@ export const useCollection = ({ session, status, elementId: collectionId }: UseE
   });
 };
 
-export const useCollections = ({ session, status }: UseElement) => {
+export const useCollections = ({ session, status, page }: UseElementWithPageNumber) => {
   return useQuery({
-    queryKey: ["collections"],
-    queryFn: () => fetchCollections(session),
+    queryKey: ["collections", page],
+    queryFn: () => fetchCollections(session, page),
     enabled: status === "authenticated",
   });
 };
 
 export const useSidebarCollections = ({ session, status }: UseElement) => {
   return useQuery({
-    queryKey: ["collections"],
+    queryKey: ["collectionsSidebar"],
     queryFn: () => fetchSidebarCollections(session),
     enabled: status === "authenticated",
   });

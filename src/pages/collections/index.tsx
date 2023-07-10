@@ -9,11 +9,13 @@ import { IconListNumbers, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { generateLoadingElements } from "~/lib/propertyHelper";
+import { Group, Pagination } from "@mantine/core";
 
 const Collections: NextPage = () => {
   const { data: session, status } = useSession();
-  const { data: colData, isLoading, isError } = useCollections({ session, status });
   const [collections, setCollections] = useState<Collection[]>([]);
+  const [activePage, setPage] = useState(1);
+  const { data: colData, isLoading, isError } = useCollections({ session, status, activePage });
 
   useEffect(() => {
     setCollections(colData?.data ?? []);
@@ -62,6 +64,19 @@ const Collections: NextPage = () => {
           </Link>
         ))}
       </span>
+      {colData?.meta.last_page && colData?.meta.last_page > 1 && (
+        <>
+          <Pagination.Root value={activePage} onChange={setPage} total={colData?.meta.last_page ?? 1}>
+            <Group spacing={5} position="center" className="mt-4">
+              <Pagination.First />
+              <Pagination.Previous />
+              <Pagination.Items />
+              <Pagination.Next />
+              <Pagination.Last />
+            </Group>
+          </Pagination.Root>
+        </>
+      )}
     </>
   );
 };
