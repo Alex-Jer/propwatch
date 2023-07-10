@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { sortBy } from "remeda";
 import { ConfirmationModal } from "./ConfirmationModal";
 import { useDisclosure } from "@mantine/hooks";
+import { errorNotification } from "./PropertyCard";
 
 type TableProps<T extends { id: any }> = {
   records: T[];
@@ -12,7 +13,7 @@ type TableProps<T extends { id: any }> = {
   viewFunction?: (record: T) => void;
   editFunction?: (record: T) => void;
   deleteFunction?: (record: T) => void;
-  deleteMultipleFunction?: (records: T[]) => boolean;
+  deleteMultipleFunction?: (records: T[]) => Promise<void>;
   defaultSortStatus?: DataTableSortStatus;
   pagination?: {
     activePage: number;
@@ -104,20 +105,24 @@ export function ManagingTable<T extends { id: any }>({
     else setDataTableColumns(newCols);
   }, [deleteFunction, editFunction, tableColumns, viewFunction]);
 
-  const removeRecords = (recordsToRemove: T[]) => {
+  /*const removeRecords = (recordsToRemove: T[]) => {
     sortRecords(
       tableRecords.filter((o) => !recordsToRemove.some((s) => s.id === o.id)),
       sortStatus
     );
-  };
+  };*/
 
   const deleteSelectedRecords = () => {
     if (!deleteMultipleFunction) return;
-    const deleted = deleteMultipleFunction(selectedRecords);
-    if (deleted) {
-      removeRecords(selectedRecords);
-      setSelectedRecords([]);
-    }
+    deleteMultipleFunction(selectedRecords)
+      .then()
+      .catch(() => {
+        errorNotification("Something went wrong.");
+      })
+      .finally(() => {
+        setSelectedRecords([]);
+        close();
+      });
   };
 
   const renderDeleteMultipleRecordsBtn = () => (

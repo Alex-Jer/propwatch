@@ -19,7 +19,12 @@ import { type Collection } from "~/types";
 const ManageCollections: NextPage = () => {
   const { data: session, status } = useSession();
   const [activePage, setPage] = useState(1);
-  const { data: colData, isLoading, isError } = useCollections({ session, status, page: activePage });
+  const {
+    data: colData,
+    isLoading,
+    isError,
+    refetch: refreshCollections,
+  } = useCollections({ session, status, page: activePage });
   const [collections, setCollections] = useState<Collection[]>([]);
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
 
@@ -58,11 +63,33 @@ const ManageCollections: NextPage = () => {
         .then(() => {
           setSelectedCollection(null);
           delClose();
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          colData.data = collections.filter((col) => col.id !== selectedCollection.id);
-          successNotification("This collection has been deleted", "Collection deleted");
+          successNotification("This collection has been deleted.", "Collection deleted");
+          refreshCollections().then().catch(null);
         })
         .catch(() => errorNotification("An unknown error occurred while deleting this collection."));
+    }
+  };
+
+  const deleteMultipleFunction = async (cols: Collection[]) => {
+    if (cols.length > 0) {
+      const ids = cols.map((col) => col.id);
+      const formData = new FormData();
+
+      ids.forEach((id, index) => {
+        formData.append(`lists[${index}]`, id);
+      });
+
+      //HACK: Laravel doesn't support DELETE requests with a body, so we have to use a POST request with a _method=DELETE parameter
+      formData.append("_method", "DELETE");
+      try {
+        await makeRequest(`me/lists/`, "POST", session?.user.access_token, formData);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        await refreshCollections();
+        successNotification("The selected collections have been deleted.", "Selected collections were deleted");
+        return;
+      } catch (e) {
+        errorNotification("An unknown error occurred while deleting the selected collections.");
+      }
     }
   };
 
@@ -123,9 +150,7 @@ const ManageCollections: NextPage = () => {
             setSelectedCollection(col);
             delOpen();
           }}
-          deleteMultipleFunction={(cols: Collection[]) => {
-            return false;
-          }}
+          deleteMultipleFunction={deleteMultipleFunction}
           defaultSortStatus={{
             columnAccessor: "name",
             direction: "asc",
