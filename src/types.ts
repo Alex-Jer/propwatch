@@ -1,5 +1,5 @@
 import { type UnstyledButtonProps } from "@mantine/core";
-import { AxiosError } from "axios";
+import { type AxiosError } from "axios";
 import { type ReactNode } from "react";
 import { type PropertiesResponse } from "./hooks/useQueries";
 

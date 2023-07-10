@@ -64,7 +64,7 @@ function LabelAndValue({ label, value }: { label: string; value: string | undefi
 
 export function PropertyAccordion({ property }: { property: Property }) {
   const [offersSortStatus, setOffersSortStatus] = useState<DataTableSortStatus>({
-    columnAccessor: "name",
+    columnAccessor: "id",
     direction: "asc",
   });
 
