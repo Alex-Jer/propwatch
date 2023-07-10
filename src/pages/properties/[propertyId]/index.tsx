@@ -29,6 +29,7 @@ import { makeRequest } from "~/lib/requestHelper";
 import { errorNotification, successNotification } from "~/components/PropertyCard";
 import { priceToString } from "~/lib/propertyHelper";
 import { PropertyAccordion } from "~/components/PropertyAccordion";
+import { ConfirmationModal } from "~/components/ConfirmationModal";
 
 type MarkerIconComponent = FunctionComponent<SVGProps<SVGSVGElement>>;
 
@@ -55,6 +56,8 @@ const Property: NextPage = () => {
   const [imagesOpened, { open: openImages, close: closeImages }] = useDisclosure(false);
   const [videosOpened, { open: openVideos, close: closeVideos }] = useDisclosure(false);
   const [blueprintsOpened, { open: openBlueprints, close: closeBlueprints }] = useDisclosure(false);
+
+  const [delConfirmOpened, { open: delConfirmOpen, close: delConfirmClose }] = useDisclosure(false);
 
   const [rating, setRating] = useState(0);
 
@@ -325,6 +328,16 @@ const Property: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <ConfirmationModal
+        opened={delConfirmOpened}
+        close={delConfirmClose}
+        yesFunction={trashProperty}
+        title="Delete property"
+        text="Are you sure you want to delete this property?"
+        yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
+        noBtn={{ text: "Cancel", variant: "default" }}
+      />
+
       <CardBackground className="pt-6 xl:mx-12 2xl:mx-48">
         {renderCover()}
         {renderImageDrawer()}
@@ -383,7 +396,7 @@ const Property: NextPage = () => {
               Edit
             </Button>
             <Button
-              onClick={trashProperty}
+              onClick={delConfirmOpen}
               color="red"
               variant="light"
               leftIcon={<IconTrash size="1rem" className="-mr-1" />}
