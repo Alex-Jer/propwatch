@@ -11,7 +11,7 @@ import { type FunctionComponent, type SVGProps, useEffect, useState, useRef } fr
 import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "public/icons";
 import { MainCarousel } from "~/components/MainCarousel";
 import { useDisclosure } from "@mantine/hooks";
-import { Badge, Button, Drawer, Group, Rating, Text, Title } from "@mantine/core";
+import { Badge, Button, Drawer, Group, Rating, Text, Title, Tooltip } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
 import {
@@ -233,7 +233,9 @@ const Property: NextPage = () => {
         <div className="mt-1">{property.description}</div>
         <Group noWrap spacing="xs" className="mt-2">
           <Text size="xs" color="dimmed">
-            {renderStatus(property.status)}
+            <Tooltip color="gray" label="Property Availability Status" position="bottom" withArrow>
+              {renderStatus(property.status)}
+            </Tooltip>
             {property?.tags?.map((tag) => (
               <Badge key={tag.id} color="blue" variant="light" className="mb-2 mr-2">
                 #{tag.name}
