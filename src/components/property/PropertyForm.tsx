@@ -16,7 +16,7 @@ import {
   AddPropertyMedia,
   AddPropertyOffers,
 } from "~/components/property";
-import { useAdms, useAdms2, useAdms3, useAllCollections, useTags } from "~/hooks/useQueries";
+import { useAdms, useAdms2, useAdms3, useAllCollections, useAllTags } from "~/hooks/useQueries";
 import { useInputState } from "@mantine/hooks";
 
 interface PropertyFormProps {
@@ -106,7 +106,7 @@ export function PropertyForm({ property = {}, close }: PropertyFormProps) {
 
   const { data: session, status } = useSession();
 
-  const { data: tagsData, isLoading: tagsLoading, isSuccess: isTagsSuccess } = useTags({ session, status });
+  const { data: tagsData, isLoading: tagsLoading, isSuccess: isTagsSuccess } = useAllTags({ session, status });
   const {
     data: collectionsData,
     isLoading: collectionsLoading,

@@ -12,6 +12,7 @@ import type {
   Tag,
   FiltersOptions,
   AdministrativeDivision,
+  TagManage,
 } from "~/types";
 
 type CollectionsResponse = {
@@ -41,6 +42,10 @@ export type PropertiesResponse = {
 
 type TagsResponse = {
   data: Tag[];
+};
+
+type TagsManageResponse = {
+  data: TagManage[];
 };
 
 type AdmsResponse = {
@@ -155,8 +160,13 @@ const fetchTrashedProperties = async (session: Session | null, page = 1) => {
   return response;
 };
 
-const fetchTags = async (session: Session | null) => {
-  const response = (await makeRequest("me/tags", "GET", session?.user.access_token)) as TagsResponse;
+const fetchAllTags = async (session: Session | null) => {
+  const response = (await makeRequest("me/tags/all", "GET", session?.user.access_token)) as TagsResponse;
+  return response.data;
+};
+
+const fetchTagsManage = async (session: Session | null, page = 1) => {
+  const response = (await makeRequest(`me/tags?page=${page}`, "GET", session?.user.access_token)) as TagsManageResponse;
   return response.data;
 };
 
@@ -261,17 +271,25 @@ export const usePolygonProperties = ({ session, status, search, filters, polygon
   });
 };
 
-export const useTags = ({ session, status }: UseElement) => {
+export const useAllTags = ({ session, status }: UseElement) => {
   return useQuery({
     queryKey: ["tags"],
-    queryFn: () => fetchTags(session),
+    queryFn: () => fetchAllTags(session),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useTagsManage = ({ session, status, page }: UseElementWithPageNumber) => {
+  return useQuery({
+    queryKey: ["tagsManage", page],
+    queryFn: () => fetchTagsManage(session, page),
     enabled: status === "authenticated",
   });
 };
 
 export const useTagsSidebar = ({ session, status }: UseElement) => {
   return useQuery({
-    queryKey: ["tags"],
+    queryKey: ["tagsSidebar"],
     queryFn: () => fetchTagsSidebar(session),
     enabled: status === "authenticated",
   });
