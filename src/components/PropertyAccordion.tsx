@@ -185,7 +185,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
       return (
         <LabelAndValue
           key={characteristic.id}
-          label={ucfirst(characteristic.name)}
+          label={ucfirst(characteristic?.name)}
           value={convertCharacteristicValue(characteristic.value, characteristic.type) ?? "N/A"}
         />
       );
