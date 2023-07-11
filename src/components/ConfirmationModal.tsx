@@ -55,6 +55,8 @@ export function ConfirmationModal({
     if (!functionHasRun) {
       setFunctionHasRun(true);
       yesFunction();
+      setFunctionHasRun(false);
+      close();
     }
   };
 
