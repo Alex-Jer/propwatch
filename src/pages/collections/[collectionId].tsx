@@ -1,5 +1,6 @@
-import { MultiSelect, Text } from "@mantine/core";
-import { useDebouncedState } from "@mantine/hooks";
+import { ActionIcon, MultiSelect, Text } from "@mantine/core";
+import { useDebouncedState, useDisclosure } from "@mantine/hooks";
+import { IconCheck, IconCirclePlus, IconPlus } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
@@ -7,9 +8,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import CardBackground from "~/components/CardBackground";
-import { PropertyCard } from "~/components/PropertyCard";
+import { ConfirmationModal } from "~/components/ConfirmationModal";
+import { PropertyCard, errorNotification, successNotification } from "~/components/PropertyCard";
 import { useCollection, usePropertyTitles } from "~/hooks/useQueries";
 import { generateLoadingElements } from "~/lib/propertyHelper";
+import { makeRequest } from "~/lib/requestHelper";
 import { type CollectionProperty } from "~/types";
 
 const Collection: NextPage = () => {
@@ -20,6 +23,8 @@ const Collection: NextPage = () => {
 
   const [searchValue, onSearchChange] = useState("");
   const [queryValue, setQueryValue] = useDebouncedState("", 500);
+  const [propsToAdd, setPropsToAdd] = useState<string[]>([]);
+  const [addPropsModalOpened, { open: apmOpen, close: apmClose }] = useDisclosure(false);
 
   useEffect(() => {
     if (searchValue !== queryValue) {
@@ -27,7 +32,7 @@ const Collection: NextPage = () => {
     }
   }, [searchValue, queryValue, setQueryValue]);
 
-  const { data, isLoading, isError } = useCollection({
+  const { data, isLoading, isError, refetch } = useCollection({
     session,
     status,
     elementId: String(collectionId ?? ""),
@@ -72,12 +77,38 @@ const Collection: NextPage = () => {
 
   const { data: collection } = data;
 
+  const addPropertiesToList = () => {
+    if (collection?.id) {
+      const formData = new FormData();
+      propsToAdd.forEach((p, idx) => formData.append(`properties[${idx}]`, p));
+      makeRequest(`me/lists/${collection.id.toString()}/properties`, "POST", session?.user.access_token, formData)
+        .then(() => {
+          setPropsToAdd([]);
+          successNotification("Properties added to collection.", "Properties added");
+        })
+        .catch(() => errorNotification("An unknown error occurred while adding properties to the collection."))
+        .finally(() => {
+          void refetch();
+        });
+    }
+  };
+
   return (
     <>
       <Head>
         <title>{collection?.name}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      <ConfirmationModal
+        opened={addPropsModalOpened}
+        close={apmClose}
+        yesFunction={addPropertiesToList}
+        title="Add properties to collection"
+        text={`Are you sure you wish to add ${propsToAdd.length} properties to this collection?`}
+        yesBtn={{ text: "Add", color: "teal", variant: "filled", icon: <IconPlus size="1rem" className="-mr-1" /> }}
+        noBtn={{ text: "Cancel", variant: "default" }}
+      />
 
       <CardBackground className="pt-4">
         <h1>{collection?.name}</h1>
@@ -95,11 +126,16 @@ const Collection: NextPage = () => {
             clearButtonProps={{ "aria-label": "Clear selection" }}
             clearable
             searchable
+            value={propsToAdd}
+            onChange={setPropsToAdd}
             searchValue={searchValue}
             className="w-1/2"
             onSearchChange={onSearchChange}
             nothingFound="No properties found"
           />
+          <ActionIcon onClick={apmOpen} variant="filled">
+            <IconCirclePlus size="1rem" />
+          </ActionIcon>
         </div>
 
         <div className="-mx-4 mb-4 border-b border-shark-700" />

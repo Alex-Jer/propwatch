@@ -119,10 +119,11 @@ const TrashedProperties: NextPage = () => {
             variant="default"
             onClick={openRestore}
             leftIcon={<IconArrowBackUpDouble size="1rem" />}
+            disabled={isLoading}
           >
             Restore all
           </Button>
-          <Button variant="default" onClick={openEmptyTrash} leftIcon={<IconTrashX size="1rem" />}>
+          <Button variant="default" onClick={openEmptyTrash} leftIcon={<IconTrashX size="1rem" />} disabled={isLoading}>
             Empty trash
           </Button>
         </div>

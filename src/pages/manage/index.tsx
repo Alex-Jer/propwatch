@@ -1,4 +1,3 @@
-import { Title } from "@mantine/core";
 import { IconAdjustmentsAlt, IconBooks, IconClipboardList, IconTags } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import Head from "next/head";
