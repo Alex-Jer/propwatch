@@ -1,6 +1,5 @@
-import { ActionIcon, Collapse, MultiSelect, Text } from "@mantine/core";
-import { useDebouncedState, useDisclosure } from "@mantine/hooks";
-import { IconCaretDown, IconCaretUp } from "@tabler/icons-react";
+import { MultiSelect, Text } from "@mantine/core";
+import { useDebouncedState } from "@mantine/hooks";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
@@ -33,31 +32,34 @@ const Collection: NextPage = () => {
     elementId: String(collectionId ?? ""),
   });
 
-  const {
-    data: propData,
-    isLoading: propIsLoading,
-    isError: propIsError,
-  } = usePropertyTitles({
+  const { data: propData } = usePropertyTitles({
     session,
     status,
     search: queryValue,
   });
 
+  const [idsFetched, setIdsFetched] = useState<string[]>([]);
+
   const [props, setProps] = useState<{ value: string; label: string }[]>([]);
 
   useEffect(() => {
+    const newIds: string[] = [];
     if (propData) {
-      setProps(
-        propData.map((prop) => ({
-          value: prop.id,
-          label: `(${prop.id}) ${prop.title}`,
-          disabled: prop.collection_ids.includes(parseInt(collectionId as string)),
-        }))
-      );
+      const newProps = propData
+        .filter((p) => !idsFetched.includes(p.id))
+        .map((prop) => {
+          newIds.push(prop.id);
+          return {
+            value: prop.id,
+            label: `(${prop.id}) ${prop.title}`,
+            disabled: prop.collection_ids.includes(parseInt(collectionId as string)),
+          };
+        });
+      setIdsFetched([...idsFetched, ...newIds]);
+      setProps([...props, ...newProps]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propData, collectionId]);
-
-  const [descOpened, { toggle: toggleDesc }] = useDisclosure(false);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -68,8 +70,6 @@ const Collection: NextPage = () => {
   }
 
   const { data: collection } = data;
-  const TRIMMING_LENGTH = (window.innerWidth ?? 33) / 18;
-  const descriptionNeedsTrimming = collection?.description?.length > TRIMMING_LENGTH;
 
   return (
     <>
@@ -80,7 +80,13 @@ const Collection: NextPage = () => {
 
       <CardBackground className="pt-4">
         <h1>{collection?.name}</h1>
-        {!propIsLoading && !propIsError && (
+        <div className="flex items-center">
+          <Text>{collection?.description}</Text>
+        </div>
+
+        <div className="-mx-4 my-2 border-b border-shark-700" />
+
+        <div className="mb-4 flex flex-row items-center">
           <MultiSelect
             data={props}
             label="Add properties to this collection"
@@ -89,32 +95,13 @@ const Collection: NextPage = () => {
             clearable
             searchable
             searchValue={searchValue}
+            className="w-1/2"
             onSearchChange={onSearchChange}
             nothingFound="No properties found"
           />
-        )}
-        <div className="flex max-w-2xl items-center pb-3">
-          {descriptionNeedsTrimming ? (
-            <>
-              {!descOpened && <Text>{collection?.description?.substring(0, TRIMMING_LENGTH - 3) + "..."}</Text>}
-              <Collapse in={descOpened}>
-                <Text className="flex items-center">
-                  {collection?.description}
-                  <ActionIcon onClick={toggleDesc}>
-                    <IconCaretUp size="1.125rem" />
-                  </ActionIcon>
-                </Text>
-              </Collapse>
-              {!descOpened && (
-                <ActionIcon onClick={toggleDesc}>
-                  <IconCaretDown size="1.125rem" />
-                </ActionIcon>
-              )}
-            </>
-          ) : (
-            <Text>{collection?.description}</Text>
-          )}
         </div>
+
+        <div className="-mx-4 mb-4 border-b border-shark-700" />
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
           {collection?.properties?.data.map((property: CollectionProperty) => (
