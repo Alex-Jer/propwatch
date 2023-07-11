@@ -387,6 +387,9 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     offersToDelete.forEach((offer, index) => {
       appendIfNotNull(`offers_remove][${index}]`, offer.id);
       appendIfNotNull(`offers_remove[${index}]`, offer.id);
+      if (typeof offer.id !== "string") {
+        appendIfNotNull(`offers_remove[${index}]`, offer.id);
+      }
     });
 
     mediaToDelete.forEach((media, index) => {
