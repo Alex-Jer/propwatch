@@ -1,4 +1,15 @@
-import { Card, Text, Group, createStyles, getStylesRef, rem, Tooltip, Center, Skeleton } from "@mantine/core";
+import {
+  Card,
+  Text,
+  Group,
+  createStyles,
+  getStylesRef,
+  rem,
+  Tooltip,
+  Center,
+  Skeleton,
+  ActionIcon,
+} from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
   IconArrowBackUp,
@@ -18,9 +29,12 @@ import { type CollectionProperty } from "~/types";
 interface PropertyCardProps {
   property: CollectionProperty;
   id?: string | undefined;
-  trashButtons?: boolean | undefined;
   refresh?: () => void;
   isLoading?: boolean;
+  trashButtons?: boolean | undefined;
+  xButton?: React.ElementType;
+  xButtonTooltip?: string;
+  executeXButton?: () => void;
 }
 
 export const errorNotification = (message: string, title = "Error") => {
@@ -41,7 +55,16 @@ export const successNotification = (message: string, title = "Success") => {
   });
 };
 
-export function PropertyCard({ property, id, trashButtons, refresh, isLoading = false }: PropertyCardProps) {
+export function PropertyCard({
+  property,
+  id,
+  refresh,
+  isLoading = false,
+  trashButtons,
+  xButton: XButton,
+  xButtonTooltip,
+  executeXButton,
+}: PropertyCardProps) {
   const { classes } = useStyles();
 
   const [isHovered, setIsHovered] = useState(false);
@@ -90,24 +113,35 @@ export function PropertyCard({ property, id, trashButtons, refresh, isLoading = 
   };
 
   const renderTrashButtons = (id: string | undefined, trashButtons: boolean | undefined) => {
-    if (trashButtons && id) {
-      return (
-        <>
-          <div className={classes.topButtons}>
-            <Tooltip label="Restore" color="gray" withArrow>
-              <IconArrowBackUp
-                className="mr-4 md:mr-1"
-                onClick={restoreProperty}
-                style={{ cursor: "pointer" }}
-              ></IconArrowBackUp>
+    return (
+      <>
+        <div className={`${classes.topButtons} space-x-1`}>
+          {XButton && (
+            <Tooltip label={xButtonTooltip} color="gray" withArrow>
+              <ActionIcon color="red" variant="filled" onClick={executeXButton}>
+                <XButton size="1.3rem" />
+              </ActionIcon>
             </Tooltip>
-            <Tooltip label="Permanently Delete" color="gray" withArrow>
-              <IconTrash onClick={permanentlyDeleteProperty} style={{ cursor: "pointer" }}></IconTrash>
-            </Tooltip>
-          </div>
-        </>
-      );
-    }
+          )}
+
+          {trashButtons && id && (
+            <>
+              <Tooltip label="Restore" color="gray" withArrow>
+                <ActionIcon color="blue" variant="filled" onClick={restoreProperty}>
+                  <IconArrowBackUp size="1.3rem" />
+                </ActionIcon>
+              </Tooltip>
+
+              <Tooltip label="Permanently Delete" color="gray" withArrow>
+                <ActionIcon color="red" variant="filled" onClick={permanentlyDeleteProperty}>
+                  <IconTrash size="1.3rem" />
+                </ActionIcon>
+              </Tooltip>
+            </>
+          )}
+        </div>
+      </>
+    );
   };
 
   return (
@@ -227,13 +261,13 @@ const useStyles = createStyles((theme) => ({
     bottom: 0,
     backgroundImage: "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .85) 90%)",
   },
+
   topButtons: {
     height: "100%",
     position: "relative",
     display: "flex",
     flexDirection: "row",
     justifyContent: "flex-end",
-    zIndex: 1,
     color: theme.colors.dark[0],
   },
 

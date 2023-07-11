@@ -19,6 +19,7 @@ import {
 import { useAdms, useAdms2, useAdms3, useAllCollections, useAllTags } from "~/hooks/useQueries";
 import { useInputState } from "@mantine/hooks";
 import { type MediaItem } from "./AddPropertyMedia";
+import { useRouter } from "next/router";
 
 type PropertyType = "house" | "apartment" | "office" | "shop" | "warehouse" | "garage" | "land" | "other";
 type PropertyStatus = "available" | "unavailable" | "unknown";
@@ -92,6 +93,9 @@ interface PropertyFormProps {
 }
 
 export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFormProps) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
   const [stepperActive, setStepperActive] = useState(0);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
@@ -115,8 +119,6 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       );
     }
   }, [property.offers, mode]);
-
-  const { data: session, status } = useSession();
 
   const { data: tagsData, isLoading: tagsLoading, isSuccess: isTagsSuccess } = useAllTags({ session, status });
   const {
@@ -381,12 +383,9 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       appendIfNotNull(`offers[${index}][url]`, offer.url);
       appendIfNotNull(`offers[${index}][description]`, offer.description);
       appendIfNotNull(`offers[${index}][price]`, offer.price);
-      console.log(offer);
     });
 
     offersToDelete.forEach((offer, index) => {
-      appendIfNotNull(`offers_remove][${index}]`, offer.id);
-      appendIfNotNull(`offers_remove[${index}]`, offer.id);
       if (typeof offer.id !== "string") {
         appendIfNotNull(`offers_remove[${index}]`, offer.id);
       }
@@ -410,6 +409,10 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
         icon: <IconCheck size="1.5rem" />,
         autoClose: 10000,
       });
+
+      if (mode === "edit" && property.id) {
+        void router.push(`/properties/${property.id}`);
+      }
     },
     onError: (error) => {
       console.error({ error });
@@ -502,7 +505,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
               </Stepper.Step>
 
               <Stepper.Step label="Characteristics">
-                <AddPropertyCharacteristics control={control} watch={watch} />
+                <AddPropertyCharacteristics control={control} watch={watch} mode={mode} />
               </Stepper.Step>
 
               <Stepper.Step label="Media">

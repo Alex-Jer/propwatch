@@ -110,7 +110,7 @@ const TrashedProperties: NextPage = () => {
         <div className="flex items-center">
           <IconTrash className="-mt-1 mr-2" strokeWidth={1.5} />
           <h1 className="pb-1 text-base font-semibold">Trashed Properties</h1>
-          <h3 className="ml-2 text-xs font-semibold text-gray-600">Hover over a property to delete or restore it.</h3>
+          <h3 className="ml-2 text-xs font-semibold text-gray-400">Hover over a property to delete or restore it.</h3>
         </div>
 
         <div>

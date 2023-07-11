@@ -5,17 +5,18 @@ import { useFieldArray, type UseFormWatch, type Control } from "react-hook-form"
 import { SegmentedControl, TextInput } from "react-hook-form-mantine";
 import { type FormSchemaType } from "./PropertyForm";
 
-type AddPropertyCharacteristicsProps = {
-  control: Control<FormSchemaType>;
-  watch: UseFormWatch<FormSchemaType>;
-};
-
 const characteristicTypes = [
   { label: "Numerical", value: "numerical" },
   { label: "Textual", value: "textual" },
 ];
 
-export function AddPropertyCharacteristics({ control, watch }: AddPropertyCharacteristicsProps) {
+type AddPropertyCharacteristicsProps = {
+  control: Control<FormSchemaType>;
+  watch: UseFormWatch<FormSchemaType>;
+  mode?: "add" | "edit";
+};
+
+export function AddPropertyCharacteristics({ control, watch, mode = "add" }: AddPropertyCharacteristicsProps) {
   const { fields, append, remove } = useFieldArray({
     name: "characteristics",
     control,
@@ -85,7 +86,7 @@ export function AddPropertyCharacteristics({ control, watch }: AddPropertyCharac
                 type={isTextual ? "text" : "number"}
               />
             </div>
-            {index > 0 && (
+            {index > 0 || mode === "edit" ? (
               <CloseButton
                 onClick={() => remove(index)}
                 radius="xl"
@@ -95,7 +96,7 @@ export function AddPropertyCharacteristics({ control, watch }: AddPropertyCharac
                   hoveredIndex === index ? "opacity-100" : "opacity-0"
                 }`}
               />
-            )}
+            ) : null}
           </div>
         );
       })}
@@ -108,6 +109,6 @@ const useStyles = createStyles(() => ({
   closeButton: {
     float: "right",
     right: "-32px",
-    top: "-75px",
+    top: "-88px",
   },
 }));
