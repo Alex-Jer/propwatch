@@ -1,4 +1,6 @@
-import axios, { type AxiosError } from "axios";
+import axios from "axios";
+import { signOut } from "next-auth/react";
+import { errorNotification } from "~/components/PropertyCard";
 import { env } from "~/env.mjs";
 import { type User } from "~/types";
 
@@ -30,7 +32,9 @@ export const makeRequest = async (
   method: Method = "GET",
   accessToken: string | null = null,
   formData: FormData | null = null,
-  hasFiles = false
+  hasFiles = false,
+  manageErrors = true,
+  unkErrTxt = "An unknown error has occurred."
 ) => {
   const headers = {
     Accept: "application/json",
@@ -87,12 +91,39 @@ export const makeRequest = async (
   }
 
   if (res) {
-    return res.data;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    if ((res.status >= 200 && res.status < 300) || !manageErrors) return res.data;
+
+    switch (res.status) {
+      case 401:
+      case 444: // 444 - our own unauthenticated error code
+        // User is no longer authenticated, maybe the token expired or was revoked
+        return void signOut();
+      case 403:
+        // User is authenticated, but does not have the required permissions
+        throw new Error("You are not authorized to perform this action.");
+      case 404:
+        // The requested resource was not found
+        throw new Error("The requested resource was not found.");
+      case 400:
+      // The request was malformed or invalid
+      case 422:
+        // The request was well-formed but was unable to be followed due to semantic errors
+        if (res.data?.message) {
+          throw new Error(res.data.message);
+        }
+      case 500:
+      // Internal server error
+      default:
+        throw new Error(unkErrTxt);
+    }
   }
 
-  //TODO: Errs
-
   return null;
+};
+
+export const processRequestError = (error: Error) => {
+  errorNotification(error.message);
 };
 
 export const login = async (email: string, password: string, deviceName: string) => {
