@@ -43,7 +43,7 @@ const ControlPanel: NextPage = () => {
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
       <CardBackground className="mx-20 mt-6 pt-4">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
           {options.map((option) => (
             <Link
               href={option.href}
