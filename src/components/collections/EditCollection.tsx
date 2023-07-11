@@ -112,7 +112,9 @@ export function EditCollection({ collection: collectionInput, collections, modal
       `me/lists/${collection.id}`,
       "PUT",
       session?.user.access_token,
-      formData
+      formData,
+      false,
+      false
     )) as Promise<CollectionResponse>;
   };
 

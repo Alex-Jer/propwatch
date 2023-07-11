@@ -159,7 +159,14 @@ export function NavbarDefault({ opened, setOpened }: Props) {
       formData.append("description", data.description);
     }
 
-    return (await makeRequest("me/lists", "POST", session?.user.access_token, formData)) as Promise<CollectionResponse>;
+    return (await makeRequest(
+      "me/lists",
+      "POST",
+      session?.user.access_token,
+      formData,
+      false,
+      false
+    )) as Promise<CollectionResponse>;
   };
 
   const { mutate } = useMutation({

@@ -301,7 +301,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       appendIfNotNull(`offers[${index}][price]`, offer.price);
     });
 
-    return makeRequest("me/properties", "POST", session?.user.access_token, formData);
+    return makeRequest("me/properties", "POST", session?.user.access_token, formData, true, false);
   };
 
   const editProperty = async (data: FormSchemaType) => {
@@ -371,7 +371,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       appendIfNotNull(`offers[${index}][price]`, offer.price);
     });
 
-    return makeRequest(`me/properties/${property.id}`, "PUT", session?.user.access_token, formData);
+    return makeRequest(`me/properties/${property.id}`, "PUT", session?.user.access_token, formData, true, false);
   };
 
   const { mutate, isLoading } = useMutation({
