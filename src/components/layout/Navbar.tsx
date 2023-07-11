@@ -25,6 +25,7 @@ import {
   IconMapSearch,
   IconCheck,
   IconX,
+  IconAdjustmentsAlt,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -108,10 +109,10 @@ export function NavbarDefault({ opened, setOpened }: Props) {
       icon: IconListNumbers,
       label: "All collections",
       url: "/collections",
-      notifications: colData?.total ?? 0,
     },
     { icon: IconMapSearch, url: "/properties/polygon", label: "Map search" },
     { icon: IconTrash, url: "/properties/trash", label: "Trash" },
+    { icon: IconAdjustmentsAlt, url: "/manage", label: "Control panel" },
   ];
 
   const mainLinks = links.map((link) => {

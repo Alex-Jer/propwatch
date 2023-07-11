@@ -33,6 +33,7 @@ import { useSidebarCollections, useTagsSidebar } from "~/hooks/useQueries";
 import type { FiltersOptions, Collection, Tag } from "~/types";
 import { UserButton } from "./UserButton";
 import { useEffect, useRef } from "react";
+import { IconAdjustmentsAlt } from "@tabler/icons-react";
 
 type Props = {
   opened: boolean;
@@ -91,10 +92,10 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
       icon: IconListNumbers,
       label: "All collections",
       url: "/collections",
-      notifications: colData?.total ?? 0,
     },
     { icon: IconMapSearch, url: "/properties/polygon", label: "Map search" },
     { icon: IconTrash, url: "/properties/trash", label: "Trash" },
+    { icon: IconAdjustmentsAlt, url: "/manage", label: "Control panel" },
   ];
 
   const mainLinks = links.map((link) => {
