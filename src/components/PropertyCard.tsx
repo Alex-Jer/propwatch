@@ -1,4 +1,15 @@
-import { Card, Text, Group, createStyles, getStylesRef, rem, Tooltip, Center, Skeleton } from "@mantine/core";
+import {
+  Card,
+  Text,
+  Group,
+  createStyles,
+  getStylesRef,
+  rem,
+  Tooltip,
+  Center,
+  Skeleton,
+  ActionIcon,
+} from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
   IconArrowBackUp,
@@ -93,16 +104,17 @@ export function PropertyCard({ property, id, trashButtons, refresh, isLoading = 
     if (trashButtons && id) {
       return (
         <>
-          <div className={classes.topButtons}>
+          <div className={`${classes.topButtons} space-x-1`}>
             <Tooltip label="Restore" color="gray" withArrow>
-              <IconArrowBackUp
-                className="mr-4 md:mr-1"
-                onClick={restoreProperty}
-                style={{ cursor: "pointer" }}
-              ></IconArrowBackUp>
+              <ActionIcon color="blue" variant="filled" onClick={restoreProperty}>
+                <IconArrowBackUp size="1.3rem" />
+              </ActionIcon>
             </Tooltip>
+
             <Tooltip label="Permanently Delete" color="gray" withArrow>
-              <IconTrash onClick={permanentlyDeleteProperty} style={{ cursor: "pointer" }}></IconTrash>
+              <ActionIcon color="red" variant="filled" onClick={permanentlyDeleteProperty}>
+                <IconTrash size="1.3rem" />
+              </ActionIcon>
             </Tooltip>
           </div>
         </>
@@ -227,13 +239,13 @@ const useStyles = createStyles((theme) => ({
     bottom: 0,
     backgroundImage: "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .85) 90%)",
   },
+
   topButtons: {
     height: "100%",
     position: "relative",
     display: "flex",
     flexDirection: "row",
     justifyContent: "flex-end",
-    zIndex: 1,
     color: theme.colors.dark[0],
   },
 
