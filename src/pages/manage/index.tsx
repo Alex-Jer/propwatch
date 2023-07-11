@@ -1,4 +1,5 @@
-import { IconBooks, IconClipboardList, IconTags } from "@tabler/icons-react";
+import { Title } from "@mantine/core";
+import { IconAdjustmentsAlt, IconBooks, IconClipboardList, IconTags } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -35,7 +36,13 @@ const ControlPanel: NextPage = () => {
         <title>Manage Characteristics</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <CardBackground className="mx-20 pt-4">
+      <div className="mb-2 flex flex-row items-center">
+        <IconAdjustmentsAlt className="-mt-1 mr-2" strokeWidth={1.5} />
+        <h1 className="pb-1 text-base font-semibold">Control Panel</h1>
+      </div>
+      <div className="-mx-4 mb-4 border-b border-shark-700" />
+
+      <CardBackground className="mx-20 mt-6 pt-4">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {options.map((option) => (
             <Link
