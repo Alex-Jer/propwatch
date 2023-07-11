@@ -83,16 +83,6 @@ export function NavbarDefault({ opened, setOpened }: Props) {
   const { data: colData, isLoading, isError, refetch } = useAllCollections({ session, status });
   const collections = colData?.data;
 
-  useEffect(() => {
-    document.addEventListener("keydown", (event) => {
-      if (event.ctrlKey && event.key === "k") {
-        event.preventDefault();
-        //HACK: redirect to search page
-        void router.push("/properties");
-      }
-    });
-  });
-
   //TODO: Better organization; Better error/loading processing; Better planning
 
   if (isLoading) {
