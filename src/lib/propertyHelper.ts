@@ -64,8 +64,10 @@ export const completeAdmAddress = (address: Address) => {
   return addressWithProps(address, ["adm3", "adm2", "adm1"]);
 };
 
-export const ucfirst = (string: string) =>
-  string.length > 1 ? string.charAt(0).toUpperCase() + string.slice(1) : string.toUpperCase();
+export const ucfirst = (string: string) => {
+  if (!string) return "";
+  return string.length > 1 ? string.charAt(0).toUpperCase() + string.slice(1) : string.toUpperCase();
+};
 
 export const propertyDetailsResume = (property: Property) => {
   const _sep = " | ";
