@@ -20,7 +20,7 @@ export type MediaItem = {
   id: number;
   type: "image" | "blueprint" | "video";
   url: string;
-  order?: number;
+  order: number;
 };
 
 interface AddPropertyMediaProps {
@@ -61,8 +61,13 @@ export function AddPropertyMedia({
     setMediaArray(
       ([] as MediaItem[]).concat(
         media?.photos.map((photo, index) => ({ id: photo.id, type: "image", url: photo.url, order: index + 1 })) || [],
-        media?.blueprints.map((blueprint) => ({ id: blueprint.id, type: "blueprint", url: blueprint.url })) || [],
-        media?.videos.map((video) => ({ id: video.id, type: "video", url: video.url })) || []
+        media?.blueprints.map((blueprint, index) => ({
+          id: blueprint.id,
+          type: "blueprint",
+          url: blueprint.url,
+          order: index + 1,
+        })) || [],
+        media?.videos.map((video, index) => ({ id: video.id, type: "video", url: video.url, order: index + 1 })) || []
       )
     );
   }, [media]);
