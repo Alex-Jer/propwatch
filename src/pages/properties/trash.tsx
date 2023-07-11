@@ -8,6 +8,7 @@ import { useState } from "react";
 import { ConfirmationModal } from "~/components/ConfirmationModal";
 import { PropertyCard, errorNotification, successNotification } from "~/components/PropertyCard";
 import { useTrashedProperties } from "~/hooks/useQueries";
+import { generateLoadingElements } from "~/lib/propertyHelper";
 import { makeRequest } from "~/lib/requestHelper";
 import { type CollectionProperty } from "~/types";
 
@@ -135,7 +136,9 @@ const TrashedProperties: NextPage = () => {
       {properties?.length && properties?.length > 0 ? (
         <>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-            {renderProperties(properties)}
+            {isLoading
+              ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />)
+              : renderProperties(properties)}
           </div>
 
           {propData?.meta.last_page > 1 && (

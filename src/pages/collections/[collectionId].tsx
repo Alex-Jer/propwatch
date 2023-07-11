@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import CardBackground from "~/components/CardBackground";
 import { PropertyCard } from "~/components/PropertyCard";
 import { useCollection, usePropertyTitles } from "~/hooks/useQueries";
+import { generateLoadingElements } from "~/lib/propertyHelper";
 import { type CollectionProperty } from "~/types";
 
 const Collection: NextPage = () => {
@@ -104,11 +105,15 @@ const Collection: NextPage = () => {
         <div className="-mx-4 mb-4 border-b border-shark-700" />
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-          {collection?.properties?.data.map((property: CollectionProperty) => (
-            <Link href={`/properties/${property.id}`} key={property.id}>
-              <PropertyCard property={property} key={property.id} />
-            </Link>
-          ))}
+          {isLoading
+            ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />)
+            : null}
+          {!isLoading &&
+            collection?.properties?.data.map((property: CollectionProperty) => (
+              <Link href={`/properties/${property.id}`} key={property.id}>
+                <PropertyCard property={property} key={property.id} />
+              </Link>
+            ))}
         </div>
         {collection?.properties?.data.length === 0 && <Text>There are no properties in this collection.</Text>}
       </CardBackground>
