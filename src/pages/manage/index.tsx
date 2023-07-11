@@ -42,7 +42,7 @@ const ControlPanel: NextPage = () => {
       </div>
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
-      <CardBackground className="mx-20 mt-6 pt-4">
+      <CardBackground className="mx-2 mt-6 pt-4 sm:mx-4 md:mx-6 xl:mx-32 2xl:mx-44">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
           {options.map((option) => (
             <Link
