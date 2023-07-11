@@ -374,12 +374,18 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     });
 
     offers.forEach((offer, index) => {
-      appendIfNotNull(`offers[${index}][id]`, offer.id);
+      if (typeof offer.id !== "string") {
+        appendIfNotNull(`offers[${index}][id]`, offer.id);
+      }
       appendIfNotNull(`offers[${index}][listing_type]`, offer.listing_type);
       appendIfNotNull(`offers[${index}][url]`, offer.url);
       appendIfNotNull(`offers[${index}][description]`, offer.description);
       appendIfNotNull(`offers[${index}][price]`, offer.price);
       console.log(offer);
+    });
+
+    offersToDelete.forEach((offer, index) => {
+      appendIfNotNull(`offers_remove][${index}]`, offer.id);
     });
 
     mediaToDelete.forEach((media, index) => {
@@ -564,7 +570,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
               <Button onClick={() => handleStepChange(stepperActive + 1)} disabled={stepperActive === TOTAL_STEPS}>
                 Next
               </Button>
-              <Button type="submit" loading={isLoading} disabled={stepperActive !== TOTAL_STEPS}>
+              <Button type="submit" loading={isLoading} disabled={stepperActive !== TOTAL_STEPS && mode === "add"}>
                 {mode === "add" ? "Add Property" : "Update Property"}
               </Button>
             </div>
