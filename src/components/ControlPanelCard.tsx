@@ -1,22 +1,31 @@
-import { Card, Group, Button, Text } from "@mantine/core";
-import { useRouter } from "next/router";
+import { Card, Group, Text, Badge } from "@mantine/core";
 
 type ControlPanelCardProps = {
-  href: string;
   title: string;
   description: string;
   icon: React.ElementType;
   buttonLabel?: string;
+  badges: string[];
 };
 
-export function ControlPanelCard({ href, title, description, buttonLabel = title, icon: Icon }: ControlPanelCardProps) {
-  const router = useRouter();
+const badgeColor = (badge: string) => {
+  switch (badge) {
+    case "view":
+      return "blue";
+    case "edit":
+      return "yellow";
+    case "delete":
+      return "red";
+  }
+};
+
+const badgeVariant = (/*badge: string*/) => "light";
+
+export function ControlPanelCard({ title, description, icon: Icon, badges }: ControlPanelCardProps) {
   return (
     <>
       <Card shadow="sm" padding="lg" radius="md" withBorder>
         <Card.Section
-          component="a"
-          href={href}
           style={{
             display: "flex",
             justifyContent: "center",
@@ -38,9 +47,13 @@ export function ControlPanelCard({ href, title, description, buttonLabel = title
           </Text>
         </Group>
 
-        <Button variant="light" color="blue" fullWidth mt="md" radius="md" onClick={() => void router.push(href)}>
-          {buttonLabel}
-        </Button>
+        <Group position="left" mt="xs" className="-mb-2">
+          {badges.map((badge) => (
+            <Badge className="-mr-2" key={badge} color={badgeColor(badge)} variant={badgeVariant()}>
+              {badge}
+            </Badge>
+          ))}
+        </Group>
       </Card>
     </>
   );
