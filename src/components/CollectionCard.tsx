@@ -82,13 +82,13 @@ export function CollectionCard({ covers, description, title, date, isLoading = f
       <Group noWrap spacing={0}>
         <div>
           {covers.length === 0 && !isLoading ? (
-            <div className={`flex items-center justify-center  ${classes.placeholder}`}>
+            <div className={`flex items-center justify-center ${classes.placeholder}`}>
               <span>No covers</span>
             </div>
           ) : !isLoading ? (
             <ThumbnailCollage covers={covers} />
           ) : (
-            <div className={`flex items-center justify-center  ${classes.placeholder}`}>
+            <div className={`flex items-center justify-center ${classes.placeholder}`}>
               <Skeleton width={144} height={144} />
             </div>
           )}

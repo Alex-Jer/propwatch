@@ -11,7 +11,7 @@ import { type FunctionComponent, type SVGProps, useEffect, useState, useRef } fr
 import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "public/icons";
 import { MainCarousel } from "~/components/MainCarousel";
 import { useDisclosure } from "@mantine/hooks";
-import { Badge, Button, Drawer, Group, Rating, Text, Title, Tooltip } from "@mantine/core";
+import { Badge, Button, Card, createStyles, Drawer, Group, Rating, Text, Title, Tooltip } from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
 import {
@@ -47,6 +47,7 @@ const markerIcons: { [key: string]: MarkerIconComponent } = {
 const Property: NextPage = () => {
   const router = useRouter();
   const { propertyId } = router.query;
+  const { classes } = useStyles();
 
   const { data: session, status } = useSession();
   const { data: property, isLoading, isError } = useProperty({ session, status, elementId: String(propertyId ?? "") });
@@ -143,14 +144,17 @@ const Property: NextPage = () => {
   };
 
   const renderCover = () => {
-    if (photos?.length == 0) return <div>Loading...</div>;
+    if (photos?.length == 0)
+      return (
+        <Card radius="md" withBorder p={0} className={classes.card}>
+          <div className={`flex items-center justify-center ${classes.placeholder}`}>
+            <span>No images added</span>
+          </div>
+        </Card>
+      );
     return (
       <>
-        {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-3"> */}
-        {/* <span onClick={open}> */}
         <MainCarousel images={photos} setSelectedUrl={setSelectedUrl} setPhotoIndex={setPhotoIndex} />
-        {/* </span> */}
-        {/* </div> */}
       </>
     );
   };
@@ -377,7 +381,7 @@ const Property: NextPage = () => {
             </Button>
           </Button.Group>
           <Button
-            disabled={selectedUrl == ""}
+            disabled={selectedUrl == "" || property?.media?.photos?.length == 0}
             color="yellow"
             variant="default"
             onClick={coverButtonClick}
@@ -423,3 +427,27 @@ const Property: NextPage = () => {
 };
 
 export default Property;
+
+const useStyles = createStyles((theme) => ({
+  card: {
+    [theme.fn.smallerThan("md")]: {
+      width: "100%",
+    },
+
+    [theme.fn.largerThan("md")]: {
+      width: "calc(100% - 1px)",
+      height: "calc(100% - 20px)",
+    },
+  },
+
+  placeholder: {
+    backgroundColor: theme.colors.dark[7],
+    borderRadius: theme.radius.md,
+    height: 400,
+
+    "& span": {
+      color: theme.colors.dark[3],
+      fontWeight: 600,
+    },
+  },
+}));
