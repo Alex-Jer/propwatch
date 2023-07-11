@@ -13,21 +13,21 @@ const ControlPanel: NextPage = () => {
       icon: IconBooks,
       title: "Manage Collections",
       description: "Manage the collections that your properties are organized into.",
-      badges: ["view", "edit", "delete"],
+      badges: ["list", "view", "edit", "delete"],
     },
     {
       href: `/manage/tags`,
       icon: IconTags,
       title: "Manage Tags",
       description: "Manage the tags that your properties are organized with.",
-      badges: ["delete"],
+      badges: ["list", "delete"],
     },
     {
       href: `/manage/characteristics`,
       icon: IconClipboardList,
       title: "Manage Characteristics",
       description: "Manage the characteristics that are used to describe your properties.",
-      badges: ["delete"],
+      badges: ["list", "delete"],
     },
   ];
   return (

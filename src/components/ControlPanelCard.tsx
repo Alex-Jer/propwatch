@@ -16,6 +16,10 @@ const badgeColor = (badge: string) => {
       return "yellow";
     case "delete":
       return "red";
+    case "list":
+      return "dark";
+    case "create":
+      return "teal";
   }
 };
 
