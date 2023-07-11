@@ -143,29 +143,17 @@ export function AddPropertyMedia({
         </div>
       </Modal>
 
-      <Modal
+      <ConfirmationModal
         opened={confirmModalOpened}
-        onClose={closeConfirmModal}
-        title={<b>Delete selected media</b>}
-        centered
-        zIndex={999}
-      >
-        <Group position="left">
-          <p className="text-gray-400">
-            Are you sure you want to delete the <b>{selectedMediaToDelete.length}</b> selected media?
-          </p>
-        </Group>
-        <Group position="right" className="mt-5">
-          <Button color="red" leftIcon={<IconTrash size="1rem" className="-mr-1" />} onClick={deleteSelectedMedia}>
-            Delete
-          </Button>
-          <Button variant="default" onClick={closeConfirmModal}>
-            Cancel
-          </Button>
-        </Group>
-      </Modal>
+        close={closeConfirmModal}
+        yesFunction={deleteSelectedMedia}
+        title="Delete selected media"
+        text={`Are you sure you want to delete the ${selectedMediaToDelete.length} selected media?`}
+        yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
+        noBtn={{ text: "Cancel", variant: "default" }}
+      />
 
-      {media && (
+      {mediaArray.length > 0 && (
         <DataTable
           className="mb-8"
           columns={columns}
@@ -174,17 +162,6 @@ export function AddPropertyMedia({
           onSelectedRecordsChange={setSelectedMediaToDelete}
         />
       )}
-
-      <div>
-        <Button
-          onClick={() => {
-            console.log({ mediaToDelete });
-            console.log({ media });
-          }}
-        >
-          Test
-        </Button>
-      </div>
 
       <div className="mb-8">
         <Divider my="xs" label="Images" labelPosition="center" />
