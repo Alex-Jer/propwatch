@@ -1,14 +1,15 @@
-import { ActionIcon, Collapse, Text } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { ActionIcon, Collapse, MultiSelect, Text } from "@mantine/core";
+import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { IconCaretDown, IconCaretUp } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import CardBackground from "~/components/CardBackground";
 import { PropertyCard } from "~/components/PropertyCard";
-import { useCollection } from "~/hooks/useQueries";
+import { useCollection, usePropertyTitles } from "~/hooks/useQueries";
 import { type CollectionProperty } from "~/types";
 
 const Collection: NextPage = () => {
@@ -16,11 +17,45 @@ const Collection: NextPage = () => {
   const { collectionId } = router.query;
 
   const { data: session, status } = useSession();
+
+  const [searchValue, onSearchChange] = useState("");
+  const [queryValue, setQueryValue] = useDebouncedState("", 500);
+
+  useEffect(() => {
+    if (searchValue !== queryValue) {
+      setQueryValue(searchValue);
+    }
+  }, [searchValue, queryValue, setQueryValue]);
+
   const { data, isLoading, isError } = useCollection({
     session,
     status,
     elementId: String(collectionId ?? ""),
   });
+
+  const {
+    data: propData,
+    isLoading: propIsLoading,
+    isError: propIsError,
+  } = usePropertyTitles({
+    session,
+    status,
+    search: queryValue,
+  });
+
+  const [props, setProps] = useState<{ value: string; label: string }[]>([]);
+
+  useEffect(() => {
+    if (propData) {
+      setProps(
+        propData.map((prop) => ({
+          value: prop.id,
+          label: `(${prop.id}) ${prop.title}`,
+          disabled: prop.collection_ids.includes(parseInt(collectionId as string)),
+        }))
+      );
+    }
+  }, [propData, collectionId]);
 
   const [descOpened, { toggle: toggleDesc }] = useDisclosure(false);
 
@@ -45,6 +80,19 @@ const Collection: NextPage = () => {
 
       <CardBackground className="pt-4">
         <h1>{collection?.name}</h1>
+        {!propIsLoading && !propIsError && (
+          <MultiSelect
+            data={props}
+            label="Add properties to this collection"
+            placeholder="Select the properties you wish to add to this collection"
+            clearButtonProps={{ "aria-label": "Clear selection" }}
+            clearable
+            searchable
+            searchValue={searchValue}
+            onSearchChange={onSearchChange}
+            nothingFound="No properties found"
+          />
+        )}
         <div className="flex max-w-2xl items-center pb-3">
           {descriptionNeedsTrimming ? (
             <>

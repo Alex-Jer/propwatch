@@ -8,7 +8,7 @@ import { useState } from "react";
 import { ConfirmationModal } from "~/components/ConfirmationModal";
 import { PropertyCard, errorNotification, successNotification } from "~/components/PropertyCard";
 import { useTrashedProperties } from "~/hooks/useQueries";
-import { makeRequest, processRequestError } from "~/lib/requestHelper";
+import { makeRequest } from "~/lib/requestHelper";
 import { type CollectionProperty } from "~/types";
 
 const TrashedProperties: NextPage = () => {

@@ -127,6 +127,12 @@ export type Property = {
   };
 };
 
+export type PropertyTitle = {
+  id: string;
+  title: string;
+  collection_ids: number[];
+};
+
 export type Links = {
   first: string;
   last: string;

@@ -14,6 +14,7 @@ import type {
   AdministrativeDivision,
   TagManage,
   BareCharacteristic,
+  PropertyTitle,
 } from "~/types";
 
 type CollectionsResponse = {
@@ -87,6 +88,12 @@ type UseProperties = {
   page: number;
 };
 
+type UsePropertyTitles = {
+  session: Session | null;
+  status: string;
+  search: string;
+};
+
 type UsePolygonProperties = UseProperties & {
   polygon: DrawPolygon | null;
 };
@@ -116,6 +123,15 @@ const fetchCollections = async (session: Session | null, page = 1) => {
     session?.user.access_token
   )) as CollectionsResponse;
   return response;
+};
+
+const fetchPropertyTitles = async (session: Session | null, search: string) => {
+  let extra = "";
+  if (search) extra += `?query=${encodeURIComponent(search)}`;
+  const response = (await makeRequest(`me/properties/titles${extra}`, "GET", session?.user.access_token)) as {
+    data: PropertyTitle[];
+  };
+  return response.data;
 };
 
 const fetchAllCollections = async (session: Session | null) => {
@@ -270,6 +286,14 @@ export const useProperties = ({ session, status, search, filters, page }: UsePro
   return useQuery({
     queryKey: ["properties", search, filters, page] /* TODO: Is this worth it ? */,
     queryFn: () => fetchProperties(session, search, filters, page),
+    enabled: status === "authenticated",
+  });
+};
+
+export const usePropertyTitles = ({ session, status, search }: UsePropertyTitles) => {
+  return useQuery({
+    queryKey: ["propertyTitles", search],
+    queryFn: () => fetchPropertyTitles(session, search),
     enabled: status === "authenticated",
   });
 };
