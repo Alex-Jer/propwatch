@@ -1,4 +1,4 @@
-import { createStyles, Divider } from "@mantine/core";
+import { ActionIcon, createStyles, Divider, Group, Modal, Text } from "@mantine/core";
 import { Controller, type Control } from "react-hook-form";
 import { type FormSchemaType } from "./PropertyForm";
 import { FilePond, registerPlugin } from "react-filepond";
@@ -7,8 +7,20 @@ import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+import { IconEye, IconTrash } from "@tabler/icons-react";
+import { DataTable, type DataTableColumn } from "mantine-datatable";
+import { type Media } from "~/types";
+import { useDisclosure } from "@mantine/hooks";
+import { useState } from "react";
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview, FilePondPluginFileValidateType);
+
+export type MediaItem = {
+  id?: string;
+  type: "image" | "blueprint" | "video";
+  url: string;
+  order?: number;
+};
 
 interface AddPropertyMediaProps {
   control: Control<FormSchemaType>;
@@ -18,6 +30,9 @@ interface AddPropertyMediaProps {
   setSelectedBlueprints: (blueprints: File[]) => void;
   selectedVideos: File[];
   setSelectedVideos: (videos: File[]) => void;
+  media?: Media;
+  mediaToDelete: MediaItem[];
+  setMediaToDelete: (mediaToDelete: MediaItem[]) => void;
 }
 
 export function AddPropertyMedia({
@@ -28,11 +43,78 @@ export function AddPropertyMedia({
   setSelectedBlueprints,
   selectedVideos,
   setSelectedVideos,
+  media,
+  mediaToDelete,
+  setMediaToDelete,
 }: AddPropertyMediaProps) {
   const { classes } = useStyles();
+  const [previewModalOpened, { open: openPreviewModal, close: closePreviewModal }] = useDisclosure(false);
+  const [selectedMediaItem, setSelectedMediaItem] = useState<MediaItem | null>(null);
+  /* const [selectedMediaItems, setSelectedMediaItems] = useState<MediaItem[]>([]); */
+
+  const mediaArray = ([] as MediaItem[]).concat(
+    media?.photos.map((photo, index) => ({ type: "image", url: photo.url, order: index + 1 })) || [],
+    media?.blueprints.map((blueprint) => ({ type: "blueprint", url: blueprint.url })) || [],
+    media?.videos.map((video) => ({ type: "video", url: video.url })) || []
+  );
+
+  const columns = [
+    {
+      accessor: "type",
+      title: "Type",
+      width: 100,
+      cellsClassName: "capitalize",
+    },
+    {
+      accessor: "order",
+      title: "Order",
+      width: 100,
+      textAlignment: "center",
+    },
+    {
+      accessor: "actions",
+      title: <Text mr="xs">Actions</Text>,
+      textAlignment: "right",
+      render: (item: MediaItem) => (
+        <Group spacing={4} position="right" noWrap>
+          <ActionIcon
+            color="blue"
+            onClick={() => {
+              setSelectedMediaItem(item);
+              openPreviewModal();
+            }}
+          >
+            <IconEye size={16} />
+          </ActionIcon>
+          <ActionIcon color="red">
+            <IconTrash size={16} />
+          </ActionIcon>
+        </Group>
+      ),
+    },
+  ] as DataTableColumn<MediaItem>[];
 
   return (
     <>
+      <Modal opened={previewModalOpened} onClose={closePreviewModal} title="Preview">
+        <div className="flex justify-center">
+          <div>{selectedMediaItem?.url}</div>
+        </div>
+      </Modal>
+
+      {media && (
+        <DataTable
+          className="mb-8"
+          columns={columns}
+          records={mediaArray}
+          /* selectedRecords={selectedMediaItems} */
+          /* onSelectedRecordsChange={setSelectedMediaItems} */
+          selectedRecords={mediaToDelete}
+          onSelectedRecordsChange={setMediaToDelete}
+          idAccessor="url"
+        />
+      )}
+
       <div className="mb-8">
         <Divider my="xs" label="Images" labelPosition="center" />
         <Controller

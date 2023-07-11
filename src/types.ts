@@ -80,7 +80,7 @@ type List = {
   name: string;
 };
 
-type Media = {
+export type Media = {
   photos: { url: string }[];
   videos: { url: string }[];
   blueprints: { url: string }[];
