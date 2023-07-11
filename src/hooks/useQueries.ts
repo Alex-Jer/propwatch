@@ -74,6 +74,13 @@ type UseElementWithElementId = {
   enabled?: boolean;
 };
 
+type UseElementWithElementIdAndPageNumber = {
+  session: Session | null;
+  status: string;
+  elementId: string;
+  page: number;
+};
+
 type UseElementWithPageNumber = {
   session: Session | null;
   status: string;
@@ -109,9 +116,12 @@ type UseAdmsWithoutParent = {
   status: string;
 };
 
-const fetchCollection = async (session: Session | null, id: string) => {
-  // TODO: fix API response
-  const response = (await makeRequest(`me/lists/${id}`, "GET", session?.user.access_token)) as CollectionResponse;
+const fetchCollection = async (session: Session | null, id: string, page: number) => {
+  const response = (await makeRequest(
+    `me/lists/${id}?page=${page}`,
+    "GET",
+    session?.user.access_token
+  )) as CollectionResponse;
   return response;
 };
 
@@ -242,10 +252,15 @@ const fetchPropertiesInPolygon = async (
   return response;
 };
 
-export const useCollection = ({ session, status, elementId: collectionId }: UseElementWithElementId) => {
+export const useCollection = ({
+  session,
+  status,
+  elementId: collectionId,
+  page,
+}: UseElementWithElementIdAndPageNumber) => {
   return useQuery({
-    queryKey: ["collection", collectionId],
-    queryFn: () => fetchCollection(session, collectionId),
+    queryKey: ["collection", collectionId, page],
+    queryFn: () => fetchCollection(session, collectionId, page),
     enabled: status === "authenticated",
   });
 };

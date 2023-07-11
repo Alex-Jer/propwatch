@@ -1,6 +1,6 @@
-import { ActionIcon, MultiSelect, Text } from "@mantine/core";
+import { ActionIcon, Group, MultiSelect, Pagination, Text } from "@mantine/core";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
-import { IconCheck, IconCirclePlus, IconPlus } from "@tabler/icons-react";
+import { IconCirclePlus, IconPlus } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
@@ -32,10 +32,12 @@ const Collection: NextPage = () => {
     }
   }, [searchValue, queryValue, setQueryValue]);
 
+  const [activePage, setPage] = useState(1);
   const { data, isLoading, isError, refetch } = useCollection({
     session,
     status,
     elementId: String(collectionId ?? ""),
+    page: activePage,
   });
 
   const { data: propData } = usePropertyTitles({
@@ -84,6 +86,7 @@ const Collection: NextPage = () => {
       makeRequest(`me/lists/${collection.id.toString()}/properties`, "POST", session?.user.access_token, formData)
         .then(() => {
           setPropsToAdd([]);
+          setPage(1);
           successNotification("Properties added to collection.", "Properties added");
         })
         .catch(() => errorNotification("An unknown error occurred while adding properties to the collection."))
@@ -118,7 +121,7 @@ const Collection: NextPage = () => {
 
         <div className="-mx-4 my-2 border-b border-shark-700" />
 
-        <div className="mb-4 flex flex-row items-center">
+        <div className="mb-4 flex flex-row items-center align-middle">
           <MultiSelect
             data={props}
             label="Add properties to this collection"
@@ -153,6 +156,19 @@ const Collection: NextPage = () => {
         </div>
         {!isLoading && collection?.properties?.data.length === 0 && (
           <Text>There are no properties in this collection.</Text>
+        )}
+        {collection?.properties?.meta.last_page && collection?.properties?.meta.last_page > 1 && (
+          <>
+            <Pagination.Root value={activePage} onChange={setPage} total={collection?.properties?.meta.last_page ?? 1}>
+              <Group spacing={5} position="center" className="mt-4">
+                <Pagination.First />
+                <Pagination.Previous />
+                <Pagination.Items />
+                <Pagination.Next />
+                <Pagination.Last />
+              </Group>
+            </Pagination.Root>
+          </>
         )}
       </CardBackground>
     </>
