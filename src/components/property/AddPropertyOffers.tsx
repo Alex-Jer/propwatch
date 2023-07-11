@@ -16,9 +16,18 @@ const listingTypes = [
 type AddPropertyOffersProps = {
   offers: Offer[];
   setOffers: (offers: Offer[]) => void;
+  offersToDelete: Offer[];
+  setOffersToDelete: (offers: Offer[]) => void;
+  mode?: "add" | "edit";
 };
 
-export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps) {
+export function AddPropertyOffers({
+  offers,
+  setOffers,
+  offersToDelete,
+  setOffersToDelete,
+  mode = "add",
+}: AddPropertyOffersProps) {
   const [listingType, setListingType] = useState("sale");
   const [price, setPrice] = useInputState<number | "">("");
   const [priceError, setPriceError] = useState("");
@@ -72,17 +81,18 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
   ];
 
   const addOffer = (offer: Offer) => {
-    // setOffers without using a spread operator
     const newOffers = offers.concat(offer);
     setOffers(newOffers);
   };
 
   const removeOffer = (offer: Offer) => {
-    setOffers((state) => state.filter((o) => o.id !== offer.id));
+    const newOffers = offers.filter((o) => o.id !== offer.id);
+    setOffers(newOffers);
   };
 
-  const removeOffers = (offers: Offer[]) => {
-    setOffers((state) => state.filter((o) => !offers.some((s) => s.id === o.id)));
+  const removeOffers = (offersToRemove: Offer[]) => {
+    const newOffers = offers.filter((o) => !offersToRemove.includes(o));
+    setOffers(newOffers);
   };
 
   const sortOffers = (offers: Offer[], sortStatus: DataTableSortStatus) => {
@@ -109,11 +119,18 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
     }
 
     deleteOffer(offer);
+
+    if (mode === "edit") {
+      console.log("offersToDelete", offersToDelete);
+      setOffersToDelete((state) => state.concat(offer));
+    }
   };
 
   const deleteSelectedOffers = () => {
     removeOffers(selectedOffers);
     setSelectedOffers([]);
+    setOffersToDelete((state) => state.concat(selectedOffers));
+    console.log("offersToDelete", offersToDelete);
     close();
   };
 
@@ -287,6 +304,14 @@ export function AddPropertyOffers({ offers, setOffers }: AddPropertyOffersProps)
           onSortStatusChange={setSortStatus}
         />
       )}
+      <Button
+        onClick={() => {
+          console.log({ offers });
+          console.log({ offersToDelete });
+        }}
+      >
+        Test
+      </Button>
     </>
   );
 }

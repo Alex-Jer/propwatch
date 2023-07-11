@@ -101,17 +101,20 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
   const [media, setMedia] = useState<Media>(property.media || { photos: [], blueprints: [], videos: [] });
   const [mediaToDelete, setMediaToDelete] = useState<MediaItem[]>([]);
+  const [offersToDelete, setOffersToDelete] = useState<Offer[]>([]);
 
   const [offers, setOffers] = useState<Offer[]>([]);
   const [countAdmFetches, setCountAdmFetches] = useState(0);
 
-  if (property.offers && offers.length === 0) {
-    setOffers(
-      property.offers.rent
-        .map((offer) => ({ ...offer, listing_type: "rent" }))
-        .concat(property.offers.sale.map((offer) => ({ ...offer, listing_type: "sale" })))
-    );
-  }
+  useEffect(() => {
+    if (property.offers && mode === "edit") {
+      setOffers(
+        property.offers.rent
+          .map((offer) => ({ ...offer, listing_type: "rent" }))
+          .concat(property.offers.sale.map((offer) => ({ ...offer, listing_type: "sale" })))
+      );
+    }
+  }, [property.offers, mode]);
 
   const { data: session, status } = useSession();
 
@@ -509,7 +512,13 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
               </Stepper.Step>
 
               <Stepper.Step label="Offers">
-                <AddPropertyOffers offers={offers} setOffers={setOffers} />
+                <AddPropertyOffers
+                  offers={offers}
+                  setOffers={setOffers}
+                  offersToDelete={offersToDelete}
+                  setOffersToDelete={setOffersToDelete}
+                  mode={mode}
+                />
               </Stepper.Step>
 
               <Stepper.Step label="Summary">
