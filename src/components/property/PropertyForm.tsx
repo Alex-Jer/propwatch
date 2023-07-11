@@ -8,7 +8,7 @@ import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { type Property, type Offer, type SelectOption } from "~/types";
+import { type Property, type Offer, type SelectOption, Media } from "~/types";
 import {
   AddPropertyAddress,
   AddPropertyCharacteristics,
@@ -18,12 +18,7 @@ import {
 } from "~/components/property";
 import { useAdms, useAdms2, useAdms3, useAllCollections, useAllTags } from "~/hooks/useQueries";
 import { useInputState } from "@mantine/hooks";
-
-interface PropertyFormProps {
-  property?: Partial<Property>;
-  close?: () => void;
-  mode?: "add" | "edit";
-}
+import { type MediaItem } from "./AddPropertyMedia";
 
 type PropertyType = "house" | "apartment" | "office" | "shop" | "warehouse" | "garage" | "land" | "other";
 type PropertyStatus = "available" | "unavailable" | "unknown";
@@ -90,6 +85,12 @@ const schema = z.object({
 
 export type FormSchemaType = z.infer<typeof schema>;
 
+interface PropertyFormProps {
+  property?: Partial<Property>;
+  close?: () => void;
+  mode?: "add" | "edit";
+}
+
 export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFormProps) {
   const [stepperActive, setStepperActive] = useState(0);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -98,11 +99,12 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
+  const [mediaToDelete, setMediaToDelete] = useState<MediaItem[]>([]);
+
   const [offers, setOffers] = useState<Offer[]>([]);
   const [countAdmFetches, setCountAdmFetches] = useState(0);
 
   if (property.offers && offers.length === 0) {
-    /* setOffers([...property.offers.rent, ...property.offers.sale]); */
     setOffers(
       property.offers.rent
         .map((offer) => ({ ...offer, listing_type: "rent" }))
@@ -295,6 +297,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     });
 
     offers.forEach((offer, index) => {
+      // TODO: offer id
       appendIfNotNull(`offers[${index}][listing_type]`, offer.listing_type);
       appendIfNotNull(`offers[${index}][url]`, offer.url);
       appendIfNotNull(`offers[${index}][description]`, offer.description);
@@ -305,6 +308,8 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
   };
 
   const editProperty = async (data: FormSchemaType) => {
+    if (!property.id) return;
+
     const formData = new FormData();
 
     function appendIfNotNull(key: string, value: unknown) {
@@ -365,10 +370,12 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     });
 
     offers.forEach((offer, index) => {
+      appendIfNotNull(`offers[${index}][id]`, offer.id);
       appendIfNotNull(`offers[${index}][listing_type]`, offer.listing_type);
       appendIfNotNull(`offers[${index}][url]`, offer.url);
       appendIfNotNull(`offers[${index}][description]`, offer.description);
       appendIfNotNull(`offers[${index}][price]`, offer.price);
+      console.log(offer);
     });
 
     return makeRequest(`me/properties/${property.id}`, "PUT", session?.user.access_token, formData);
@@ -380,7 +387,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       close && close();
       notifications.show({
         title: "Property added",
-        message: "Your property was added successfully",
+        message: mode === "add" ? "Your property was added successfully" : "Your property was edited successfully",
         color: "teal",
         icon: <IconCheck size="1.5rem" />,
         autoClose: 10000,
@@ -485,6 +492,9 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
                   setSelectedBlueprints={setSelectedBlueprints}
                   selectedVideos={selectedVideos}
                   setSelectedVideos={setSelectedVideos}
+                  media={property.media}
+                  mediaToDelete={mediaToDelete}
+                  setMediaToDelete={setMediaToDelete}
                 />
               </Stepper.Step>
 
