@@ -205,6 +205,9 @@ export type FiltersOptions = {
   exclude_tags?: string[];
   list?: string;
   adm?: string;
+  type?: string[];
+  listing_type?: string[];
+  status?: string[];
 };
 
 export type SearchPropertyProps = {

@@ -34,6 +34,7 @@ import type { FiltersOptions, Collection, Tag } from "~/types";
 import { UserButton } from "./UserButton";
 import { useEffect, useRef } from "react";
 import { IconAdjustmentsAlt } from "@tabler/icons-react";
+import { PropertyFilters } from "../PropertyFilters";
 
 type Props = {
   opened: boolean;
@@ -211,6 +212,10 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
         />
       </Navbar.Section>
 
+      <Navbar.Section className={classes.section}>
+        <div className={classes.mainLinks}>{mainLinks}</div>
+      </Navbar.Section>
+
       <TextInput
         placeholder="Search"
         size="xs"
@@ -226,9 +231,7 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
         ref={searchInputRef}
       />
 
-      <Navbar.Section className={classes.section}>
-        <div className={classes.mainLinks}>{mainLinks}</div>
-      </Navbar.Section>
+      <PropertyFilters filters={filters} setFilters={setFilters} />
 
       <Navbar.Section className={classes.section}>
         <div className={classes.mainLinks}>
