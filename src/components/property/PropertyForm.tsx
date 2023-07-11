@@ -8,7 +8,7 @@ import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest, processAxiosError } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { type Property, type Offer, type SelectOption, Media } from "~/types";
+import { type Property, type Offer, type SelectOption, type Media } from "~/types";
 import {
   AddPropertyAddress,
   AddPropertyCharacteristics,
@@ -99,6 +99,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
   const [selectedBlueprints, setSelectedBlueprints] = useState<any[]>([]);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [selectedVideos, setSelectedVideos] = useState<any[]>([]);
+  const [media, setMedia] = useState<Media>(property.media || { photos: [], blueprints: [], videos: [] });
   const [mediaToDelete, setMediaToDelete] = useState<MediaItem[]>([]);
 
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -378,6 +379,10 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       console.log(offer);
     });
 
+    mediaToDelete.forEach((media, index) => {
+      appendIfNotNull(`media[remove][${index}]`, media.id);
+    });
+
     return makeRequest(`me/properties/${property.id}`, "PUT", session?.user.access_token, formData, true, false);
   };
 
@@ -496,7 +501,8 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
                   setSelectedBlueprints={setSelectedBlueprints}
                   selectedVideos={selectedVideos}
                   setSelectedVideos={setSelectedVideos}
-                  media={property.media}
+                  media={media}
+                  setMedia={setMedia}
                   mediaToDelete={mediaToDelete}
                   setMediaToDelete={setMediaToDelete}
                 />

@@ -81,9 +81,9 @@ type List = {
 };
 
 export type Media = {
-  photos: { url: string }[];
-  videos: { url: string }[];
-  blueprints: { url: string }[];
+  photos: { id: number; url: string }[];
+  videos: { id: number; url: string }[];
+  blueprints: { id: number; url: string }[];
 };
 
 type PriceHistory = {

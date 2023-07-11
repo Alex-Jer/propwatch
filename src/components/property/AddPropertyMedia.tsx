@@ -1,4 +1,4 @@
-import { ActionIcon, createStyles, Divider, Group, Modal, Text } from "@mantine/core";
+import { ActionIcon, Button, createStyles, Divider, Group, Modal, Text } from "@mantine/core";
 import { Controller, type Control } from "react-hook-form";
 import { type FormSchemaType } from "./PropertyForm";
 import { FilePond, registerPlugin } from "react-filepond";
@@ -11,12 +11,13 @@ import { IconEye, IconTrash } from "@tabler/icons-react";
 import { DataTable, type DataTableColumn } from "mantine-datatable";
 import { type Media } from "~/types";
 import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ConfirmationModal } from "../ConfirmationModal";
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview, FilePondPluginFileValidateType);
 
 export type MediaItem = {
-  id?: string;
+  id: number;
   type: "image" | "blueprint" | "video";
   url: string;
   order?: number;
@@ -31,6 +32,7 @@ interface AddPropertyMediaProps {
   selectedVideos: File[];
   setSelectedVideos: (videos: File[]) => void;
   media?: Media;
+  setMedia: (media: Media) => void;
   mediaToDelete: MediaItem[];
   setMediaToDelete: (mediaToDelete: MediaItem[]) => void;
 }
@@ -44,19 +46,53 @@ export function AddPropertyMedia({
   selectedVideos,
   setSelectedVideos,
   media,
+  setMedia,
   mediaToDelete,
   setMediaToDelete,
 }: AddPropertyMediaProps) {
   const { classes } = useStyles();
   const [previewModalOpened, { open: openPreviewModal, close: closePreviewModal }] = useDisclosure(false);
+  const [confirmModalOpened, { open: openConfirmModal, close: closeConfirmModal }] = useDisclosure(false);
   const [selectedMediaItem, setSelectedMediaItem] = useState<MediaItem | null>(null);
-  /* const [selectedMediaItems, setSelectedMediaItems] = useState<MediaItem[]>([]); */
+  const [selectedMediaToDelete, setSelectedMediaToDelete] = useState<MediaItem[]>([]);
+  const [mediaArray, setMediaArray] = useState<MediaItem[]>([]);
 
-  const mediaArray = ([] as MediaItem[]).concat(
-    media?.photos.map((photo, index) => ({ type: "image", url: photo.url, order: index + 1 })) || [],
-    media?.blueprints.map((blueprint) => ({ type: "blueprint", url: blueprint.url })) || [],
-    media?.videos.map((video) => ({ type: "video", url: video.url })) || []
-  );
+  useEffect(() => {
+    setMediaArray(
+      ([] as MediaItem[]).concat(
+        media?.photos.map((photo, index) => ({ id: photo.id, type: "image", url: photo.url, order: index + 1 })) || [],
+        media?.blueprints.map((blueprint) => ({ id: blueprint.id, type: "blueprint", url: blueprint.url })) || [],
+        media?.videos.map((video) => ({ id: video.id, type: "video", url: video.url })) || []
+      )
+    );
+  }, [media]);
+
+  const deleteMediaItem = (mediaItem: MediaItem) => {
+    const newMediaArray = mediaArray.filter((m) => m.id !== mediaItem.id);
+    setMediaArray(newMediaArray);
+    setMediaToDelete([...mediaToDelete, mediaItem]);
+  };
+
+  const handleDelete = (mediaItem: MediaItem) => {
+    if (selectedMediaToDelete.length > 1 && selectedMediaToDelete.some((s) => s.id === mediaItem.id)) {
+      openConfirmModal();
+      return;
+    }
+    deleteMediaItem(mediaItem);
+    setMedia((state) => ({
+      ...state,
+      photos: state.photos.filter((p) => p.id !== mediaItem.id),
+      blueprints: state.blueprints.filter((b) => b.id !== mediaItem.id),
+      videos: state.videos.filter((v) => v.id !== mediaItem.id),
+    }));
+  };
+
+  const deleteSelectedMedia = () => {
+    setMediaArray((state) => state.filter((o) => !selectedMediaToDelete.some((s) => s.id === o.id)));
+    setSelectedMediaToDelete([]);
+    setMediaToDelete((state) => [...state, ...selectedMediaToDelete]);
+    closeConfirmModal();
+  };
 
   const columns = [
     {
@@ -86,7 +122,12 @@ export function AddPropertyMedia({
           >
             <IconEye size={16} />
           </ActionIcon>
-          <ActionIcon color="red">
+          <ActionIcon
+            color="red"
+            onClick={() => {
+              handleDelete(item);
+            }}
+          >
             <IconTrash size={16} />
           </ActionIcon>
         </Group>
@@ -102,18 +143,48 @@ export function AddPropertyMedia({
         </div>
       </Modal>
 
+      <Modal
+        opened={confirmModalOpened}
+        onClose={closeConfirmModal}
+        title={<b>Delete selected media</b>}
+        centered
+        zIndex={999}
+      >
+        <Group position="left">
+          <p className="text-gray-400">
+            Are you sure you want to delete the <b>{selectedMediaToDelete.length}</b> selected media?
+          </p>
+        </Group>
+        <Group position="right" className="mt-5">
+          <Button color="red" leftIcon={<IconTrash size="1rem" className="-mr-1" />} onClick={deleteSelectedMedia}>
+            Delete
+          </Button>
+          <Button variant="default" onClick={closeConfirmModal}>
+            Cancel
+          </Button>
+        </Group>
+      </Modal>
+
       {media && (
         <DataTable
           className="mb-8"
           columns={columns}
           records={mediaArray}
-          /* selectedRecords={selectedMediaItems} */
-          /* onSelectedRecordsChange={setSelectedMediaItems} */
-          selectedRecords={mediaToDelete}
-          onSelectedRecordsChange={setMediaToDelete}
-          idAccessor="url"
+          selectedRecords={selectedMediaToDelete}
+          onSelectedRecordsChange={setSelectedMediaToDelete}
         />
       )}
+
+      <div>
+        <Button
+          onClick={() => {
+            console.log({ mediaToDelete });
+            console.log({ media });
+          }}
+        >
+          Test
+        </Button>
+      </div>
 
       <div className="mb-8">
         <Divider my="xs" label="Images" labelPosition="center" />
