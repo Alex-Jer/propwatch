@@ -122,8 +122,8 @@ const ManageTags: NextPage = () => {
         noBtn={{ text: "Cancel", variant: "default" }}
       />
       <CardBackground className="pt-4">
-        <h1 className="mb-2">Manage Tags</h1>
         <ManagingTable
+          title="Manage Tags"
           records={tags}
           tableColumns={tableColumns}
           deleteFunction={(tag: TagManage) => {

@@ -122,8 +122,8 @@ const ManageCharacteristics: NextPage = () => {
         noBtn={{ text: "Cancel", variant: "default" }}
       />
       <CardBackground className="pt-4">
-        <h1 className="mb-2">Manage Characteristics</h1>
         <ManagingTable
+          title="Manage Characteristics"
           records={crcs}
           tableColumns={tableColumns}
           deleteFunction={(tag: BareCharacteristic) => {

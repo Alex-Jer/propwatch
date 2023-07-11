@@ -134,8 +134,8 @@ const ManageCollections: NextPage = () => {
         noBtn={{ text: "Cancel", variant: "default" }}
       />
       <CardBackground className="pt-4">
-        <h1 className="mb-2">Manage Collections</h1>
         <ManagingTable
+          title="Manage Collections"
           records={collections}
           tableColumns={tableColumns}
           viewFunction={(col: Collection) => void router.push(`/collections/${col.id}`)}

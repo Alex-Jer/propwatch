@@ -20,6 +20,7 @@ type TableProps<T extends { id: any }> = {
     setPage: (page: number) => void;
     total: number;
   };
+  title?: string;
 };
 
 export function ManagingTable<T extends { id: any }>({
@@ -31,6 +32,7 @@ export function ManagingTable<T extends { id: any }>({
   deleteMultipleFunction,
   defaultSortStatus,
   pagination,
+  title,
 }: TableProps<T>) {
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>(
     defaultSortStatus ?? {
@@ -126,18 +128,16 @@ export function ManagingTable<T extends { id: any }>({
   };
 
   const renderDeleteMultipleRecordsBtn = () => (
-    <Group position="center">
-      <Button
-        onClick={open}
-        color="red"
-        variant="filled"
-        className="mt-2"
-        disabled={selectedRecords.length == 0}
-        leftIcon={<IconTrash size="1rem" className="-mr-1" />}
-      >
-        Delete selected records
-      </Button>
-    </Group>
+    <Button
+      onClick={open}
+      color="red"
+      variant="filled"
+      className="mt-2"
+      disabled={selectedRecords.length == 0}
+      leftIcon={<IconTrash size="1rem" className="-mr-1" />}
+    >
+      Delete selected records
+    </Button>
   );
 
   return (
@@ -150,6 +150,24 @@ export function ManagingTable<T extends { id: any }>({
         text={`Are you sure you want to delete the ${selectedRecords.length} selected records?`}
         yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
+      />
+
+      <Group className="flex">
+        <h1 className="mb-2">{title}</h1>
+        <div className="absolute right-10">{deleteMultipleFunction && renderDeleteMultipleRecordsBtn()}</div>
+      </Group>
+
+      <DataTable
+        withBorder={false}
+        borderRadius="md"
+        columns={dataTableColumns}
+        records={tableRecords}
+        {...(deleteMultipleFunction && {
+          selectedRecords,
+          onSelectedRecordsChange: setSelectedRecords,
+        })}
+        sortStatus={sortStatus}
+        onSortStatusChange={setSortStatus}
       />
       {pagination && pagination.total > 1 && (
         <>
@@ -164,19 +182,6 @@ export function ManagingTable<T extends { id: any }>({
           </Pagination.Root>
         </>
       )}
-      <DataTable
-        withBorder={false}
-        borderRadius="md"
-        columns={dataTableColumns}
-        records={tableRecords}
-        {...(deleteMultipleFunction && {
-          selectedRecords,
-          onSelectedRecordsChange: setSelectedRecords,
-        })}
-        sortStatus={sortStatus}
-        onSortStatusChange={setSortStatus}
-      />
-      {deleteMultipleFunction && renderDeleteMultipleRecordsBtn()}
     </>
   );
 }
