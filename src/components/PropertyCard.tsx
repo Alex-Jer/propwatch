@@ -67,10 +67,8 @@ export function PropertyCard({ property, id, trashButtons, refresh, isLoading = 
       .then(() => {
         successNotification("The selected property has been restored!", "Property restored");
       })
-      .catch((err) => {
+      .catch(() => {
         errorNotification("An unknown error occurred while restoring this property.");
-        // TODO:
-        console.log("Error: ", err, " when restoring property.");
       })
       .finally(() => {
         if (refresh) refresh();
@@ -83,10 +81,8 @@ export function PropertyCard({ property, id, trashButtons, refresh, isLoading = 
       .then(() => {
         successNotification("The selected property has been permanently deleted!", "Property permanently deleted");
       })
-      .catch((err) => {
+      .catch(() => {
         errorNotification("An unknown error occurred while permanently deleting this property.");
-        // TODO:
-        console.log("Error: ", err, " when permanently deleting property.");
       })
       .finally(() => {
         if (refresh) refresh();

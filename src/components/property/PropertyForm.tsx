@@ -6,7 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
-import { makeRequest } from "~/lib/requestHelper";
+import { makeRequest, processAxiosError } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
 import { type Property, type Offer, type SelectOption, Media } from "~/types";
 import {
@@ -304,7 +304,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       appendIfNotNull(`offers[${index}][price]`, offer.price);
     });
 
-    return makeRequest("me/properties", "POST", session?.user.access_token, formData);
+    return makeRequest("me/properties", "POST", session?.user.access_token, formData, true, false);
   };
 
   const editProperty = async (data: FormSchemaType) => {
@@ -378,7 +378,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       console.log(offer);
     });
 
-    return makeRequest(`me/properties/${property.id}`, "PUT", session?.user.access_token, formData);
+    return makeRequest(`me/properties/${property.id}`, "PUT", session?.user.access_token, formData, true, false);
   };
 
   const { mutate, isLoading } = useMutation({
@@ -395,12 +395,16 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     },
     onError: (error) => {
       console.error({ error });
-      notifications.show({
+
+      if (mode == "add") processAxiosError(error, "An error occurred while adding your property");
+      else processAxiosError(error, "An error occurred while editing your property");
+
+      /*notifications.show({
         title: "Error",
         message: "An error occurred while adding your property",
         color: "red",
         icon: <IconX size="1.5rem" />,
-      });
+      });*/
     },
   });
 

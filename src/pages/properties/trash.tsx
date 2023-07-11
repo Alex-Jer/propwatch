@@ -8,7 +8,7 @@ import { useState } from "react";
 import { ConfirmationModal } from "~/components/ConfirmationModal";
 import { PropertyCard, errorNotification, successNotification } from "~/components/PropertyCard";
 import { useTrashedProperties } from "~/hooks/useQueries";
-import { makeRequest } from "~/lib/requestHelper";
+import { makeRequest, processRequestError } from "~/lib/requestHelper";
 import { type CollectionProperty } from "~/types";
 
 const TrashedProperties: NextPage = () => {
@@ -44,11 +44,7 @@ const TrashedProperties: NextPage = () => {
       .then(() => {
         successNotification("All trashed properties have been restored!", "All properties restored");
       })
-      .catch((err) => {
-        errorNotification("An unknown error occurred while restoring this property.");
-        //TODO
-        console.log("Error: ", err, " while restoring all properties.");
-      })
+      .catch(() => errorNotification("An unknown error occurred while restoring all the properties."))
       .finally(() => {
         void refetch();
       });
@@ -59,11 +55,7 @@ const TrashedProperties: NextPage = () => {
       .then(() => {
         successNotification("All trashed properties have been permanently deleted!", "Trash emptied");
       })
-      .catch((err) => {
-        errorNotification("An unknown error occurred while emptying the trash.");
-        //TODO
-        console.log("Error: ", err, " while permanently deleting all properties.");
-      })
+      .catch(() => errorNotification("An unknown error occurred while emptying the trash."))
       .finally(() => {
         void refetch();
       });

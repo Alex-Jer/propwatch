@@ -195,7 +195,7 @@ const Property: NextPage = () => {
         setRating(value);
         property.rating = value * 2;
       })
-      .catch(() => errorNotification("An error as occurred while rating this property."));
+      .catch(() => errorNotification("An error has occurred while rating this property."));
   };
 
   const renderStatus = (status: string) => {
@@ -295,10 +295,8 @@ const Property: NextPage = () => {
         };
         router.push("/properties").then(sendSuccess).catch(sendSuccess); //TODO: Should we redirect to trash?
       })
-      .catch((err) => {
-        errorNotification("An unknown error occurred while deleting this property.");
-        //TODO
-        console.log("Error: ", err, " when trashing property.");
+      .catch(() => {
+        errorNotification("An unknown error occurred while trying to delete this property.");
       });
   };
 

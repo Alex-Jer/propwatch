@@ -38,7 +38,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { makeRequest } from "~/lib/requestHelper";
+import { makeRequest, processAxiosError, processRequestError } from "~/lib/requestHelper";
 import { useMutation } from "@tanstack/react-query";
 import { notifications } from "@mantine/notifications";
 import { type AxiosError } from "axios";
@@ -159,7 +159,14 @@ export function NavbarDefault({ opened, setOpened }: Props) {
       formData.append("description", data.description);
     }
 
-    return (await makeRequest("me/lists", "POST", session?.user.access_token, formData)) as Promise<CollectionResponse>;
+    return (await makeRequest(
+      "me/lists",
+      "POST",
+      session?.user.access_token,
+      formData,
+      false,
+      false
+    )) as Promise<CollectionResponse>;
   };
 
   const { mutate } = useMutation({
@@ -185,13 +192,15 @@ export function NavbarDefault({ opened, setOpened }: Props) {
         return;
       }
 
-      notifications.show({
+      processAxiosError(error, "An error occurred while creating the collection");
+
+      /*notifications.show({
         title: "Error",
         message: "An error occurred while creating the collection",
         color: "red",
         icon: <IconX size="1.5rem" />,
         autoClose: 10000,
-      });
+      });*/
     },
   });
 

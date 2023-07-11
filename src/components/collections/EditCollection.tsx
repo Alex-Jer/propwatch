@@ -34,7 +34,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { makeRequest } from "~/lib/requestHelper";
+import { makeRequest, processAxiosError } from "~/lib/requestHelper";
 import { useMutation } from "@tanstack/react-query";
 import { notifications } from "@mantine/notifications";
 import { type AxiosError } from "axios";
@@ -112,7 +112,9 @@ export function EditCollection({ collection: collectionInput, collections, modal
       `me/lists/${collection.id}`,
       "PUT",
       session?.user.access_token,
-      formData
+      formData,
+      false,
+      false
     )) as Promise<CollectionResponse>;
   };
 
@@ -146,13 +148,15 @@ export function EditCollection({ collection: collectionInput, collections, modal
         return;
       }
 
-      notifications.show({
+      processAxiosError(error, "An error occurred while editing the collection");
+
+      /*notifications.show({
         title: "Error",
         message: "An error occurred while editing the collection",
         color: "red",
         icon: <IconX size="1.5rem" />,
         autoClose: 10000,
-      });
+      });*/
     },
   });
 
