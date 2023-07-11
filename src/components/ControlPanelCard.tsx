@@ -25,7 +25,7 @@ export function ControlPanelCard({ href, title, description, buttonLabel = title
             minHeight: "160px",
           }}
         >
-          <Icon size="5.5rem" />
+          <Icon size="4.5rem" />
         </Card.Section>
 
         <Group position="apart" mt="md" mb="xs">
