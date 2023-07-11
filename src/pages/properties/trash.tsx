@@ -32,10 +32,6 @@ const TrashedProperties: NextPage = () => {
 
   const properties: CollectionProperty[] | undefined = propData?.data;
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   if (isError) {
     return <div>Error loading properties.</div>;
   }
@@ -141,7 +137,7 @@ const TrashedProperties: NextPage = () => {
               : renderProperties(properties)}
           </div>
 
-          {propData?.meta.last_page > 1 && (
+          {!isLoading && propData?.meta.last_page > 1 && (
             <>
               <Pagination.Root value={activePage} onChange={setPage} total={propData?.meta.last_page ?? 1}>
                 <Group spacing={5} position="center" className="mt-4">
