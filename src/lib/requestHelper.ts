@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { signOut } from "next-auth/react";
 import { errorNotification } from "~/components/PropertyCard";
 import { env } from "~/env.mjs";
@@ -98,6 +98,7 @@ export const makeRequest = async (
       case 401:
       case 444: // 444 - our own unauthenticated error code
         // User is no longer authenticated, maybe the token expired or was revoked
+        errorNotification("Your session has expired. Please sign in again.");
         return void signOut();
       case 403:
         // User is authenticated, but does not have the required permissions
@@ -124,6 +125,15 @@ export const makeRequest = async (
 
 export const processRequestError = (error: Error) => {
   errorNotification(error.message);
+};
+
+export const processAxiosError = (error: AxiosError, defaultError = "An unknown error has occurred") => {
+  if ((error.response?.status == 422 || error.response?.status == 400) && error.response?.data?.message)
+    errorNotification(error.response.data.message);
+  else if (error.response?.status == 401 || error.response?.status == 444) {
+    errorNotification("Your session has expired. Please sign in again.");
+    void signOut();
+  } else errorNotification(defaultError);
 };
 
 export const login = async (email: string, password: string, deviceName: string) => {
