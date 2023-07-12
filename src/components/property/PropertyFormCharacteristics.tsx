@@ -10,13 +10,13 @@ const characteristicTypes = [
   { label: "Textual", value: "textual" },
 ];
 
-type AddPropertyCharacteristicsProps = {
+type PropertyFormCharacteristicsProps = {
   control: Control<FormSchemaType>;
   watch: UseFormWatch<FormSchemaType>;
   mode?: "add" | "edit";
 };
 
-export function AddPropertyCharacteristics({ control, watch, mode = "add" }: AddPropertyCharacteristicsProps) {
+export function PropertyFormCharacteristics({ control, watch, mode = "add" }: PropertyFormCharacteristicsProps) {
   const { fields, append, remove } = useFieldArray({
     name: "characteristics",
     control,

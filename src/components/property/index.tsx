@@ -1,15 +1,17 @@
-import { AddPropertyAddress } from "./AddPropertyAddress";
-import { AddPropertyCharacteristics } from "./AddPropertyCharacteristics";
+import { PropertyFormAddress } from "./PropertyFormAddress";
+import { PropertyFormCharacteristics } from "./PropertyFormCharacteristics";
+import { PropertyFormMainInfo } from "./PropertyFormMainInfo";
+import { PropertyFormMedia } from "./PropertyFormMedia";
+import { PropertyFormOffers } from "./PropertyFormOffers";
 import { PropertyForm } from "./PropertyForm";
-import { AddPropertyMainInfo } from "./AddPropertyMainInfo";
-import { AddPropertyMedia } from "./AddPropertyMedia";
-import { AddPropertyOffers } from "./AddPropertyOffers";
+import { type MediaItem } from "./PropertyFormMedia";
 
 export {
-  AddPropertyAddress,
-  AddPropertyCharacteristics,
+  PropertyFormAddress,
+  PropertyFormCharacteristics,
+  PropertyFormMainInfo,
+  PropertyFormMedia,
+  PropertyFormOffers,
   PropertyForm,
-  AddPropertyMainInfo,
-  AddPropertyMedia,
-  AddPropertyOffers,
+  MediaItem,
 };

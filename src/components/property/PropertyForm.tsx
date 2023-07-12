@@ -10,15 +10,15 @@ import { makeRequest, processAxiosError } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
 import { type Property, type Offer, type SelectOption, type Media } from "~/types";
 import {
-  AddPropertyAddress,
-  AddPropertyCharacteristics,
-  AddPropertyMainInfo,
-  AddPropertyMedia,
-  AddPropertyOffers,
+  PropertyFormAddress,
+  PropertyFormCharacteristics,
+  PropertyFormMainInfo,
+  PropertyFormMedia,
+  PropertyFormOffers,
+  type MediaItem,
 } from "~/components/property";
 import { useAdms, useAdms2, useAdms3, useAllCollections, useAllTags } from "~/hooks/useQueries";
 import { useInputState } from "@mantine/hooks";
-import { type MediaItem } from "./AddPropertyMedia";
 import { useRouter } from "next/router";
 
 type PropertyType = "house" | "apartment" | "office" | "shop" | "warehouse" | "garage" | "land" | "other";
@@ -477,7 +477,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
           >
             <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
               <Stepper.Step label="Main Info">
-                <AddPropertyMainInfo
+                <PropertyFormMainInfo
                   tags={tags}
                   collections={collections}
                   tagsLoading={tagsLoading}
@@ -488,7 +488,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
               </Stepper.Step>
 
               <Stepper.Step label="Address">
-                <AddPropertyAddress
+                <PropertyFormAddress
                   adm1Data={adm1Data}
                   adm2Data={adm2Data}
                   adm3Data={adm3Data}
@@ -505,11 +505,11 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
               </Stepper.Step>
 
               <Stepper.Step label="Characteristics">
-                <AddPropertyCharacteristics control={control} watch={watch} mode={mode} />
+                <PropertyFormCharacteristics control={control} watch={watch} mode={mode} />
               </Stepper.Step>
 
               <Stepper.Step label="Media">
-                <AddPropertyMedia
+                <PropertyFormMedia
                   control={control}
                   selectedImages={selectedImages}
                   setSelectedImages={setSelectedImages}
@@ -525,7 +525,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
               </Stepper.Step>
 
               <Stepper.Step label="Offers">
-                <AddPropertyOffers
+                <PropertyFormOffers
                   offers={offers}
                   setOffers={setOffers}
                   offersToDelete={offersToDelete}
@@ -539,7 +539,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
                 {/* <AddPropertySummary />  */}
                 <h1 className="mb-2 text-2xl font-semibold">Summary</h1>
                 <Paper className="mb-4" shadow="xs" p="md" withBorder>
-                  <AddPropertyMainInfo
+                  <PropertyFormMainInfo
                     tags={tags}
                     collections={collections}
                     tagsLoading={tagsLoading}
@@ -547,7 +547,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
                     control={control}
                     trigger={trigger}
                   />
-                  <AddPropertyAddress
+                  <PropertyFormAddress
                     adm1Data={adm1Data}
                     adm2Data={adm2Data}
                     adm3Data={adm3Data}

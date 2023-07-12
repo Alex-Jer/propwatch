@@ -23,7 +23,7 @@ export type MediaItem = {
   order: number;
 };
 
-interface AddPropertyMediaProps {
+interface PropertyFormMediaProps {
   control: Control<FormSchemaType>;
   selectedImages: File[];
   setSelectedImages: (files: File[]) => void;
@@ -37,7 +37,7 @@ interface AddPropertyMediaProps {
   setMediaToDelete: (mediaToDelete: MediaItem[]) => void;
 }
 
-export function AddPropertyMedia({
+export function PropertyFormMedia({
   control,
   selectedImages,
   setSelectedImages,
@@ -49,7 +49,7 @@ export function AddPropertyMedia({
   setMedia,
   mediaToDelete,
   setMediaToDelete,
-}: AddPropertyMediaProps) {
+}: PropertyFormMediaProps) {
   const { classes } = useStyles();
   const [previewModalOpened, { open: openPreviewModal, close: closePreviewModal }] = useDisclosure(false);
   const [confirmModalOpened, { open: openConfirmModal, close: closeConfirmModal }] = useDisclosure(false);

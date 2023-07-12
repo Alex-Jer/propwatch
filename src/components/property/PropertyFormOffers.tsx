@@ -13,7 +13,7 @@ const listingTypes = [
   { label: "Rent", value: "rent" },
 ];
 
-type AddPropertyOffersProps = {
+type PropertyFormOffersProps = {
   offers: Offer[];
   setOffers: (offers: Offer[]) => void;
   offersToDelete: Offer[];
@@ -21,13 +21,13 @@ type AddPropertyOffersProps = {
   mode?: "add" | "edit";
 };
 
-export function AddPropertyOffers({
+export function PropertyFormOffers({
   offers,
   setOffers,
   offersToDelete,
   setOffersToDelete,
   mode = "add",
-}: AddPropertyOffersProps) {
+}: PropertyFormOffersProps) {
   const [listingType, setListingType] = useState("sale");
   const [price, setPrice] = useInputState<number | "">("");
   const [priceError, setPriceError] = useState("");

@@ -38,7 +38,7 @@ const currentStatuses = [
   { value: "unknown", label: "Unknown" },
 ];
 
-type AddPropertyMainInfoProps = {
+type PropertyFormMainInfoProps = {
   tags: SelectOption[];
   collections: SelectOption[];
   tagsLoading: boolean;
@@ -49,7 +49,7 @@ type AddPropertyMainInfoProps = {
   resetField?: UseFormResetField<FormSchemaType>;
 };
 
-export function AddPropertyMainInfo({
+export function PropertyFormMainInfo({
   tags,
   collections,
   tagsLoading,
@@ -58,7 +58,7 @@ export function AddPropertyMainInfo({
   trigger,
   disabled,
   resetField,
-}: AddPropertyMainInfoProps) {
+}: PropertyFormMainInfoProps) {
   const [selectedPropertyType, setSelectedPropertyType] = useInputState("");
   const [isUndoRatingVisible, setIsUndoRatingVisible] = useState(false);
 

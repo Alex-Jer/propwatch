@@ -12,7 +12,7 @@ const formatAdmData = (data: AdministrativeDivision[]) => {
   }));
 };
 
-type AddPropertyAddressProps = {
+type PropertyFormAddressProps = {
   adm1Data: AdministrativeDivision[] | undefined;
   adm2Data: AdministrativeDivision[] | undefined;
   adm3Data: AdministrativeDivision[] | undefined;
@@ -29,7 +29,7 @@ type AddPropertyAddressProps = {
   disabled?: boolean;
 };
 
-export function AddPropertyAddress({
+export function PropertyFormAddress({
   adm1Data,
   adm2Data,
   adm3Data,
@@ -44,7 +44,7 @@ export function AddPropertyAddress({
   trigger,
   resetField,
   disabled,
-}: AddPropertyAddressProps) {
+}: PropertyFormAddressProps) {
   let adm1 = [] as SelectOption[];
   let adm2 = [] as SelectOption[];
   let adm3 = [] as SelectOption[];
