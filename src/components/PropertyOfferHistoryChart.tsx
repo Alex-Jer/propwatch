@@ -52,7 +52,15 @@ export function PropertyOfferHistoryChart({ offers, extra }: { offers: Offer[]; 
     lines.forEach((line) => {
       const rndColor = getRandomHexColor(line);
       linesArr.push(
-        <Line connectNulls type="monotone" stroke={rndColor} fill={rndColor} dataKey={line} strokeWidth={3} />
+        <Line
+          key={line}
+          connectNulls
+          type="monotone"
+          stroke={rndColor}
+          fill={rndColor}
+          dataKey={line}
+          strokeWidth={3}
+        />
       );
     });
     return linesArr;
