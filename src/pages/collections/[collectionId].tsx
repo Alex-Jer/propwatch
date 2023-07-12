@@ -167,7 +167,6 @@ const Collection: NextPage = () => {
               >
                 <PropertyCard
                   property={property}
-                  key={property.id}
                   xButton={IconX}
                   xButtonTooltip="Remove from collection"
                   executeXButton={() => removePropertyFromCollection(property.id)}
