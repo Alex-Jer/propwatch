@@ -22,6 +22,7 @@ import {
   IconTag,
   IconMapSearch,
   IconFilterOff,
+  IconFolderOff,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -163,7 +164,7 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
         className={classes.mainLink}
       >
         <div className={`${classes.mainLinkInner} ${color}`}>
-          <IconFolder size={20} className={`${classes.mainLinkIcon} ${color}`} stroke={1.5} />
+          <IconFolderOff size={20} className={`${classes.mainLinkIcon} ${color}`} stroke={1.5} />
           <p className="w-60 overflow-hidden truncate">No collection</p>
         </div>
       </UnstyledButton>
