@@ -167,9 +167,27 @@ const processSearch = (search: string, filters: FiltersOptions) => {
   let extraFields = "";
   if (search) extraFields += `&query=${encodeURIComponent(search)}`;
   if (filters.list) extraFields += `&list_id=${encodeURIComponent(filters.list)}`;
-  if (filters.adm) extraFields += `&adm_id=${encodeURIComponent(filters.adm)}`;
+  //if (filters.adm) extraFields += `&adm_id=${encodeURIComponent(filters.adm)}`;
   if (filters.include_tags) extraFields += `&include_tags=${encodeURIComponent(JSON.stringify(filters.include_tags))}`;
   if (filters.exclude_tags) extraFields += `&exclude_tags=${encodeURIComponent(JSON.stringify(filters.exclude_tags))}`;
+  if (filters.areaRange && filters.areaRange[0]) extraFields += `&area_min=${encodeURIComponent(filters.areaRange[0])}`;
+  if (filters.areaRange && filters.areaRange[1]) extraFields += `&area_max=${encodeURIComponent(filters.areaRange[1])}`;
+  if (filters.priceRange && filters.priceRange[0])
+    extraFields += `&price_min=${encodeURIComponent(filters.priceRange[0])}`;
+  if (filters.priceRange && filters.priceRange[1])
+    extraFields += `&price_max=${encodeURIComponent(filters.priceRange[1])}`;
+  if (filters.ratingRange && filters.ratingRange[0])
+    extraFields += `&rating_min=${encodeURIComponent(filters.ratingRange[0])}`;
+  if (filters.ratingRange && filters.ratingRange[1])
+    extraFields += `&rating_max=${encodeURIComponent(filters.ratingRange[1])}`;
+  if (filters.wcs) extraFields += `&wc=${filters.wcs}`;
+
+  if (filters.type) filters.type.forEach((type, idx) => (extraFields += `&type[${idx}]=${type}`));
+  if (filters.listing_type)
+    filters.listing_type.forEach((type, idx) => (extraFields += `&listing_type[${idx}]=${type}`));
+  if (filters.status) filters.status.forEach((type, idx) => (extraFields += `&status[${idx}]=${type}`));
+  if (filters.typology) filters.typology.forEach((type, idx) => (extraFields += `&typology[${idx}]=${type}`));
+
   return extraFields;
 };
 
