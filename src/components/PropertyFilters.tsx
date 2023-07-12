@@ -28,7 +28,8 @@ const propertyNominalFilters = [
 ];
 
 export function PropertyFilters({ filters, setFilters }: PropertyFiltersProps) {
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [selectedFilters, setSelectedFilters] = useDebouncedState<string[]>([], 750);
+
   useEffect(() => {
     const listingType: string[] = [];
     const listingStatus: string[] = [];
@@ -45,16 +46,13 @@ export function PropertyFilters({ filters, setFilters }: PropertyFiltersProps) {
         }
       }
     });
-    if (filters.listing_type == listingType && filters.status == listingStatus && filters.type == propertyType) return;
     setFilters({ ...filters, listing_type: listingType, status: listingStatus, type: propertyType });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilters]);
 
-  const [ratingValue, setRatingValue] = useState<[number, number]>([0, 10]);
+  const [ratingValue, setRatingValue] = useDebouncedState<[number, number]>([0, 10], 500);
 
   useEffect(() => {
-    if (filters.ratingRange && filters.ratingRange[0] == ratingValue[0] && filters.ratingRange[1] == ratingValue[1])
-      return;
     setFilters({ ...filters, ratingRange: ratingValue });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ratingValue]);
@@ -63,7 +61,6 @@ export function PropertyFilters({ filters, setFilters }: PropertyFiltersProps) {
   const [priceMax, setPriceMax] = useDebouncedState<number>(100000000, 500);
 
   useEffect(() => {
-    if (filters.priceRange && filters.priceRange[0] == priceMin && filters.priceRange[1] == priceMax) return;
     setFilters({ ...filters, priceRange: [priceMin, priceMax] });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [priceMin, priceMax]);
@@ -72,7 +69,6 @@ export function PropertyFilters({ filters, setFilters }: PropertyFiltersProps) {
   const [maxArea, setMaxArea] = useDebouncedState<number>(10000, 500);
 
   useEffect(() => {
-    if (filters.areaRange && filters.areaRange[0] == minArea && filters.areaRange[1] == maxArea) return;
     setFilters({ ...filters, areaRange: [minArea, maxArea] });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minArea, maxArea]);
@@ -80,7 +76,6 @@ export function PropertyFilters({ filters, setFilters }: PropertyFiltersProps) {
   const [bathrooms, setBathrooms] = useDebouncedState<number>(0, 500);
 
   useEffect(() => {
-    if (bathrooms == filters.wcs) return;
     setFilters({ ...filters, wcs: bathrooms });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bathrooms]);
@@ -88,7 +83,6 @@ export function PropertyFilters({ filters, setFilters }: PropertyFiltersProps) {
   const [typology, setTypology] = useDebouncedState<string[]>([], 500);
 
   useEffect(() => {
-    if (typology == filters.typology) return;
     if (typology === null) {
       setFilters({ ...filters, typology: undefined });
     } else {
@@ -103,7 +97,6 @@ export function PropertyFilters({ filters, setFilters }: PropertyFiltersProps) {
         data={propertyNominalFilters}
         size="xs"
         mb="xs"
-        value={selectedFilters}
         onChange={setSelectedFilters}
         label="Listing/Property Filter"
         placeholder="Pick some filters >w<"
