@@ -215,7 +215,7 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
       </Navbar.Section>
 
       <TextInput
-        placeholder="Search"
+        placeholder="Search by title or description"
         size="xs"
         icon={<IconSearch size="0.8rem" stroke={1.5} />}
         rightSectionWidth={70}

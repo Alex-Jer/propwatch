@@ -265,13 +265,14 @@ const fetchPropertiesInPolygon = async (
   polygon: DrawPolygon | null,
   page = 1
 ) => {
-  let extraFields = processSearch(search, filters);
-
+  let coords = "";
   if (polygon && polygon.coordinates.length > 0) {
     polygon.coordinates[0]?.forEach((coord, index) => {
-      if (coord && coord[0] && coord[1]) extraFields += `&p[${index}][x]=${coord[1]}&p[${index}][y]=${coord[0]}`;
+      if (coord && coord[0] && coord[1])
+        coords += `&p[${index}][x]=${encodeURIComponent(coord[1])}&p[${index}][y]=${encodeURIComponent(coord[0])}`;
     });
   }
+  const extraFields = coords + processSearch(search, filters);
   const response = (await makeRequest(
     `me/properties/polygon?page=${page}${extraFields}`,
     "GET",
