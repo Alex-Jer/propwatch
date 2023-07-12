@@ -33,6 +33,7 @@ import { UserButton } from "./UserButton";
 import { useEffect, useRef } from "react";
 import { PropertyFilters } from "../PropertyFilters";
 import { CreateCollectionTooltip } from "../collections/CreateCollectionTooltip";
+import { useDebouncedState } from "@mantine/hooks";
 
 type Props = {
   opened: boolean;
@@ -66,6 +67,7 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
   const { query } = useRouter();
 
   const searchInputRef = useRef(null);
+  const [clearFilters, setClearFilters] = useDebouncedState(false, 100);
 
   useEffect(() => {
     document.addEventListener("keydown", (event) => {
@@ -254,7 +256,12 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
         ref={searchInputRef}
       />
 
-      <PropertyFilters filters={filters} setFilters={setFilters} />
+      <PropertyFilters
+        filters={filters}
+        setFilters={setFilters}
+        clearFilters={clearFilters}
+        setClearFilters={setClearFilters}
+      />
 
       <Navbar.Section className={classes.section}>
         <div className={classes.mainLinks}>
@@ -263,6 +270,7 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
             onClick={() => {
               if (setSearch) setSearch("");
               setFilters({});
+              setClearFilters(true);
             }}
           >
             <div className={classes.mainLinkInner}>

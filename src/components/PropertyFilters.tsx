@@ -7,6 +7,8 @@ import type { FiltersOptions } from "~/types";
 type PropertyFiltersProps = {
   filters: FiltersOptions;
   setFilters: (filters: FiltersOptions) => void;
+  clearFilters: boolean;
+  setClearFilters: (clearFilters: boolean) => void;
 };
 
 const propertyNominalFilters = [
@@ -27,14 +29,27 @@ const propertyNominalFilters = [
   { value: "type|other", label: "Type: Other", group: "Property Type" },
 ];
 
-export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalFilters }: PropertyFiltersProps) {
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+export function PropertyFilters({
+  filters: globalFilters,
+  setFilters: setGlobalFilters,
+  clearFilters,
+  setClearFilters,
+}: PropertyFiltersProps) {
+  const [selectedFilters, setSelectedFilters] = useState<string[]>(globalFilters.listingPropertyFilters ?? []);
   const [filters, setFilters] = useDebouncedState<FiltersOptions>(globalFilters ?? {}, 500);
 
   useEffect(() => {
     setGlobalFilters({ ...globalFilters, ...filters });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
+
+  useEffect(() => {
+    if (clearFilters) {
+      setFilters({});
+      setClearFilters(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clearFilters]);
 
   useEffect(() => {
     if (selectedFilters == filters.listingPropertyFilters) return;
@@ -45,9 +60,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
   const [ratingValue, setRatingValue] = useState<[number, number] | undefined>(globalFilters.ratingRange);
 
   useEffect(() => {
-    console.log(ratingValue);
     if (ratingValue && ratingValue[0] == 0 && ratingValue[1] == 10) {
-      console.log("reset");
       setFilters({ ...filters, ratingRange: undefined });
     } else {
       setFilters({ ...filters, ratingRange: ratingValue });
