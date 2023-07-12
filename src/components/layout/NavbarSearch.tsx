@@ -146,6 +146,30 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
     );
   });
 
+  const noCollectionLink = () => {
+    const active = filters.list == "-1";
+    const color = active ? classes.active : "";
+
+    return (
+      <UnstyledButton
+        onClick={() => {
+          if (!active) {
+            setFilters({ ...filters, list: "-1" });
+          } else {
+            setFilters({ ...filters, list: undefined });
+          }
+        }}
+        key={"-1"}
+        className={classes.mainLink}
+      >
+        <div className={`${classes.mainLinkInner} ${color}`}>
+          <IconFolder size={20} className={`${classes.mainLinkIcon} ${color}`} stroke={1.5} />
+          <p className="w-60 overflow-hidden truncate">No collection</p>
+        </div>
+      </UnstyledButton>
+    );
+  };
+
   const addToList = (list: string[] | undefined, newElement: string): string[] => {
     const listReturn = list ?? [];
     listReturn.push(newElement);
@@ -255,7 +279,10 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
           </Text>
           <CreateCollectionTooltip refetch={refetch} />
         </Group>
-        <div className={classes.sectionContent}>{collectionLinks}</div>
+        <div className={classes.sectionContent}>
+          {noCollectionLink()}
+          {collectionLinks}
+        </div>
       </Navbar.Section>
 
       <Navbar.Section className={classes.section}>
