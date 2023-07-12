@@ -338,8 +338,8 @@ const Property: NextPage = () => {
         opened={delConfirmOpened}
         close={delConfirmClose}
         yesFunction={trashProperty}
-        title="Delete property"
-        text="Are you sure you want to delete this property?"
+        title="Trash property"
+        text="Are you sure you want to send this property to the trash?"
         yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
       />
@@ -407,7 +407,7 @@ const Property: NextPage = () => {
               variant="light"
               leftIcon={<IconTrash size="1rem" className="-mr-1" />}
             >
-              Delete
+              Trash
             </Button>
           </Button.Group>
           <div style={{ flex: 1 }}></div>

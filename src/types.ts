@@ -2,6 +2,7 @@ import { type UnstyledButtonProps } from "@mantine/core";
 import { type AxiosError } from "axios";
 import { type ReactNode } from "react";
 import { type PropertiesResponse } from "./hooks/useQueries";
+import { type QueryObserverResult } from "@tanstack/react-query";
 
 export type User = {
   id: string;
@@ -228,6 +229,7 @@ export type DisplayPropertiesProps = {
   isError: boolean;
   activePage: number;
   setPage: (page: number) => void;
+  refetch: () => Promise<QueryObserverResult<PropertiesResponse, unknown>>;
 };
 
 export type AxiosErrorResponse = AxiosError & {

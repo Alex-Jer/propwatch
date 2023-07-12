@@ -19,6 +19,7 @@ const Properties: NextPage<SearchPropertyProps> = ({ search, filters }) => {
     data: propData,
     isLoading,
     isError,
+    refetch,
   } = useProperties({
     session,
     status,
@@ -47,6 +48,7 @@ const Properties: NextPage<SearchPropertyProps> = ({ search, filters }) => {
         isError={isError}
         activePage={activePage}
         setPage={setPage}
+        refetch={refetch}
       />
     </>
   );

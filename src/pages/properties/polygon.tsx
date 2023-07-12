@@ -31,6 +31,7 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, filter
     data: propData,
     isLoading,
     isError,
+    refetch,
   } = usePolygonProperties({
     session,
     status,
@@ -138,6 +139,7 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, filter
         isError={isError}
         activePage={activePage}
         setPage={setPage}
+        refetch={refetch}
       />
     </>
   );
