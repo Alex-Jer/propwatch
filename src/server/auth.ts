@@ -37,11 +37,19 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    jwt({ token, user }) {
+    jwt({ token, user, session }) {
       if (user) {
         token.id = user.access_token;
         token.photo_url = user.photo_url;
       }
+
+      if (session) {
+        token.name = session.user.name;
+        token.email = session.user.email;
+        token.id = session.user.access_token;
+        token.photo_url = session.user.photo_url;
+      }
+
       return token;
     },
 
