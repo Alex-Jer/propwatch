@@ -24,7 +24,7 @@ export function HeroTitle() {
         </h1>
 
         <Text className={classes.description} color="dimmed">
-          Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.
+          Aggregate and manage properties and their offers effortlessly
         </Text>
 
         <Group className={classes.controls}>
