@@ -40,6 +40,10 @@ export function PropertyFilters({
   const [filters, setFilters] = useDebouncedState<FiltersOptions>(globalFilters ?? {}, 500);
 
   useEffect(() => {
+    if (clearFilters) {
+      setClearFilters(false);
+      return;
+    }
     if (globalFilters === filters) return;
     setGlobalFilters({ ...globalFilters, ...filters });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,6 +51,7 @@ export function PropertyFilters({
 
   useEffect(() => {
     if (clearFilters) {
+      setFilters({});
       setSelectedFilters([]);
       setActualRatingValue([0, 10]);
       setRatingValue([0, 10]);
@@ -57,8 +62,6 @@ export function PropertyFilters({
       setBathrooms(0);
       setTypology([]);
       setAddressSearch("");
-      setFilters({});
-      setClearFilters(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clearFilters]);
