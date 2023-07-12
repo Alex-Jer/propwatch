@@ -1,7 +1,7 @@
 import { MultiSelect, NumberInput, RangeSlider, Text } from "@mantine/core";
 import { useDebouncedState } from "@mantine/hooks";
 import { IconBathFilled, IconHomeSearch } from "@tabler/icons-react";
-import { Dispatch, SetStateAction, use, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import type { FiltersOptions } from "~/types";
 
 type PropertyFiltersProps = {

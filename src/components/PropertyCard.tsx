@@ -16,11 +16,13 @@ import {
   IconBed,
   IconCalendarDollar,
   IconCheck,
+  IconEye,
   IconHomeDollar,
   IconTrash,
   IconX,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { priceToString } from "~/lib/propertyHelper";
 import { makeRequest } from "~/lib/requestHelper";
@@ -35,6 +37,7 @@ interface PropertyCardProps {
   xButton?: React.ElementType;
   xButtonTooltip?: string;
   executeXButton?: () => void;
+  propIdForLink?: string;
 }
 
 export const errorNotification = (message: string, title = "Error") => {
@@ -64,9 +67,10 @@ export function PropertyCard({
   xButton: XButton,
   xButtonTooltip,
   executeXButton,
+  propIdForLink,
 }: PropertyCardProps) {
   const { classes } = useStyles();
-
+  const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -116,6 +120,13 @@ export function PropertyCard({
     return (
       <>
         <div className={`${classes.topButtons} space-x-1`}>
+          {propIdForLink && (
+            <Tooltip label="View property" color="gray" withArrow>
+              <ActionIcon color="blue" variant="filled" onClick={void router.push(`/properties/${propIdForLink}`)}>
+                <IconEye size="1.3rem" />
+              </ActionIcon>
+            </Tooltip>
+          )}
           {XButton && (
             <Tooltip label={xButtonTooltip} color="gray" withArrow>
               <ActionIcon color="red" variant="filled" onClick={executeXButton}>

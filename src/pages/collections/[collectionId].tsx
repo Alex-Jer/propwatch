@@ -4,7 +4,6 @@ import { IconCirclePlus, IconPlus, IconX } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import CardBackground from "~/components/CardBackground";
@@ -160,15 +159,14 @@ const Collection: NextPage = () => {
             : null}
           {!isLoading &&
             collection?.properties?.data.map((property: CollectionProperty) => (
-              <Link href={`/properties/${property.id}`} key={property.id}>
-                <PropertyCard
-                  property={property}
-                  key={property.id}
-                  xButton={IconX}
-                  xButtonTooltip="Remove from collection"
-                  executeXButton={() => removePropertyFromCollection(property.id)}
-                />
-              </Link>
+              <PropertyCard
+                property={property}
+                key={property.id}
+                xButton={IconX}
+                xButtonTooltip="Remove from collection"
+                executeXButton={() => removePropertyFromCollection(property.id)}
+                propIdForLink={`${property.id}`}
+              />
             ))}
         </div>
         {!isLoading && collection?.properties?.data.length === 0 && (
