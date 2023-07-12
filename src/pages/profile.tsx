@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createStyles, rem, Paper, Text, Button } from "@mantine/core";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { PasswordInput, TextInput } from "react-hook-form-mantine";
 import { z } from "zod";
@@ -17,9 +17,7 @@ import { makeRequest, processAxiosError } from "~/lib/requestHelper";
 import { useMutation } from "@tanstack/react-query";
 import { notifications } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons-react";
-import { type AxiosError } from "axios";
-import { type User } from "~/types";
-import { useRouter } from "next/router";
+import { type AxiosErrorResponse, type User } from "~/types";
 
 registerPlugin(
   FilePondPluginFileValidateType,
@@ -49,11 +47,6 @@ const changePasswordSchema = z.object({
 type EditFormSchemaType = z.infer<typeof editSchema>;
 type ChangePasswordFormSchemaType = z.infer<typeof changePasswordSchema>;
 
-const defaultEditValues: EditFormSchemaType = {
-  name: "Alexandre",
-  email: "alexandre@teste.com",
-};
-
 const defaultChangePasswordValues: ChangePasswordFormSchemaType = {
   currentPassword: "",
   newPassword: "",
@@ -63,10 +56,14 @@ const defaultChangePasswordValues: ChangePasswordFormSchemaType = {
 const Profile = () => {
   const { classes } = useStyles();
   const { data: session, update } = useSession();
-  const route = useRouter();
 
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const [avatar, setAvatar] = useState<any[]>([]);
+
+  const defaultEditValues: EditFormSchemaType = {
+    name: session?.user.name ?? "",
+    email: session?.user.email ?? "",
+  };
 
   const {
     control: editControl,
@@ -108,13 +105,7 @@ const Profile = () => {
         session.user.photo_url = res.user.photo_url;
       }
 
-      await update({
-        ...session,
-      });
-
-      console.log({ session });
-
-      /* await route.push("/properties"); */
+      await update({ ...session });
 
       notifications.show({
         title: "Profile updated",
@@ -124,15 +115,16 @@ const Profile = () => {
         autoClose: 10000,
       });
     },
-    onError: (error: AxiosError) => {
-      if (error.response?.status === 409) {
-        /* setError("title", { */
-        /*   type: "custom", */
-        /*   message: "A collection with that name already exists", */
-        /* }); */
+    onError: (error: AxiosErrorResponse) => {
+      if (error.response?.status === 422) {
+        console.log({ error });
+        setEditError("email", {
+          type: "custom",
+          message: error.response.data.message,
+        });
         return;
       }
-      processAxiosError(error, "An error occurred while creating the collection");
+      processAxiosError(error, "An error occurred while updating your profile");
     },
   });
 
