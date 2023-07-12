@@ -2,7 +2,6 @@ import { MultiSelect, NumberInput, RangeSlider, Text, TextInput } from "@mantine
 import { useDebouncedState } from "@mantine/hooks";
 import { IconBathFilled, IconHomeSearch, IconMapPinSearch } from "@tabler/icons-react";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
-import { set } from "remeda";
 import type { FiltersOptions } from "~/types";
 
 type PropertyFiltersProps = {
