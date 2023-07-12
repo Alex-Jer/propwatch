@@ -46,28 +46,25 @@ const markerIcons: { [key: string]: MarkerIconComponent } = {
 
 const Property: NextPage = () => {
   const router = useRouter();
-  const { propertyId } = router.query;
   const { classes } = useStyles();
-
   const { data: session, status } = useSession();
+
+  const { propertyId } = router.query;
   const { data: property, isLoading, isError } = useProperty({ session, status, elementId: String(propertyId ?? "") });
 
   const [coverUrl, setCoverUrl] = useState("");
   const [selectedUrl, setSelectedUrl] = useState(property?.cover_url);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [rating, setRating] = useState(0);
+  const [isCurrentCover, setIsCurrentCover] = useState(false);
+  const hasSetRatingOnce = useRef(false);
+
   const [imagesOpened, { open: openImages, close: closeImages }] = useDisclosure(false);
   const [videosOpened, { open: openVideos, close: closeVideos }] = useDisclosure(false);
   const [blueprintsOpened, { open: openBlueprints, close: closeBlueprints }] = useDisclosure(false);
-
   const [delConfirmOpened, { open: delConfirmOpen, close: delConfirmClose }] = useDisclosure(false);
 
-  const [rating, setRating] = useState(0);
-
   const photos = property?.media?.photos;
-
-  const [isCurrentCover, setIsCurrentCover] = useState(false);
-
-  const hasSetRatingOnce = useRef(false);
 
   useEffect(() => {
     if (property?.rating && !hasSetRatingOnce.current) {
@@ -99,7 +96,6 @@ const Property: NextPage = () => {
   const coordinates = property?.address?.coordinates;
 
   const renderPrice = () => {
-    if (!property) return "";
     if (!property || (!property.current_price_sale && !property.current_price_rent)) return "";
     switch (property.listing_type) {
       case "sale":
