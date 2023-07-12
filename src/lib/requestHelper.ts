@@ -1,4 +1,4 @@
-import axios, { type AxiosResponse } from "axios";
+import axios from "axios";
 import { signOut } from "next-auth/react";
 import { errorNotification } from "~/components/PropertyCard";
 import { env } from "~/env.mjs";
