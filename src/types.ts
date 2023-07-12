@@ -210,6 +210,9 @@ export type FiltersOptions = {
   status?: string[];
   ratingRange?: [number, number];
   priceRange?: [number, number];
+  areaRange?: [number, number];
+  wcs?: number;
+  typology?: string[];
 };
 
 export type SearchPropertyProps = {
