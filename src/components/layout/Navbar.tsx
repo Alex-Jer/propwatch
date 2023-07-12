@@ -5,27 +5,18 @@ import {
   Badge,
   Text,
   Group,
-  ActionIcon,
-  Tooltip,
   rem,
   MediaQuery,
   Burger,
   useMantineTheme,
-  Modal,
-  Box,
-  Button,
 } from "@mantine/core";
 import {
-  IconPlus,
   IconSelector,
   IconListNumbers,
   IconTrash,
   IconFolder,
   IconBuildingEstate,
   IconMapSearch,
-  IconCheck,
-  IconX,
-  IconAdjustmentsAlt,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -33,49 +24,16 @@ import { useRouter } from "next/router";
 import { useAllCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
 import { UserButton } from "./UserButton";
-import { useEffect } from "react";
-import { useDisclosure } from "@mantine/hooks";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { makeRequest, processAxiosError, processRequestError } from "~/lib/requestHelper";
-import { useMutation } from "@tanstack/react-query";
-import { notifications } from "@mantine/notifications";
-import { type AxiosError } from "axios";
-import { Textarea, TextInput as TextInputForm } from "react-hook-form-mantine";
+import { CreateCollectionTooltip } from "../collections/CreateCollectionTooltip";
 
 type Props = {
   opened: boolean;
   setOpened: (opened: boolean) => void;
 };
 
-type CollectionResponse = {
-  message: string;
-  data: Collection;
-};
-
-const schema = z.object({
-  title: z
-    .string()
-    .nonempty({ message: "A title is required" })
-    .min(1, { message: "Title must be at least 1 character long" })
-    .max(100, { message: "Title must be at most 100 characters long" }),
-  description: z.string().max(5000, { message: "Description must be at most 5000 characters long" }),
-});
-
-const defaultValues: FormSchemaType = {
-  title: "",
-  description: "",
-};
-
-type FormSchemaType = z.infer<typeof schema>;
-
 export function NavbarDefault({ opened, setOpened }: Props) {
   const { classes } = useStyles();
   const theme = useMantineTheme();
-
-  const [newCollectionModalOpened, { open: openNewCollectionModal, close: closeNewCollectionModal }] =
-    useDisclosure(false);
 
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -102,7 +60,6 @@ export function NavbarDefault({ opened, setOpened }: Props) {
     },
     { icon: IconMapSearch, url: "/properties/polygon", label: "Map search" },
     { icon: IconTrash, url: "/properties/trash", label: "Trash" },
-    { icon: IconAdjustmentsAlt, url: "/manage", label: "Control panel" },
   ];
 
   const mainLinks = links.map((link) => {
@@ -135,87 +92,8 @@ export function NavbarDefault({ opened, setOpened }: Props) {
     </Link>
   ));
 
-  const { control, handleSubmit, reset, setError } = useForm<FormSchemaType>({
-    resolver: zodResolver(schema),
-    defaultValues,
-  });
-
-  const newCollection = async (data: FormSchemaType) => {
-    const formData = new FormData();
-
-    formData.append("name", data.title);
-
-    if (data.description) {
-      formData.append("description", data.description);
-    }
-
-    return (await makeRequest(
-      "me/lists",
-      "POST",
-      session?.user.access_token,
-      formData,
-      false,
-      false
-    )) as Promise<CollectionResponse>;
-  };
-
-  const { mutate } = useMutation({
-    mutationFn: newCollection,
-    onSuccess: () => {
-      reset(defaultValues);
-      closeNewCollectionModal();
-      refetch().then().catch(null);
-      notifications.show({
-        title: "Collection created",
-        message: "Collection created successfully",
-        color: "teal",
-        icon: <IconCheck size="1.5rem" />,
-        autoClose: 10000,
-      });
-    },
-    onError: (error: AxiosError) => {
-      if (error.response?.status === 409) {
-        setError("title", {
-          type: "custom",
-          message: "A collection with that name already exists",
-        });
-        return;
-      }
-
-      processAxiosError(error, "An error occurred while creating the collection");
-
-      /*notifications.show({
-        title: "Error",
-        message: "An error occurred while creating the collection",
-        color: "red",
-        icon: <IconX size="1.5rem" />,
-        autoClose: 10000,
-      });*/
-    },
-  });
-
   return (
     <>
-      <Modal opened={newCollectionModalOpened} onClose={closeNewCollectionModal} title="New Collection">
-        <form
-          /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-          onSubmit={handleSubmit(
-            (data) => mutate(data),
-            (error) => {
-              console.log({ error });
-            }
-          )}
-        >
-          <Box maw={320} mx="auto">
-            <TextInputForm label="Title" name="title" control={control} mb="xs" withAsterisk />
-            <Textarea label="Description" name="description" control={control} autosize minRows={2} maxRows={4} />
-
-            <Group position="center" mt="lg">
-              <Button type="submit">Create Collection</Button>
-            </Group>
-          </Box>
-        </form>
-      </Modal>
       <Navbar width={{ sm: 300 }} p="md" pt={0} className={classes.navbar} hiddenBreakpoint="sm" hidden={!opened}>
         <MediaQuery largerThan="sm" styles={{ display: "none" }}>
           <Burger opened={opened} onClick={() => setOpened(!opened)} size="sm" color={theme.colors.gray[6]} mr="xl" />
@@ -238,11 +116,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
             <Text size="xs" weight={500} color="dimmed">
               My Collections
             </Text>
-            <Tooltip color="gray" label="Create collection" withArrow position="right">
-              <ActionIcon variant="default" size={18} onClick={openNewCollectionModal}>
-                <IconPlus size="0.8rem" stroke={1.5} />
-              </ActionIcon>
-            </Tooltip>
+            <CreateCollectionTooltip refetch={refetch} />
           </Group>
           <div className={classes.sectionContent}>{collectionLinks}</div>
         </Navbar.Section>

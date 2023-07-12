@@ -7,8 +7,6 @@ import {
   Badge,
   Text,
   Group,
-  ActionIcon,
-  Tooltip,
   rem,
   MediaQuery,
   Burger,
@@ -16,7 +14,6 @@ import {
 } from "@mantine/core";
 import {
   IconSearch,
-  IconPlus,
   IconSelector,
   IconListNumbers,
   IconTrash,
@@ -33,8 +30,8 @@ import { useSidebarCollections, useTagsSidebar } from "~/hooks/useQueries";
 import type { FiltersOptions, Collection, Tag } from "~/types";
 import { UserButton } from "./UserButton";
 import { useEffect, useRef } from "react";
-import { IconAdjustmentsAlt } from "@tabler/icons-react";
 import { PropertyFilters } from "../PropertyFilters";
+import { CreateCollectionTooltip } from "../collections/CreateCollectionTooltip";
 
 type Props = {
   opened: boolean;
@@ -47,6 +44,7 @@ type Props = {
 export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters }: Props) {
   const { classes } = useStyles();
   const theme = useMantineTheme();
+
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -54,6 +52,7 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
     data: colData,
     isLoading: isLoadingCollections,
     isError: isErrorCollection,
+    refetch,
   } = useSidebarCollections({ session, status });
 
   const collections = colData?.data;
@@ -96,7 +95,6 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
     },
     { icon: IconMapSearch, url: "/properties/polygon", label: "Map search" },
     { icon: IconTrash, url: "/properties/trash", label: "Trash" },
-    { icon: IconAdjustmentsAlt, url: "/manage", label: "Control panel" },
   ];
 
   const mainLinks = links.map((link) => {
@@ -255,11 +253,7 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
           <Text size="xs" weight={500} color="dimmed">
             My Collections
           </Text>
-          <Tooltip color="gray" label="Create collection" withArrow position="right">
-            <ActionIcon variant="default" size={18}>
-              <IconPlus size="0.8rem" stroke={1.5} />
-            </ActionIcon>
-          </Tooltip>
+          <CreateCollectionTooltip refetch={refetch} />
         </Group>
         <div className={classes.sectionContent}>{collectionLinks}</div>
       </Navbar.Section>

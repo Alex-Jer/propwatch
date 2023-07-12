@@ -1,6 +1,7 @@
 import { UnstyledButton, Group, Avatar, Text, createStyles, Menu } from "@mantine/core";
-import { IconChevronRight, IconLogout } from "@tabler/icons-react";
+import { IconAdjustmentsAlt, IconChevronRight, IconLogout } from "@tabler/icons-react";
 import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { logout } from "~/lib/requestHelper";
 import { type UserButtonProps } from "~/types";
@@ -27,7 +28,7 @@ export function UserButton({ image, name, icon, ...others }: UserButtonProps) {
     if (!session) return;
     await signOut({ redirect: false });
     await logout(session.user.access_token);
-    await router.push("/");
+    await router.push("/auth/login");
   };
 
   return (
@@ -49,8 +50,12 @@ export function UserButton({ image, name, icon, ...others }: UserButtonProps) {
           </UnstyledButton>
         </Menu.Target>
         <Menu.Dropdown>
+          <Menu.Label>Settings</Menu.Label>
+          <Link href="/manage">
+            <Menu.Item icon={<IconAdjustmentsAlt size="1rem" stroke={1.5} />}>Control Panel</Menu.Item>
+          </Link>
           <Menu.Label>Account</Menu.Label>
-          <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />} onClick={() => void handleLogout()}>
+          <Menu.Item icon={<IconLogout size="1rem" stroke={1.5} />} onClick={() => void handleLogout()}>
             Logout
           </Menu.Item>
         </Menu.Dropdown>

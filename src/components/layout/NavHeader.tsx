@@ -35,28 +35,17 @@ export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProp
     if (session) {
       return (
         <>
-          {/*<Button
-            className="mr-1"
-            color="gray"
-            onClick={() => {
-              //TODO: remove this
-              void router.push("/manage/collections");
-            }}
-            leftIcon={<IconAlertTriangle size="1rem" className="-mr-1" />}
-          >
-            Temporary
-          </Button>*/}
-          <Button
-            className="mr-1"
-            color="gray"
-            onClick={() => {
-              //HACK: Go to search page
-              void router.push("/properties");
-            }}
-            leftIcon={<IconSearch size="1rem" className="-mr-1" />}
-          >
-            Search
-          </Button>
+          {router.pathname !== "/properties" ? (
+            <Link href="/properties" passHref>
+              <Button className="mr-1" color="gray" leftIcon={<IconSearch size="1rem" className="-mr-1" />}>
+                Search Mode
+              </Button>
+            </Link>
+          ) : (
+            <Button className="mr-1" color="gray" leftIcon={<IconSearch size="1rem" className="-mr-1" />} disabled>
+              Search Mode
+            </Button>
+          )}
           <Button onClick={openDrawer} leftIcon={<IconHomePlus size="1rem" className="-mr-1" />}>
             Add Property
           </Button>

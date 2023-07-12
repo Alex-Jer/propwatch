@@ -1,36 +1,7 @@
-import {
-  createStyles,
-  Navbar,
-  UnstyledButton,
-  Badge,
-  Text,
-  Group,
-  ActionIcon,
-  Tooltip,
-  rem,
-  MediaQuery,
-  Burger,
-  useMantineTheme,
-  Modal,
-  Box,
-  Button,
-} from "@mantine/core";
-import {
-  IconPlus,
-  IconSelector,
-  IconListNumbers,
-  IconTrash,
-  IconFolder,
-  IconBuildingEstate,
-  IconMapSearch,
-  IconCheck,
-  IconX,
-} from "@tabler/icons-react";
+import { Group, Modal, Box, Button } from "@mantine/core";
+import { IconCheck } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { type Collection } from "~/types";
-import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -70,7 +41,7 @@ type EditCollectionProps = {
 };
 
 export function EditCollection({ collection: collectionInput, collections, modalOpened, close }: EditCollectionProps) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const [defaultValues, setDefaultValues] = useState<FormSchemaType>(defaultDefaultValues);
 
@@ -147,16 +118,7 @@ export function EditCollection({ collection: collectionInput, collections, modal
         });
         return;
       }
-
       processAxiosError(error, "An error occurred while editing the collection");
-
-      /*notifications.show({
-        title: "Error",
-        message: "An error occurred while editing the collection",
-        color: "red",
-        icon: <IconX size="1.5rem" />,
-        autoClose: 10000,
-      });*/
     },
   });
 
