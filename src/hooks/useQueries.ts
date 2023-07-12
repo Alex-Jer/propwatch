@@ -182,10 +182,11 @@ const processSearch = (search: string, filters: FiltersOptions) => {
     extraFields += `&rating_max=${encodeURIComponent(filters.ratingRange[1])}`;
   if (filters.wcs) extraFields += `&wc=${filters.wcs}`;
 
-  if (filters.type) extraFields += `&type=${encodeURIComponent(JSON.stringify(filters.type))}`;
-  if (filters.listing_type) extraFields += `&listing_type=${encodeURIComponent(JSON.stringify(filters.listing_type))}`;
-  if (filters.status) extraFields += `&status=${encodeURIComponent(JSON.stringify(filters.status))}`;
-  if (filters.typology) extraFields += `&typology=${encodeURIComponent(JSON.stringify(filters.typology))}`;
+  if (filters.type) filters.type.forEach((type, idx) => (extraFields += `&type[${idx}]=${type}`));
+  if (filters.listing_type)
+    filters.listing_type.forEach((type, idx) => (extraFields += `&listing_type[${idx}]=${type}`));
+  if (filters.status) filters.status.forEach((type, idx) => (extraFields += `&status[${idx}]=${type}`));
+  if (filters.typology) filters.typology.forEach((type, idx) => (extraFields += `&typology[${idx}]=${type}`));
 
   return extraFields;
 };
