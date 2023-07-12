@@ -419,8 +419,12 @@ const Property: NextPage = () => {
         {renderHeader(property)}
         <div className="-ml-6 -mr-6 -mt-2 mb-4 border-b border-shark-700 pb-4" />
         <PropertyAccordion property={property} />
-        <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
-        {coordinates && <>{renderMap()}</>}
+        {coordinates?.longitude && coordinates?.latitude && (
+          <>
+            <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
+            {renderMap()}
+          </>
+        )}
       </CardBackground>
     </>
   );

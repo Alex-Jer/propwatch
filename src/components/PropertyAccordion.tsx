@@ -232,6 +232,26 @@ export function PropertyAccordion({ property }: { property: Property }) {
       disabled: !propertyDetailsResume(property),
     },
     {
+      id: "address",
+      icon: IconMapPin,
+      label: "Address",
+      description: completeAddress(property.address),
+      content: (
+        <>
+          <div style={{ display: "flex", flexWrap: "wrap", gridGap: "2rem" }}>
+            {/* TODO: MANTER ESTA ORDEM?? */}
+            <LabelAndValue label="District" value={property.address.adm1?.toString()} />
+            <LabelAndValue label="Municipality" value={property.address.adm2?.toString()} />
+            <LabelAndValue label="Parish" value={property.address.adm3?.toString()} />
+            <LabelAndValue label="Postal Code" value={property.address.postal_code?.toString()} />
+            <LabelAndValue label="Street Address" value={property.address.full_address?.toString()} />
+            <LabelAndValue label="Latitude" value={property.address.coordinates?.latitude?.toString()} />
+            <LabelAndValue label="Longitude" value={property.address.coordinates?.longitude?.toString()} />
+          </div>
+        </>
+      ),
+    },
+    {
       id: "offers",
       icon: IconChartLine,
       label: "Offers",
@@ -286,26 +306,6 @@ export function PropertyAccordion({ property }: { property: Property }) {
         </>
       ),
       disabled: property.offers.sale.length + property.offers.rent.length === 0,
-    },
-    {
-      id: "address",
-      icon: IconMapPin,
-      label: "Address",
-      description: completeAddress(property.address),
-      content: (
-        <>
-          <div style={{ display: "flex", flexWrap: "wrap", gridGap: "2rem" }}>
-            {/* TODO: MANTER ESTA ORDEM?? */}
-            <LabelAndValue label="District" value={property.address.adm1?.toString()} />
-            <LabelAndValue label="Municipality" value={property.address.adm2?.toString()} />
-            <LabelAndValue label="Parish" value={property.address.adm3?.toString()} />
-            <LabelAndValue label="Postal Code" value={property.address.postal_code?.toString()} />
-            <LabelAndValue label="Street Address" value={property.address.full_address?.toString()} />
-            <LabelAndValue label="Latitude" value={property.address.coordinates?.latitude?.toString()} />
-            <LabelAndValue label="Longitude" value={property.address.coordinates?.longitude?.toString()} />
-          </div>
-        </>
-      ),
     },
   ];
 
