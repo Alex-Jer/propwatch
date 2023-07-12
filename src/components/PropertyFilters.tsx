@@ -2,6 +2,7 @@ import { MultiSelect, NumberInput, RangeSlider, Text, TextInput } from "@mantine
 import { useDebouncedState } from "@mantine/hooks";
 import { IconBathFilled, IconHomeSearch, IconMapPinSearch } from "@tabler/icons-react";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { set } from "remeda";
 import type { FiltersOptions } from "~/types";
 
 type PropertyFiltersProps = {
@@ -46,6 +47,16 @@ export function PropertyFilters({
 
   useEffect(() => {
     if (clearFilters) {
+      setSelectedFilters([]);
+      setActualRatingValue([0, 10]);
+      setRatingValue([0, 10]);
+      setPriceMin(0);
+      setPriceMax(0);
+      setMinArea(0);
+      setMaxArea(0);
+      setBathrooms(0);
+      setTypology([]);
+      setAddressSearch("");
       setFilters({});
       setClearFilters(false);
     }
@@ -58,6 +69,7 @@ export function PropertyFilters({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilters]);
 
+  const [actualRatingValue, setActualRatingValue] = useState<[number, number] | undefined>(globalFilters.ratingRange);
   const [ratingValue, setRatingValue] = useState<[number, number] | undefined>(globalFilters.ratingRange);
 
   useEffect(() => {
@@ -69,23 +81,23 @@ export function PropertyFilters({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ratingValue]);
 
-  const [minPrice, setPriceMin] = useState<number | undefined>(globalFilters.minPrice);
-  const [maxPrice, setPriceMax] = useState<number | undefined>(globalFilters.maxPrice);
+  const [minPrice, setPriceMin] = useState<number | undefined>(globalFilters.minPrice ?? 0);
+  const [maxPrice, setPriceMax] = useState<number | undefined>(globalFilters.maxPrice ?? 0);
 
   useEffect(() => {
     setFilters({ ...filters, minPrice, maxPrice });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minPrice, maxPrice]);
 
-  const [minArea, setMinArea] = useState<number | undefined>(globalFilters.minArea);
-  const [maxArea, setMaxArea] = useState<number | undefined>(globalFilters.maxArea);
+  const [minArea, setMinArea] = useState<number | undefined>(globalFilters.minArea ?? 0);
+  const [maxArea, setMaxArea] = useState<number | undefined>(globalFilters.maxArea ?? 0);
 
   useEffect(() => {
     setFilters({ ...filters, minArea, maxArea });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minArea, maxArea]);
 
-  const [bathrooms, setBathrooms] = useState<number | undefined>(globalFilters.wcs ?? undefined);
+  const [bathrooms, setBathrooms] = useState<number | undefined>(globalFilters.wcs ?? 0);
 
   useEffect(() => {
     setFilters({ ...filters, wcs: bathrooms });
@@ -127,6 +139,7 @@ export function PropertyFilters({
         size="xs"
         mb="xs"
         defaultValue={globalFilters.listingPropertyFilters ?? []}
+        value={selectedFilters}
         onChange={setSelectedFilters}
         label="Listing/Property Filter"
         placeholder="Pick some filters >w<"
@@ -140,11 +153,13 @@ export function PropertyFilters({
         mb="xs"
         label={(value) => (value / 2).toFixed(1).replace(".0", "").replace(".5", ",5")}
         defaultValue={globalFilters.ratingRange}
+        value={actualRatingValue}
         minRange={0}
         maxRange={10}
         marks={[{ value: 0 }, { value: 2 }, { value: 4 }, { value: 6 }, { value: 8 }, { value: 10 }]}
         min={0}
         max={10}
+        onChange={setActualRatingValue}
         onChangeEnd={setRatingValue}
       />
       <div className="grid grid-cols-2 gap-4">
@@ -152,16 +167,19 @@ export function PropertyFilters({
           mb="xs"
           size="xs"
           label="Minimum price"
-          defaultValue={globalFilters.minPrice}
+          defaultValue={globalFilters.minPrice ?? 0}
           stepHoldDelay={500}
           step={1000}
           min={0}
           max={1000000000}
+          value={minPrice}
           onChange={(v) => numberInputOverride(v, setPriceMin)}
           stepHoldInterval={(t) => Math.max(1000 / t ** 2, 25)}
           parser={(value) => value.replace(/(\.*)/g, "")}
           formatter={(value) =>
-            !Number.isNaN(parseFloat(value)) ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") : ""
+            !Number.isNaN(parseFloat(value)) && parseInt(value) != 0
+              ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")
+              : ""
           }
           icon="€"
         />
@@ -169,16 +187,19 @@ export function PropertyFilters({
           mb="xs"
           size="xs"
           label="Maximum price"
-          defaultValue={globalFilters.maxPrice}
+          defaultValue={globalFilters.maxPrice ?? 0}
           stepHoldDelay={500}
           step={1000}
+          value={maxPrice}
           onChange={(v) => numberInputOverride(v, setPriceMax)}
           min={0}
           max={1000000000}
           stepHoldInterval={(t) => Math.max(1000 / t ** 2, 25)}
           parser={(value) => value.replace(/(\.*)/g, "")}
           formatter={(value) =>
-            !Number.isNaN(parseFloat(value)) ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".") : ""
+            !Number.isNaN(parseFloat(value)) && parseInt(value) != 0
+              ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")
+              : ""
           }
           icon="€"
         />
@@ -188,26 +209,30 @@ export function PropertyFilters({
           mb="xs"
           size="xs"
           label="Minimum area"
-          defaultValue={globalFilters.minArea}
+          defaultValue={globalFilters.minArea ?? 0}
           stepHoldDelay={500}
           step={10}
           min={0}
           max={10000}
+          value={minArea}
           onChange={(v) => numberInputOverride(v, setMinArea)}
           stepHoldInterval={(t) => Math.max(1000 / t ** 2, 25)}
+          formatter={(value) => (parseInt(value) != 0 ? value : "")}
           icon="m²"
         />
         <NumberInput
           mb="xs"
           size="xs"
           label="Maximum area"
-          defaultValue={globalFilters.maxArea}
+          defaultValue={globalFilters.maxArea ?? 0}
           stepHoldDelay={500}
           step={10}
           min={0}
           max={10000}
+          value={maxArea}
           onChange={(v) => numberInputOverride(v, setMaxArea)}
           stepHoldInterval={(t) => Math.max(1000 / t ** 2, 25)}
+          formatter={(value) => (parseInt(value) != 0 ? value : "")}
           icon="m²"
         />
       </div>
@@ -228,6 +253,7 @@ export function PropertyFilters({
             { value: "T5", label: "T5" },
             { value: "T6+", label: "T6+" },
           ]}
+          value={typology}
           onChange={setTypology}
         />
         <NumberInput
@@ -235,13 +261,14 @@ export function PropertyFilters({
           size="xs"
           label="Number of Bathrooms"
           placeholder="Bathrooms"
-          defaultValue={globalFilters.wcs ?? undefined}
-          value={bathrooms}
+          defaultValue={globalFilters.wcs ?? 0}
           icon={<IconBathFilled size="1rem" />}
           min={0}
           stepHoldDelay={500}
+          value={bathrooms}
           onChange={(v) => numberInputOverride(v, setBathrooms)}
           stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
+          formatter={(value) => (parseInt(value) != 0 ? value : "")}
         />
       </div>
       <TextInput
