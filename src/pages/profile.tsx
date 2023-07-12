@@ -108,9 +108,13 @@ const Profile = () => {
         session.user.photo_url = res.user.photo_url;
       }
 
-      await route.push("/properties");
+      await update({
+        ...session,
+      });
 
       console.log({ session });
+
+      /* await route.push("/properties"); */
 
       notifications.show({
         title: "Profile updated",
