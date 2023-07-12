@@ -1,19 +1,10 @@
-import axios, { AxiosError } from "axios";
+import axios, { type AxiosResponse } from "axios";
 import { signOut } from "next-auth/react";
 import { errorNotification } from "~/components/PropertyCard";
 import { env } from "~/env.mjs";
-import { type User } from "~/types";
+import { type AxiosErrorResponse, type User } from "~/types";
 
 const API_URL = env.NEXT_PUBLIC_API_URL;
-
-// const checkForAuthError = (res, storedToken) => {
-//   if (res.status === 444 && storedToken) {
-//     // When the user was suppoused to be logged in, but is not. Then "logout".
-//     // Example: token revoked, token expired, blocked account, etc.
-//     const userStore = useUserStore();
-//     userStore.clearUser();
-//   }
-// };
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -49,7 +40,7 @@ export const makeRequest = async (
 
   const url = `${API_URL}/api/${route}`;
 
-  let res;
+  let res: AxiosResponse<LoginResponseData | LogoutResponseData | undefined> | null = null;
 
   switch (method) {
     case "POST":
@@ -60,8 +51,6 @@ export const makeRequest = async (
         res = await axios.put(url, formData, { headers });
         break;
       }
-      /* eslint-disable-next-line no-param-reassign */
-      // formData._method = method.toUpperCase();
       formData.append("_method", method.toUpperCase());
       res = await axios.post(url, formData, { headers });
       break;
@@ -70,8 +59,6 @@ export const makeRequest = async (
         res = await axios.patch(url, formData, { headers });
         break;
       }
-      /* eslint-disable-next-line no-param-reassign */
-      // formData._method = method.toUpperCase();
       formData.append("_method", method.toUpperCase());
       res = await axios.post(url, formData, { headers });
       break;
@@ -91,7 +78,6 @@ export const makeRequest = async (
   }
 
   if (res) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     if ((res.status >= 200 && res.status < 300) || !manageErrors) return res.data;
 
     switch (res.status) {
@@ -127,7 +113,7 @@ export const processRequestError = (error: Error) => {
   errorNotification(error.message);
 };
 
-export const processAxiosError = (error: AxiosError, defaultError = "An unknown error has occurred") => {
+export const processAxiosError = (error: AxiosErrorResponse, defaultError = "An unknown error has occurred") => {
   if ((error.response?.status == 422 || error.response?.status == 400) && error.response?.data?.message)
     errorNotification(error.response.data.message);
   else if (error.response?.status == 401 || error.response?.status == 444) {
@@ -150,7 +136,6 @@ export const login = async (email: string, password: string, deviceName: string)
   };
 
   const res = await axios.post(url, formData, { headers });
-
   return res.data as LoginResponseData;
 };
 
@@ -162,9 +147,6 @@ export const logout = async (accessToken: string) => {
   };
 
   const res = await axios.delete(url, { headers });
-
-  console.log("res.data", res.data);
-
   return res.data as LogoutResponseData;
 };
 
@@ -190,7 +172,6 @@ export const register = async (
   };
 
   const res = await axios.post(url, formData, { headers });
-
   return res.data as LoginResponseData;
 };
 
@@ -198,22 +179,6 @@ export const pageRequest = async (pageUrl: string) => {
   const headers = {
     Accept: "application/json",
   };
-
   const res = await axios.get(pageUrl, { headers });
-
-  // checkForAuthError(res, storedToken);
-
   return res;
 };
-
-// export const processGeneralError = (error, model) => {
-//   const actualError = error.response ? error.response : error;
-//   if (!actualError.status) {
-//     toast.error("Couldn't connect to the server! Please try again later.");
-//     return;
-//   }
-//   const capitalModel = model.charAt(0).toUpperCase() + model.slice(1);
-//   if (actualError.status === 404) {toast.error(`${capitalModel} was not found!`);
-//   else if (actualError.data?.message) toast.error(actualError.data.message);
-//   else toast.error("An unknown server error has occurred!");
-// };
