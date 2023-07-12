@@ -23,7 +23,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
   const isAppRoute = router.pathname !== "/" && router.pathname !== "/403" && !router.pathname.startsWith("/auth");
 
   const [search, setSearch] = useDebouncedState("", 300);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useDebouncedState({}, 100);
 
   const isPropertySearch: boolean | undefined = Component == Properties || Component == SearchPolygonProperties;
 
