@@ -40,7 +40,7 @@ export const makeRequest = async (
 
   const url = `${API_URL}/api/${route}`;
 
-  let res: AxiosResponse<LoginResponseData | LogoutResponseData | undefined> | null = null;
+  let res = null;
 
   switch (method) {
     case "POST":
