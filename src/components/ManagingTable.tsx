@@ -132,11 +132,10 @@ export function ManagingTable<T extends { id: any }>({
       onClick={open}
       color="red"
       variant="filled"
-      className="mt-2"
       disabled={selectedRecords.length == 0}
       leftIcon={<IconTrash size="1rem" className="-mr-1" />}
     >
-      Delete selected records
+      Delete selected
     </Button>
   );
 
@@ -152,10 +151,10 @@ export function ManagingTable<T extends { id: any }>({
         noBtn={{ text: "Cancel", variant: "default" }}
       />
 
-      <Group className="flex">
-        <h1 className="mb-2">{title}</h1>
-        <div className="absolute right-10">{deleteMultipleFunction && renderDeleteMultipleRecordsBtn()}</div>
-      </Group>
+      <div className="mb-6 flex justify-between">
+        <h1>{title}</h1>
+        <div className="mt-2">{deleteMultipleFunction && renderDeleteMultipleRecordsBtn()}</div>
+      </div>
 
       <DataTable
         withBorder={false}
