@@ -1,4 +1,4 @@
-import { ActionIcon, Group, MultiSelect, Pagination, Text } from "@mantine/core";
+import { ActionIcon, Group, MultiSelect, Pagination, Text, UnstyledButton } from "@mantine/core";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { IconCirclePlus, IconPlus, IconX } from "@tabler/icons-react";
 import { type NextPage } from "next";
@@ -19,7 +19,6 @@ const Collection: NextPage = () => {
   const { collectionId } = router.query;
 
   const { data: session, status } = useSession();
-
   const [searchValue, onSearchChange] = useState("");
   const [queryValue, setQueryValue] = useDebouncedState("", 500);
   const [propsToAdd, setPropsToAdd] = useState<string[]>([]);
@@ -159,14 +158,21 @@ const Collection: NextPage = () => {
             : null}
           {!isLoading &&
             collection?.properties?.data.map((property: CollectionProperty) => (
-              <PropertyCard
-                property={property}
+              <UnstyledButton
+                className="z-10"
+                onClick={() => {
+                  void router.push(`/properties/${property.id}`);
+                }}
                 key={property.id}
-                xButton={IconX}
-                xButtonTooltip="Remove from collection"
-                executeXButton={() => removePropertyFromCollection(property.id)}
-                propIdForLink={`${property.id}`}
-              />
+              >
+                <PropertyCard
+                  property={property}
+                  key={property.id}
+                  xButton={IconX}
+                  xButtonTooltip="Remove from collection"
+                  executeXButton={() => removePropertyFromCollection(property.id)}
+                />
+              </UnstyledButton>
             ))}
         </div>
         {!isLoading && collection?.properties?.data.length === 0 && (
