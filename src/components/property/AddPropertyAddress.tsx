@@ -131,7 +131,7 @@ export function AddPropertyAddress({
         <TextInput
           name="coordinates"
           label="Coordinates"
-          placeholder="38.69793338600741, -9.20669997333539"
+          placeholder="38.6981, -9.20577"
           control={control}
           icon={<IconWorld size="1rem" />}
           disabled={disabled}

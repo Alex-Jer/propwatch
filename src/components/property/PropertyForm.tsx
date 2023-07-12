@@ -195,7 +195,6 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     wc: property.wc || "",
     tags: [],
     lists: [],
-    // TODO: images, bps, videos
     images: [],
     blueprints: [],
     videos: [],
@@ -207,9 +206,10 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       : [{ name: "", type: "numerical", value: "" }],
     full_address: property.address?.full_address || "",
     postal_code: property.address?.postal_code || "",
-    coordinates: property.address?.coordinates
-      ? `${property.address.coordinates.latitude},${property.address.coordinates.longitude}`
-      : "",
+    coordinates:
+      property.address?.coordinates?.latitude && property.address?.coordinates?.longitude
+        ? `${property.address.coordinates.latitude},${property.address.coordinates.longitude}`
+        : "",
     adm1_id: null,
     adm2_id: null,
     adm3_id: null,

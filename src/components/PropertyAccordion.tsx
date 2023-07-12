@@ -47,6 +47,7 @@ export type AccordionItem = {
   description: string;
   content: string | ReactNode;
   open?: boolean;
+  disabled?: boolean;
 };
 
 function LabelAndValue({ label, value }: { label: string; value: string | undefined }) {
@@ -211,7 +212,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
       id: "details",
       icon: IconListDetails,
       label: "Property Details",
-      description: propertyDetailsResume(property),
+      description: propertyDetailsResume(property) || "No details available",
       content: (
         <>
           <div style={{ display: "flex", flexWrap: "wrap", gridGap: "2rem" }}>
@@ -230,6 +231,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
         </>
       ),
       open: true,
+      disabled: !propertyDetailsResume(property),
     },
     {
       id: "offers",
@@ -238,25 +240,29 @@ export function PropertyAccordion({ property }: { property: Property }) {
       description: generateOffersDescription(property),
       content: (
         <>
-          <DataTable
-            withBorder={false}
-            borderRadius="md"
-            columns={offerTableColumns}
-            records={offerRecords}
-            sortStatus={offersSortStatus}
-            onSortStatusChange={setOffersSortStatus}
-          />
+          {offerRecords.length > 0 && (
+            <DataTable
+              withBorder={false}
+              borderRadius="md"
+              columns={offerTableColumns}
+              records={offerRecords}
+              sortStatus={offersSortStatus}
+              onSortStatusChange={setOffersSortStatus}
+            />
+          )}
         </>
       ),
+      disabled: property.offers.sale.length + property.offers.rent.length === 0,
     },
     {
       id: "offers_history",
       icon: IconChartInfographic,
       label: "Offers' Price History",
       description:
-        "View the price history of " +
-        ((property?.offers?.sale?.length ?? 0) + (property?.offers?.rent?.length ?? 0)).toString() +
-        " offers",
+        property.offers.sale.length + property.offers.rent.length === 0
+          ? "This property has no offers"
+          : `View the price history of ${property.offers.sale.length + property.offers.rent.length} offers`,
+
       content: (
         <>
           {property.offers.sale.length > 0 && (
@@ -281,6 +287,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
           )}
         </>
       ),
+      disabled: property.offers.sale.length + property.offers.rent.length === 0,
     },
     {
       id: "address",
@@ -306,7 +313,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
 
   const items = itemList.map((item) => (
     <Accordion.Item value={item.id} key={item.label}>
-      <Accordion.Control>
+      <Accordion.Control disabled={item.disabled}>
         <AccordionLabel {...item} />
       </Accordion.Control>
       <Accordion.Panel>{item.content}</Accordion.Panel>

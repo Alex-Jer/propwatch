@@ -207,7 +207,7 @@ export function AddPropertyMedia({
               }}
               labelIdle="Drag & Drop your blueprints or <span class='filepond--label-action'>click to browse</span>"
               allowMultiple={true}
-              acceptedFileTypes={["image/jpeg", "image/png", "image/webp", "application/pdf"]}
+              acceptedFileTypes={["image/jpeg", "image/png", "image/webp"]}
             />
           )}
         />
