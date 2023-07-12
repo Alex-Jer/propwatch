@@ -100,6 +100,7 @@ const Property: NextPage = () => {
 
   const renderPrice = () => {
     if (!property) return "";
+    if (!property || (!property.current_price_sale && !property.current_price_rent)) return "";
     switch (property.listing_type) {
       case "sale":
         return (
