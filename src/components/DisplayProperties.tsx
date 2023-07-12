@@ -4,7 +4,7 @@ import { IconTrash, IconX } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { PropertyCard } from "~/components/PropertyCard";
+import { PropertyCard, errorNotification, successNotification } from "~/components/PropertyCard";
 import { generateLoadingElements } from "~/lib/propertyHelper";
 import { makeRequest } from "~/lib/requestHelper";
 import type { CollectionProperty, DisplayPropertiesProps } from "~/types";
@@ -29,10 +29,7 @@ export function DisplayProperties({ propData, isLoading, isError, activePage, se
     if (!propId) return;
     makeRequest(`me/properties/${propId}`, "DELETE", session?.user.access_token)
       .then(() => {
-        const sendSuccess = () => {
-          successNotification("This property has been sent to trash!", "Property deleted");
-        };
-        router.push("/properties").then(sendSuccess).catch(sendSuccess); //TODO: Should we redirect to trash?
+        successNotification("This property has been sent to trash!", "Property deleted");
       })
       .catch(() => {
         errorNotification("An unknown error occurred while trying to delete this property.");
