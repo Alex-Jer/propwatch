@@ -71,7 +71,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minArea, maxArea]);
 
-  const [bathrooms, setBathrooms] = useState<number | undefined>(globalFilters.wcs ?? 0);
+  const [bathrooms, setBathrooms] = useState<number | undefined>(globalFilters.wcs ?? undefined);
 
   useEffect(() => {
     setFilters({ ...filters, wcs: bathrooms });
@@ -92,7 +92,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
   const [addressSearch, setAddressSearch] = useState<string | undefined>(globalFilters.addressSearch ?? undefined);
 
   useEffect(() => {
-    if (!addressSearch) {
+    if (!addressSearch || addressSearch === "") {
       setFilters({ ...filters, addressSearch: undefined });
     } else {
       setFilters({ ...filters, addressSearch });
@@ -221,7 +221,8 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           size="xs"
           label="Number of Bathrooms"
           placeholder="Bathrooms"
-          defaultValue={globalFilters.wcs ?? 0}
+          defaultValue={globalFilters.wcs ?? undefined}
+          value={bathrooms}
           icon={<IconBathFilled size="1rem" />}
           min={0}
           stepHoldDelay={500}
@@ -235,10 +236,9 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
         label="Address"
         placeholder="Address search"
         defaultValue={globalFilters.addressSearch ?? ""}
+        value={addressSearch}
         icon={<IconMapPinSearch size="0.8rem" stroke={1.5} />}
-        onChange={(txt) => {
-          txt.target.value === "" ? setAddressSearch(undefined) : setAddressSearch(txt.target.value);
-        }}
+        onChange={(txt) => setAddressSearch(txt.target.value)}
       />
     </>
   );
