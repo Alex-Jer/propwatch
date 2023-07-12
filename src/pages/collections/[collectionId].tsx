@@ -146,7 +146,7 @@ const Collection: NextPage = () => {
             onSearchChange={onSearchChange}
             nothingFound="No properties found"
           />
-          <ActionIcon onClick={apmOpen} variant="filled">
+          <ActionIcon disabled={propsToAdd.length == 0} onClick={apmOpen} variant="filled">
             <IconCirclePlus size="1rem" />
           </ActionIcon>
         </div>
