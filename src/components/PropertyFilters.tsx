@@ -1,4 +1,5 @@
-import { MultiSelect, RangeSlider } from "@mantine/core";
+import { MultiSelect, NumberInput, RangeSlider, Text } from "@mantine/core";
+import { useDebouncedState } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import type { FiltersOptions } from "~/types";
 
@@ -46,6 +47,23 @@ export function PropertyFilters({ filters, setFilters }: PropertyFiltersProps) {
     setFilters({ ...filters, listing_type: listingType, status: listingStatus, type: propertyType });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilters]);
+
+  const [ratingValue, setRatingValue] = useState<[number, number]>([0, 10]);
+
+  useEffect(() => {
+    setFilters({ ...filters, ratingRange: ratingValue });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ratingValue]);
+
+  const [priceMin, setPriceMin] = useDebouncedState<number>(0, 500);
+  const [priceMax, setPriceMax] = useDebouncedState<number>(100000000, 500);
+
+  useEffect(() => {
+    console.log(priceMax);
+    setFilters({ ...filters, priceRange: [priceMin, priceMax] });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [priceMin, priceMax]);
+
   return (
     <>
       <MultiSelect
@@ -59,15 +77,37 @@ export function PropertyFilters({ filters, setFilters }: PropertyFiltersProps) {
         clearButtonProps={{ "aria-label": "Clear selection" }}
         clearable
       />
-
+      <Text size="xs" className="font-semibold">
+        Rating
+      </Text>
       <RangeSlider
         mb="sm"
-        defaultValue={[1, 2]}
-        minRange={1}
+        label={(value) => (value / 2).toFixed(1).replace(".0", "").replace(".5", ",5")}
+        defaultValue={[0, 10]}
+        minRange={0}
         maxRange={10}
-        marks={[{ value: 0 }, { value: 5 }, { value: 10 }]}
+        marks={[{ value: 0 }, { value: 2 }, { value: 4 }, { value: 6 }, { value: 8 }, { value: 10 }]}
         min={0}
         max={10}
+        onChangeEnd={setRatingValue}
+      />
+      <NumberInput
+        label="Minimum price"
+        stepHoldDelay={500}
+        step={1000}
+        min={0}
+        max={1000000000}
+        onChange={setPriceMin}
+        stepHoldInterval={(t) => Math.max(1000 / t ** 2, 25)}
+      />
+      <NumberInput
+        label="Maximum price"
+        stepHoldDelay={500}
+        step={1000}
+        onChange={setPriceMax}
+        min={0}
+        max={1000000000}
+        stepHoldInterval={(t) => Math.max(1000 / t ** 2, 25)}
       />
     </>
   );

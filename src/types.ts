@@ -208,6 +208,8 @@ export type FiltersOptions = {
   type?: string[];
   listing_type?: string[];
   status?: string[];
+  ratingRange?: [number, number];
+  priceRange?: [number, number];
 };
 
 export type SearchPropertyProps = {
