@@ -42,26 +42,29 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilters]);
 
-  const [ratingValue, setRatingValue] = useState<[number, number]>(globalFilters.ratingRange ?? [0, 10]);
+  const [ratingValue, setRatingValue] = useState<[number, number] | undefined>(globalFilters.ratingRange);
 
   useEffect(() => {
-    if (ratingValue == filters.ratingRange) return;
-    if (filters.ratingRange && ratingValue[0] == filters.ratingRange[0] && ratingValue[1] == filters.ratingRange[1])
-      return;
-    setFilters({ ...filters, ratingRange: ratingValue });
+    console.log(ratingValue);
+    if (ratingValue && ratingValue[0] == 0 && ratingValue[1] == 10) {
+      console.log("reset");
+      setFilters({ ...filters, ratingRange: undefined });
+    } else {
+      setFilters({ ...filters, ratingRange: ratingValue });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ratingValue]);
 
-  const [minPrice, setPriceMin] = useState<number | undefined>(globalFilters.minPrice ?? 0);
-  const [maxPrice, setPriceMax] = useState<number | undefined>(globalFilters.maxPrice ?? 100000000);
+  const [minPrice, setPriceMin] = useState<number | undefined>(globalFilters.minPrice);
+  const [maxPrice, setPriceMax] = useState<number | undefined>(globalFilters.maxPrice);
 
   useEffect(() => {
     setFilters({ ...filters, minPrice, maxPrice });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minPrice, maxPrice]);
 
-  const [minArea, setMinArea] = useState<number | undefined>(globalFilters.minArea ?? 0);
-  const [maxArea, setMaxArea] = useState<number | undefined>(globalFilters.maxArea ?? 10000);
+  const [minArea, setMinArea] = useState<number | undefined>(globalFilters.minArea);
+  const [maxArea, setMaxArea] = useState<number | undefined>(globalFilters.maxArea);
 
   useEffect(() => {
     setFilters({ ...filters, minArea, maxArea });
@@ -71,7 +74,6 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
   const [bathrooms, setBathrooms] = useState<number | undefined>(globalFilters.wcs ?? 0);
 
   useEffect(() => {
-    if (bathrooms == filters.wcs) return;
     setFilters({ ...filters, wcs: bathrooms });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bathrooms]);
@@ -79,7 +81,6 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
   const [typology, setTypology] = useState<string[]>(globalFilters.typology ?? []);
 
   useEffect(() => {
-    if (typology == filters.typology) return;
     if (typology === null) {
       setFilters({ ...filters, typology: undefined });
     } else {
@@ -91,7 +92,6 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
   const [addressSearch, setAddressSearch] = useState<string | undefined>(globalFilters.addressSearch ?? undefined);
 
   useEffect(() => {
-    if (addressSearch == filters.addressSearch) return;
     if (!addressSearch) {
       setFilters({ ...filters, addressSearch: undefined });
     } else {
@@ -125,7 +125,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
       <RangeSlider
         mb="xs"
         label={(value) => (value / 2).toFixed(1).replace(".0", "").replace(".5", ",5")}
-        defaultValue={globalFilters.ratingRange ?? [0, 10]}
+        defaultValue={globalFilters.ratingRange}
         minRange={0}
         maxRange={10}
         marks={[{ value: 0 }, { value: 2 }, { value: 4 }, { value: 6 }, { value: 8 }, { value: 10 }]}
@@ -138,7 +138,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           mb="xs"
           size="xs"
           label="Minimum price"
-          defaultValue={globalFilters.minPrice ?? 0}
+          defaultValue={globalFilters.minPrice}
           stepHoldDelay={500}
           step={1000}
           min={0}
@@ -155,7 +155,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           mb="xs"
           size="xs"
           label="Maximum price"
-          defaultValue={globalFilters.maxPrice ?? 100000000}
+          defaultValue={globalFilters.maxPrice}
           stepHoldDelay={500}
           step={1000}
           onChange={(v) => numberInputOverride(v, setPriceMax)}
@@ -174,7 +174,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           mb="xs"
           size="xs"
           label="Minimum area"
-          defaultValue={globalFilters.minArea ?? 0}
+          defaultValue={globalFilters.minArea}
           stepHoldDelay={500}
           step={10}
           min={0}
@@ -187,7 +187,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           mb="xs"
           size="xs"
           label="Maximum area"
-          defaultValue={globalFilters.maxArea ?? 10000}
+          defaultValue={globalFilters.maxArea}
           stepHoldDelay={500}
           step={10}
           min={0}
