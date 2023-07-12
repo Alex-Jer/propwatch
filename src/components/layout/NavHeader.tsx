@@ -35,7 +35,7 @@ export function NavHeader({ links, opened, setOpened, isHero }: HeaderActionProp
     if (session) {
       return (
         <>
-          {router.pathname !== "/properties" ? (
+          {router.pathname !== "/properties" && router.pathname !== "/properties/polygon" ? (
             <Link href="/properties" passHref>
               <Button className="mr-1" color="gray" leftIcon={<IconSearch size="1rem" className="-mr-1" />}>
                 Search Mode
