@@ -209,8 +209,8 @@ export type FiltersOptions = {
   listing_type?: string[];
   status?: string[];
   ratingRange?: [number, number];
-  priceRange?: [number, number];
-  areaRange?: [number, number];
+  priceRange?: [number | undefined, number | undefined];
+  areaRange?: [number | undefined, number | undefined];
   wcs?: number;
   typology?: string[];
 };
