@@ -122,7 +122,13 @@ export function PropertyCard({
         <div className={`${classes.topButtons} space-x-1`}>
           {propIdForLink && (
             <Tooltip label="View property" color="gray" withArrow>
-              <ActionIcon color="blue" variant="filled" onClick={void router.push(`/properties/${propIdForLink}`)}>
+              <ActionIcon
+                color="blue"
+                variant="filled"
+                onClick={() => {
+                  void router.push(`/properties/${propIdForLink}`);
+                }}
+              >
                 <IconEye size="1.3rem" />
               </ActionIcon>
             </Tooltip>
