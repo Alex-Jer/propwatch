@@ -183,21 +183,21 @@ const processSearch = (search: string, filters: FiltersOptions) => {
   if (filters.wcs) extraFields += `&wc=${filters.wcs}`;
 
   if (filters.type)
-    filters.type.forEach(
-      (type, idx) => (extraFields += `&type[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`)
-    );
+    filters.type.forEach((type, idx) => (extraFields += `&t[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`));
   if (filters.listing_type)
     filters.listing_type.forEach(
-      (type, idx) => (extraFields += `&listing_type[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`)
+      (type, idx) => (extraFields += `&lt[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`)
     );
   if (filters.status)
     filters.status.forEach(
-      (type, idx) => (extraFields += `&status[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`)
+      (type, idx) => (extraFields += `&s[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`)
     );
   if (filters.typology)
     filters.typology.forEach(
-      (type, idx) => (extraFields += `&typology[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`)
+      (type, idx) => (extraFields += `&tl[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`)
     );
+
+  if (filters.addressSearch) extraFields += `&address=${encodeURIComponent(filters.addressSearch)}`;
 
   return extraFields;
 };

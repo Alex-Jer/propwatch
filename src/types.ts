@@ -213,6 +213,7 @@ export type FiltersOptions = {
   areaRange?: [number | undefined, number | undefined];
   wcs?: number;
   typology?: string[];
+  addressSearch?: string;
 };
 
 export type SearchPropertyProps = {

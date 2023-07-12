@@ -1,6 +1,6 @@
-import { MultiSelect, NumberInput, RangeSlider, Text } from "@mantine/core";
+import { MultiSelect, NumberInput, RangeSlider, Text, TextInput } from "@mantine/core";
 import { useDebouncedState } from "@mantine/hooks";
-import { IconBathFilled, IconHomeSearch } from "@tabler/icons-react";
+import { IconBathFilled, IconHomeSearch, IconMapPinSearch } from "@tabler/icons-react";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import type { FiltersOptions } from "~/types";
 
@@ -96,6 +96,17 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typology]);
+
+  const [addressSearch, setAddressSearch] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (addressSearch === null) {
+      setFilters({ ...filters, addressSearch: undefined });
+    } else {
+      setFilters({ ...filters, addressSearch });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addressSearch]);
 
   const numberInputOverride = (value: number | "", set: Dispatch<SetStateAction<number | undefined>>) => {
     if (value === "") {
@@ -219,6 +230,13 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
         />
       </div>
+      <TextInput
+        mb="xs"
+        size="xs"
+        placeholder="Address search"
+        icon={<IconMapPinSearch size="0.8rem" stroke={1.5} />}
+        onChange={setAddressSearch}
+      />
     </>
   );
 }
