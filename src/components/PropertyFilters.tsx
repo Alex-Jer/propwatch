@@ -39,6 +39,7 @@ export function PropertyFilters({
   const [filters, setFilters] = useDebouncedState<FiltersOptions>(globalFilters ?? {}, 500);
 
   useEffect(() => {
+    if (globalFilters === filters) return;
     setGlobalFilters({ ...globalFilters, ...filters });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
