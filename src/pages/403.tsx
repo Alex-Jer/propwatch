@@ -40,7 +40,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const NotFoundTitle = () => {
+const AccessDenied = () => {
   const { classes } = useStyles();
 
   return (
@@ -61,4 +61,4 @@ const NotFoundTitle = () => {
   );
 };
 
-export default NotFoundTitle;
+export default AccessDenied;
