@@ -100,7 +100,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
   const [addressSearch, setAddressSearch] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (addressSearch === null) {
+    if (!addressSearch) {
       setFilters({ ...filters, addressSearch: undefined });
     } else {
       setFilters({ ...filters, addressSearch });
@@ -233,9 +233,12 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
       <TextInput
         mb="xs"
         size="xs"
+        label="Address"
         placeholder="Address search"
         icon={<IconMapPinSearch size="0.8rem" stroke={1.5} />}
-        onChange={setAddressSearch}
+        onChange={(txt) => {
+          txt.target.value === "" ? setAddressSearch(undefined) : setAddressSearch(txt.target.value);
+        }}
       />
     </>
   );
