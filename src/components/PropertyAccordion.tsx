@@ -46,7 +46,6 @@ export type AccordionItem = {
   icon: React.ElementType;
   description: string;
   content: string | ReactNode;
-  open?: boolean;
   disabled?: boolean;
 };
 
@@ -230,7 +229,6 @@ export function PropertyAccordion({ property }: { property: Property }) {
           </div>
         </>
       ),
-      open: true,
       disabled: !propertyDetailsResume(property),
     },
     {
@@ -347,7 +345,12 @@ export function PropertyAccordion({ property }: { property: Property }) {
         yesBtn={{ text: "Remove", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
       />
-      <Accordion defaultValue={["details"]} chevronPosition="right" variant="contained" multiple>
+      <Accordion
+        defaultValue={propertyDetailsResume(property) ? ["details"] : []}
+        chevronPosition="right"
+        variant="contained"
+        multiple
+      >
         {items}
       </Accordion>
     </>
