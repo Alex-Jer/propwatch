@@ -1,6 +1,6 @@
 import { ActionIcon, Group, MultiSelect, Pagination, Text } from "@mantine/core";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
-import { IconCirclePlus, IconPlus } from "@tabler/icons-react";
+import { IconCirclePlus, IconPlus, IconX } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
@@ -96,6 +96,17 @@ const Collection: NextPage = () => {
     }
   };
 
+  const removePropertyFromCollection = (propertyId: string) => {
+    if (collection?.id) {
+      makeRequest(`me/lists/${collection.id.toString()}/properties/${propertyId}`, "DELETE", session?.user.access_token)
+        .then(() => {
+          successNotification("Property removed from collection.", "Property removed");
+          void refetch();
+        })
+        .catch(() => errorNotification("An unknown error occurred while removing this property from the collection."));
+    }
+  };
+
   return (
     <>
       <Head>
@@ -150,7 +161,13 @@ const Collection: NextPage = () => {
           {!isLoading &&
             collection?.properties?.data.map((property: CollectionProperty) => (
               <Link href={`/properties/${property.id}`} key={property.id}>
-                <PropertyCard property={property} key={property.id} />
+                <PropertyCard
+                  property={property}
+                  key={property.id}
+                  xButton={IconX}
+                  xButtonTooltip="Remove from collection"
+                  executeXButton={() => removePropertyFromCollection(property.id)}
+                />
               </Link>
             ))}
         </div>
