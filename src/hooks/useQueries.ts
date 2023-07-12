@@ -170,28 +170,37 @@ const processSearch = (search: string, filters: FiltersOptions) => {
   //if (filters.adm) extraFields += `&adm_id=${encodeURIComponent(filters.adm)}`;
   if (filters.include_tags) extraFields += `&include_tags=${encodeURIComponent(JSON.stringify(filters.include_tags))}`;
   if (filters.exclude_tags) extraFields += `&exclude_tags=${encodeURIComponent(JSON.stringify(filters.exclude_tags))}`;
-  if (filters.areaRange && filters.areaRange[0]) extraFields += `&area_min=${encodeURIComponent(filters.areaRange[0])}`;
-  if (filters.areaRange && filters.areaRange[1]) extraFields += `&area_max=${encodeURIComponent(filters.areaRange[1])}`;
-  if (filters.priceRange && filters.priceRange[0])
-    extraFields += `&price_min=${encodeURIComponent(filters.priceRange[0])}`;
-  if (filters.priceRange && filters.priceRange[1])
-    extraFields += `&price_max=${encodeURIComponent(filters.priceRange[1])}`;
+  if (filters.minArea) extraFields += `&area_min=${encodeURIComponent(filters.minArea)}`;
+  if (filters.maxArea) extraFields += `&area_max=${encodeURIComponent(filters.maxArea)}`;
+  if (filters.minPrice) extraFields += `&price_min=${encodeURIComponent(filters.minPrice)}`;
+  if (filters.maxPrice) extraFields += `&price_max=${encodeURIComponent(filters.maxPrice)}`;
   if (filters.ratingRange && filters.ratingRange[0])
     extraFields += `&rating_min=${encodeURIComponent(filters.ratingRange[0])}`;
   if (filters.ratingRange && filters.ratingRange[1])
     extraFields += `&rating_max=${encodeURIComponent(filters.ratingRange[1])}`;
   if (filters.wcs) extraFields += `&wc=${filters.wcs}`;
 
-  if (filters.type)
-    filters.type.forEach((type, idx) => (extraFields += `&t[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`));
-  if (filters.listing_type)
-    filters.listing_type.forEach(
-      (type, idx) => (extraFields += `&lt[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`)
-    );
-  if (filters.status)
-    filters.status.forEach(
-      (type, idx) => (extraFields += `&s[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`)
-    );
+  if (filters.listingPropertyFilters) {
+    let ltIdx = 0;
+    let sIdx = 0;
+    let tIdx = 0;
+    filters.listingPropertyFilters.forEach((f) => {
+      const fs = f.split("|");
+      if (fs.length > 1 && fs[1]) {
+        if (f.startsWith("listing_type")) {
+          extraFields += `&lt[${encodeURIComponent(ltIdx)}]=${encodeURIComponent(fs[1])}`;
+          ltIdx++;
+        } else if (f.startsWith("status")) {
+          extraFields += `&s[${encodeURIComponent(sIdx)}]=${encodeURIComponent(fs[1])}`;
+          sIdx++;
+        } else if (f.startsWith("type")) {
+          extraFields += `&t[${encodeURIComponent(tIdx)}]=${encodeURIComponent(fs[1])}`;
+          tIdx++;
+        }
+      }
+    });
+  }
+
   if (filters.typology)
     filters.typology.forEach(
       (type, idx) => (extraFields += `&tl[${encodeURIComponent(idx)}]=${encodeURIComponent(type)}`)

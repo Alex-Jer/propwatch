@@ -29,7 +29,7 @@ const propertyNominalFilters = [
 
 export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalFilters }: PropertyFiltersProps) {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [filters, setFilters] = useDebouncedState<FiltersOptions>({}, 500);
+  const [filters, setFilters] = useDebouncedState<FiltersOptions>(globalFilters ?? {}, 500);
 
   useEffect(() => {
     setGlobalFilters({ ...globalFilters, ...filters });
@@ -37,58 +37,49 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
   }, [filters]);
 
   useEffect(() => {
-    const listingType: string[] = [];
-    const listingStatus: string[] = [];
-    const propertyType: string[] = [];
-    selectedFilters.forEach((f) => {
-      const fs = f.split("|");
-      if (fs.length > 1 && fs[1]) {
-        if (f.startsWith("listing_type")) {
-          listingType.push(fs[1]);
-        } else if (f.startsWith("status")) {
-          listingStatus.push(fs[1]);
-        } else if (f.startsWith("type")) {
-          propertyType.push(fs[1]);
-        }
-      }
-    });
-    setFilters({ ...filters, listing_type: listingType, status: listingStatus, type: propertyType });
+    if (selectedFilters == filters.listingPropertyFilters) return;
+    setFilters({ ...filters, listingPropertyFilters: selectedFilters });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFilters]);
 
-  const [ratingValue, setRatingValue] = useState<[number, number]>([0, 10]);
+  const [ratingValue, setRatingValue] = useState<[number, number]>(globalFilters.ratingRange ?? [0, 10]);
 
   useEffect(() => {
+    if (ratingValue == filters.ratingRange) return;
+    if (filters.ratingRange && ratingValue[0] == filters.ratingRange[0] && ratingValue[1] == filters.ratingRange[1])
+      return;
     setFilters({ ...filters, ratingRange: ratingValue });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ratingValue]);
 
-  const [priceMin, setPriceMin] = useState<number | undefined>(0);
-  const [priceMax, setPriceMax] = useState<number | undefined>(100000000);
+  const [minPrice, setPriceMin] = useState<number | undefined>(globalFilters.minPrice ?? 0);
+  const [maxPrice, setPriceMax] = useState<number | undefined>(globalFilters.maxPrice ?? 100000000);
 
   useEffect(() => {
-    setFilters({ ...filters, priceRange: [priceMin, priceMax] });
+    setFilters({ ...filters, minPrice, maxPrice });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [priceMin, priceMax]);
+  }, [minPrice, maxPrice]);
 
-  const [minArea, setMinArea] = useState<number | undefined>(0);
-  const [maxArea, setMaxArea] = useState<number | undefined>(10000);
+  const [minArea, setMinArea] = useState<number | undefined>(globalFilters.minArea ?? 0);
+  const [maxArea, setMaxArea] = useState<number | undefined>(globalFilters.maxArea ?? 10000);
 
   useEffect(() => {
-    setFilters({ ...filters, areaRange: [minArea, maxArea] });
+    setFilters({ ...filters, minArea, maxArea });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minArea, maxArea]);
 
-  const [bathrooms, setBathrooms] = useState<number | undefined>(0);
+  const [bathrooms, setBathrooms] = useState<number | undefined>(globalFilters.wcs ?? 0);
 
   useEffect(() => {
+    if (bathrooms == filters.wcs) return;
     setFilters({ ...filters, wcs: bathrooms });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bathrooms]);
 
-  const [typology, setTypology] = useState<string[]>([]);
+  const [typology, setTypology] = useState<string[]>(globalFilters.typology ?? []);
 
   useEffect(() => {
+    if (typology == filters.typology) return;
     if (typology === null) {
       setFilters({ ...filters, typology: undefined });
     } else {
@@ -97,9 +88,10 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typology]);
 
-  const [addressSearch, setAddressSearch] = useState<string | undefined>(undefined);
+  const [addressSearch, setAddressSearch] = useState<string | undefined>(globalFilters.addressSearch ?? undefined);
 
   useEffect(() => {
+    if (addressSearch == filters.addressSearch) return;
     if (!addressSearch) {
       setFilters({ ...filters, addressSearch: undefined });
     } else {
@@ -120,6 +112,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
         data={propertyNominalFilters}
         size="xs"
         mb="xs"
+        defaultValue={globalFilters.listingPropertyFilters ?? []}
         onChange={setSelectedFilters}
         label="Listing/Property Filter"
         placeholder="Pick some filters >w<"
@@ -132,7 +125,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
       <RangeSlider
         mb="xs"
         label={(value) => (value / 2).toFixed(1).replace(".0", "").replace(".5", ",5")}
-        defaultValue={[0, 10]}
+        defaultValue={globalFilters.ratingRange ?? [0, 10]}
         minRange={0}
         maxRange={10}
         marks={[{ value: 0 }, { value: 2 }, { value: 4 }, { value: 6 }, { value: 8 }, { value: 10 }]}
@@ -145,6 +138,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           mb="xs"
           size="xs"
           label="Minimum price"
+          defaultValue={globalFilters.minPrice ?? 0}
           stepHoldDelay={500}
           step={1000}
           min={0}
@@ -161,6 +155,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           mb="xs"
           size="xs"
           label="Maximum price"
+          defaultValue={globalFilters.maxPrice ?? 100000000}
           stepHoldDelay={500}
           step={1000}
           onChange={(v) => numberInputOverride(v, setPriceMax)}
@@ -179,6 +174,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           mb="xs"
           size="xs"
           label="Minimum area"
+          defaultValue={globalFilters.minArea ?? 0}
           stepHoldDelay={500}
           step={10}
           min={0}
@@ -191,6 +187,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           mb="xs"
           size="xs"
           label="Maximum area"
+          defaultValue={globalFilters.maxArea ?? 10000}
           stepHoldDelay={500}
           step={10}
           min={0}
@@ -206,6 +203,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           size="xs"
           label="Typology"
           placeholder="Typology"
+          defaultValue={globalFilters.typology ?? []}
           icon={<IconHomeSearch size="1rem" />}
           data={[
             { value: "T0", label: "T0" },
@@ -223,6 +221,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
           size="xs"
           label="Number of Bathrooms"
           placeholder="Bathrooms"
+          defaultValue={globalFilters.wcs ?? 0}
           icon={<IconBathFilled size="1rem" />}
           min={0}
           stepHoldDelay={500}
@@ -235,6 +234,7 @@ export function PropertyFilters({ filters: globalFilters, setFilters: setGlobalF
         size="xs"
         label="Address"
         placeholder="Address search"
+        defaultValue={globalFilters.addressSearch ?? ""}
         icon={<IconMapPinSearch size="0.8rem" stroke={1.5} />}
         onChange={(txt) => {
           txt.target.value === "" ? setAddressSearch(undefined) : setAddressSearch(txt.target.value);

@@ -206,12 +206,12 @@ export type FiltersOptions = {
   exclude_tags?: string[];
   list?: string;
   adm?: string;
-  type?: string[];
-  listing_type?: string[];
-  status?: string[];
+  listingPropertyFilters?: string[];
   ratingRange?: [number, number];
-  priceRange?: [number | undefined, number | undefined];
-  areaRange?: [number | undefined, number | undefined];
+  minPrice?: number;
+  maxPrice?: number;
+  minArea?: number;
+  maxArea?: number;
   wcs?: number;
   typology?: string[];
   addressSearch?: string;
