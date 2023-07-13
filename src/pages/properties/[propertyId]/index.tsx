@@ -7,7 +7,7 @@ import { Property } from "~/types";
 import { CardsCarousel } from "~/components/CardsCarousel";
 import Map, { Marker } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { type FunctionComponent, type SVGProps, useEffect, useState, useRef } from "react";
+import { type FunctionComponent, type SVGProps, useEffect, useState, useRef, useContext } from "react";
 import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "public/icons";
 import { MainCarousel } from "~/components/MainCarousel";
 import { useDisclosure } from "@mantine/hooks";
@@ -43,6 +43,7 @@ import { priceToString } from "~/lib/propertyHelper";
 import { PropertyAccordion } from "~/components/PropertyAccordion";
 import { ConfirmationModal } from "~/components/ConfirmationModal";
 import Link from "next/link";
+import { PropertiesContext } from "~/lib/PropertiesProvider";
 
 type MarkerIconComponent = FunctionComponent<SVGProps<SVGSVGElement>>;
 
@@ -63,6 +64,7 @@ const Property: NextPage = () => {
 
   const { propertyId } = router.query;
   const { data: property, isLoading, isError } = useProperty({ session, status, elementId: String(propertyId ?? "") });
+  const { refetch } = useContext(PropertiesContext);
 
   const [coverUrl, setCoverUrl] = useState("");
   const [selectedUrl, setSelectedUrl] = useState(property?.cover_url);
@@ -347,6 +349,7 @@ const Property: NextPage = () => {
       .then(() => {
         const sendSuccess = () => {
           successNotification("This property has been sent to trash!", "Property deleted");
+          void refetch();
         };
         router.push("/properties").then(sendSuccess).catch(sendSuccess);
       })

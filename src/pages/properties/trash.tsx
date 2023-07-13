@@ -4,10 +4,11 @@ import { IconArrowBackUpDouble, IconTrash, IconTrashX } from "@tabler/icons-reac
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ConfirmationModal } from "~/components/ConfirmationModal";
 import { PropertyCard, errorNotification, successNotification } from "~/components/PropertyCard";
 import { useTrashedProperties } from "~/hooks/useQueries";
+import { PropertiesContext } from "~/lib/PropertiesProvider";
 import { generateLoadingElements } from "~/lib/propertyHelper";
 import { makeRequest } from "~/lib/requestHelper";
 import { type CollectionProperty } from "~/types";
@@ -18,6 +19,8 @@ const TrashedProperties: NextPage = () => {
 
   const [restoreOpened, { open: openRestore, close: closeRestore }] = useDisclosure(false);
   const [emptyTrashOpened, { open: openEmptyTrash, close: closeEmptyTrash }] = useDisclosure(false);
+
+  const { refetch: refetchProperties } = useContext(PropertiesContext);
 
   const {
     data: propData,
@@ -46,6 +49,7 @@ const TrashedProperties: NextPage = () => {
       .catch(() => errorNotification("An unknown error occurred while restoring all the properties."))
       .finally(() => {
         void refetch();
+        void refetchProperties();
       });
   };
 

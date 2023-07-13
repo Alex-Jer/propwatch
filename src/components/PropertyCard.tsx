@@ -21,7 +21,8 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
+import { PropertiesContext } from "~/lib/PropertiesProvider";
 import { priceToString } from "~/lib/propertyHelper";
 import { makeRequest } from "~/lib/requestHelper";
 import { type CollectionProperty } from "~/types";
@@ -68,6 +69,7 @@ export function PropertyCard({
   const { classes } = useStyles();
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const { refetch } = useContext(PropertiesContext);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -88,12 +90,15 @@ export function PropertyCard({
     makeRequest(`me/properties/${id}/restore`, "PATCH", session?.user.access_token)
       .then(() => {
         successNotification("The selected property has been restored!", "Property restored");
+        void refetch();
       })
       .catch(() => {
         errorNotification("An unknown error occurred while restoring this property.");
       })
       .finally(() => {
-        if (refresh) refresh();
+        if (refresh) {
+          refresh();
+        }
       });
   };
 
