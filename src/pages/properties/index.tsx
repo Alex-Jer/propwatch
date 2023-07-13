@@ -1,32 +1,28 @@
 import { IconBuildingEstate } from "@tabler/icons-react";
 import { type NextPage } from "next";
-import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import { DisplayProperties } from "~/components/DisplayProperties";
-import { useProperties } from "~/hooks/useQueries";
+import { PropertiesContext } from "~/lib/PropertiesProvider";
 import type { SearchPropertyProps } from "~/types";
 
-const Properties: NextPage<SearchPropertyProps> = ({ search, filters }) => {
-  const { data: session, status } = useSession();
-  const [activePage, setPage] = useState(1);
+const Properties: NextPage<SearchPropertyProps> = () => {
+  const data = useContext(PropertiesContext);
+  const properties = data.properties;
+  const isLoading = data.isLoading;
+  const isSuccess = data.isSuccess;
+  const isError = data.isError;
+  const activePage = data.activePage;
+  const setPage = data.setPage;
+  const refetch = data.refetch;
 
-  useEffect(() => {
-    setPage(1);
-  }, [filters]);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  const {
-    data: propData,
-    isLoading,
-    isError,
-    refetch,
-  } = useProperties({
-    session,
-    status,
-    search,
-    filters,
-    page: activePage,
-  });
+  if (isError) {
+    return <div>Error...</div>;
+  }
 
   return (
     <>
@@ -42,14 +38,16 @@ const Properties: NextPage<SearchPropertyProps> = ({ search, filters }) => {
 
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
-      <DisplayProperties
-        propData={propData}
-        isLoading={isLoading}
-        isError={isError}
-        activePage={activePage}
-        setPage={setPage}
-        refetch={refetch}
-      />
+      {Object.keys(properties).length > 0 && (
+        <DisplayProperties
+          propData={properties}
+          isLoading={isLoading}
+          isError={isError}
+          activePage={activePage}
+          setPage={setPage}
+          refetch={refetch}
+        />
+      )}
     </>
   );
 };

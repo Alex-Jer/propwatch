@@ -195,7 +195,7 @@ export type UserButtonProps = UnstyledButtonProps & {
 export type ShellProps = {
   children: ReactNode;
   useNavbarSearch?: boolean;
-  search?: string;
+  search: string;
   filters: FiltersOptions;
   setSearch?: (search: string) => void;
   setFilters: (filters: FiltersOptions) => void;

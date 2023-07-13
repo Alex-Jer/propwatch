@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Stepper, Paper } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
@@ -20,6 +20,7 @@ import {
 import { useAdms, useAdms2, useAdms3, useAllCollections, useAllTags } from "~/hooks/useQueries";
 import { useInputState } from "@mantine/hooks";
 import { useRouter } from "next/router";
+import { PropertiesContext } from "~/lib/PropertiesProvider";
 
 type PropertyType = "house" | "apartment" | "office" | "shop" | "warehouse" | "garage" | "land" | "other";
 type PropertyStatus = "available" | "unavailable" | "unknown";
@@ -109,6 +110,9 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
 
   const [offers, setOffers] = useState<Offer[]>([]);
   const [countAdmFetches, setCountAdmFetches] = useState(0);
+
+  const data = useContext(PropertiesContext);
+  const refetch = data.refetch;
 
   useEffect(() => {
     if (property.offers && mode === "edit") {
@@ -401,6 +405,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
   const { mutate, isLoading } = useMutation({
     mutationFn: mode === "add" ? addProperty : editProperty,
     onSuccess: () => {
+      refetch();
       close && close();
       notifications.show({
         title: "Property added",
