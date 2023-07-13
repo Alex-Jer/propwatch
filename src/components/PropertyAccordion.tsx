@@ -42,6 +42,7 @@ function AccordionLabel({ label, icon: Icon, description }: AccordionLabelProps)
 
 export type AccordionItem = {
   id: string;
+  value: string;
   label: string;
   icon: React.ElementType;
   description: string;
@@ -68,15 +69,16 @@ type PropertyAccordionProps = {
 };
 
 export function PropertyAccordion({ property, isLoading = false }: PropertyAccordionProps) {
+  const { data: session } = useSession();
+
+  const [modalOpened, { open, close }] = useDisclosure(false);
   const [offersSortStatus, setOffersSortStatus] = useState<DataTableSortStatus>({
     columnAccessor: "id",
     direction: "asc",
   });
-
-  const [modalOpened, { open, close }] = useDisclosure(false);
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [offerRecords, setOfferRecords] = useState<Offer[]>([]);
-  const { data: session } = useSession();
+  const [accordionValue, setAccordionValue] = useState<string[]>([]);
 
   const sortOffers = (sortStatus: DataTableSortStatus) => {
     // @ts-expect-error sortBy is not typed
@@ -97,6 +99,16 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
       return;
     }
 
+    if (propertyDetailsResume(property, isLoading)) {
+      setAccordionValue(["details"]);
+    }
+  }, [property, isLoading]);
+
+  useEffect(() => {
+    if (!property) {
+      return;
+    }
+
     const offers = [
       ...property.offers.sale.map((offer) => ({
         ...offer,
@@ -111,6 +123,8 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
         listing_type: "rent",
       })),
     ];
+
+    console.log(offers);
 
     setOfferRecords(offers);
   }, [property]);
@@ -220,6 +234,7 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
   const itemList: AccordionItem[] = [
     {
       id: "details",
+      value: "details",
       icon: IconListDetails,
       label: "Property Details",
       description: propertyDetailsResume(property, isLoading) || "No details available",
@@ -248,6 +263,7 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
     },
     {
       id: "address",
+      value: "address",
       icon: IconMapPin,
       label: "Address",
       description: isLoading ? "Loading address..." : completeAddress(property?.address),
@@ -273,6 +289,7 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
     },
     {
       id: "offers",
+      value: "offers",
       icon: IconChartLine,
       label: "Offers",
       description: generateOffersDescription(property),
@@ -294,6 +311,7 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
     },
     {
       id: "offers_history",
+      value: "history",
       icon: IconChartInfographic,
       label: "Offers' Price History",
       description:
@@ -351,12 +369,17 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
       makeRequest(`me/offers/${selectedOffer.id.toString()}`, "DELETE", session?.user.access_token)
         .then(() => {
           setSelectedOffer(null);
+          setOfferRecords(offerRecords.filter((offer) => offer.id !== selectedOffer.id));
           close();
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           property.offers[selectedOffer.listing_type] = property.offers[selectedOffer.listing_type].filter(
             (offer) => offer.id !== selectedOffer.id
           );
           successNotification("This offer has been removed", "Offer removed");
+
+          if (property.offers.sale.length + property.offers.rent.length === 0) {
+            setAccordionValue(accordionValue.filter((value) => value !== "offers"));
+          }
         })
         .catch(() => errorNotification("An unknown error occurred while removing this offer."));
     }
@@ -378,6 +401,8 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
         chevronPosition="right"
         variant="contained"
         multiple
+        value={accordionValue}
+        onChange={setAccordionValue}
       >
         {items}
       </Accordion>
