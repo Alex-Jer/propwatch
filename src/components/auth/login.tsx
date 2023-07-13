@@ -21,8 +21,7 @@ export function LoginForm() {
   }
 
   const form = useForm<Inputs>({
-    // TODO: Temp values
-    initialValues: { email: "test123@example.com", password: "123456" },
+    initialValues: { email: "", password: "" },
     validate: {
       email: (value: string) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
       password: (value: string) => (value.length > 0 ? null : "Password is required"),

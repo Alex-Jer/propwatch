@@ -27,11 +27,10 @@ const schema = z
   });
 
 const defaultValues: FormSchemaType = {
-  // TODO: Temp values
-  name: "Test",
-  email: "test3210@example.com",
-  password: "123456",
-  password_confirmation: "123456",
+  name: "",
+  email: "",
+  password: "",
+  password_confirmation: "",
 };
 
 type FormSchemaType = z.infer<typeof schema>;
