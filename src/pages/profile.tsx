@@ -33,16 +33,26 @@ type UserResponse = {
   user: User;
 };
 
+type PasswordResponse = {
+  message: string;
+  access_token: string;
+};
+
 const editSchema = z.object({
   name: z.string().nonempty({ message: "A name is required" }),
   email: z.string().email().nonempty({ message: "An email is required" }),
 });
 
-const changePasswordSchema = z.object({
-  currentPassword: z.string().min(8, { message: "Password must be at least 8 characters long" }),
-  confirmPassword: z.string().min(8, { message: "Password must be at least 8 characters long" }),
-  newPassword: z.string().min(8, { message: "Password must be at least 8 characters long" }),
-});
+const changePasswordSchema = z
+  .object({
+    currentPassword: z.string(),
+    newPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
+    confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 type EditFormSchemaType = z.infer<typeof editSchema>;
 type ChangePasswordFormSchemaType = z.infer<typeof changePasswordSchema>;
@@ -77,7 +87,7 @@ const Profile = () => {
   const {
     control: passwordControl,
     handleSubmit: handlePasswordSubmit,
-    setError: setPasswordError,
+    reset: resetPasswordForm,
   } = useForm<ChangePasswordFormSchemaType>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: defaultChangePasswordValues,
@@ -96,7 +106,7 @@ const Profile = () => {
     return await makeRequest("me", "PUT", session?.user.access_token, formData, true, false);
   };
 
-  const { mutate } = useMutation({
+  const { mutate: mutateEdit } = useMutation({
     mutationFn: editProfile,
     onSuccess: async (res: UserResponse) => {
       if (session) {
@@ -116,7 +126,7 @@ const Profile = () => {
       });
     },
     onError: (error: AxiosErrorResponse) => {
-      if (error.response?.status === 422) {
+      if (error.response?.data?.message?.includes("email")) {
         console.log({ error });
         setEditError("email", {
           type: "custom",
@@ -125,6 +135,39 @@ const Profile = () => {
         return;
       }
       processAxiosError(error, "An error occurred while updating your profile");
+    },
+  });
+
+  const changePassword = async (data: ChangePasswordFormSchemaType) => {
+    const formData = new FormData();
+
+    formData.append("old_password", data.currentPassword);
+    formData.append("new_password", data.newPassword);
+    formData.append("new_password_confirmation", data.confirmPassword);
+
+    return await makeRequest("me/password", "PATCH", session?.user.access_token, formData, false, false);
+  };
+
+  const { mutate: mutatePassword } = useMutation({
+    mutationFn: changePassword,
+    onSuccess: async (res: PasswordResponse) => {
+      if (session) {
+        session.user.access_token = res.access_token;
+      }
+
+      await update({ ...session });
+      resetPasswordForm();
+
+      notifications.show({
+        title: "Password updated",
+        message: "Your password has been updated",
+        color: "teal",
+        icon: <IconCheck size="1.5rem" />,
+        autoClose: 10000,
+      });
+    },
+    onError: (error: AxiosErrorResponse) => {
+      processAxiosError(error, "An error occurred while updating your password");
     },
   });
 
@@ -137,7 +180,7 @@ const Profile = () => {
               <form
                 /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
                 onSubmit={handleEditSubmit(
-                  (data) => mutate(data),
+                  (data) => mutateEdit(data),
                   (error) => {
                     console.log({ error });
                   }
@@ -185,9 +228,7 @@ const Profile = () => {
             <form
               /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
               onSubmit={handlePasswordSubmit(
-                (data) => {
-                  console.log({ data });
-                },
+                (data) => mutatePassword(data),
                 (error) => {
                   console.log({ error });
                 }

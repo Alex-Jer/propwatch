@@ -167,7 +167,7 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
       >
         <div className={`${classes.mainLinkInner} ${color}`}>
           <IconFolderOff size={20} className={`${classes.mainLinkIcon} ${color}`} stroke={1.5} />
-          <p className="w-60 overflow-hidden truncate">No collection</p>
+          <p className="w-60 overflow-hidden truncate">Unsorted</p>
         </div>
       </UnstyledButton>
     );

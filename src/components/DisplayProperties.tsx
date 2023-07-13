@@ -63,8 +63,8 @@ export function DisplayProperties({
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
         {isLoading ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />) : null}
         {properties?.map((property: CollectionProperty) => (
-          <UnstyledButton
-            className="z-10"
+          <div
+            className="z-10 cursor-pointer"
             onClick={() => {
               void router.push(`/properties/${property.id}`);
             }}
@@ -79,7 +79,7 @@ export function DisplayProperties({
                 openTrashModal();
               }}
             />
-          </UnstyledButton>
+          </div>
         ))}
       </div>
 
