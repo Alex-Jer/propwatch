@@ -70,9 +70,9 @@ const Statistics: NextPage = () => {
           });
           properties.push({
             name: property_type == "no_type" ? "no type" : property_type,
-            "Average Sale Price": stats.price.sale,
-            "Average Rent Price": stats.price.rent,
-            "Average Rating": stats.avg,
+            "Average Sale Price": stats.price.sale == null ? null : Number(stats.price.sale),
+            "Average Rent Price": stats.price.rent == null ? null : Number(stats.price.rent),
+            "Average Rating": stats.avg == null ? null : Number(stats.avg),
           });
           i++;
         });

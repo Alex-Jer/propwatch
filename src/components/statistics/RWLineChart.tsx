@@ -13,6 +13,8 @@ const RWLineChart = ({ data }: { data: LineChartPayload[] }) => {
     return priceToStringShort(value);
   };
 
+  console.log(data);
+
   const formatValueTooltip = (value: number) => {
     return priceToString(value);
   };
@@ -34,9 +36,9 @@ const RWLineChart = ({ data }: { data: LineChartPayload[] }) => {
         <XAxis dataKey="name" tick={{ fill: "#C1C2C5", style: { fontSize: "0.8rem" } }} />
         <YAxis
           yAxisId="left"
+          domain={["dataMax", "dataMin"]}
           tick={{ fill: "#C1C2C5", style: { fontSize: "0.8rem" } }}
           tickFormatter={formatValue}
-          domain={["dataMax", "dataMin"]}
           label={{
             value: "Price (€)",
             position: "outsideLeft",
@@ -51,6 +53,7 @@ const RWLineChart = ({ data }: { data: LineChartPayload[] }) => {
           orientation="right"
           tick={{ fill: "#C1C2C5", style: { fontSize: "0.8rem" } }}
           tickFormatter={(val) => Number(val).toFixed(2).replaceAll(".", ",").replaceAll(",00", "")}
+          domain={[1, 10]}
           label={{
             value: "Rating",
             position: "outsideRight",
@@ -61,19 +64,8 @@ const RWLineChart = ({ data }: { data: LineChartPayload[] }) => {
           }}
         />
 
-        <Tooltip formatter={formatValueTooltip} />
+        <Tooltip />
         <Legend />
-        <Line
-          yAxisId="left"
-          connectNulls
-          type="monotone"
-          dataKey="Average Sale Price"
-          stroke="#f03e3e"
-          fill="#f03e3e"
-          strokeWidth={3}
-          dot={{ r: 3 }}
-          activeDot={{ r: 6 }}
-        />
         <Line
           yAxisId="right"
           orientation="right"
@@ -82,6 +74,18 @@ const RWLineChart = ({ data }: { data: LineChartPayload[] }) => {
           dataKey="Average Rating"
           stroke="#0ca678"
           fill="#0ca678"
+          strokeWidth={3}
+          dot={{ r: 3 }}
+          activeDot={{ r: 6 }}
+        />
+        <Line
+          yAxisId="left"
+          orientation="left"
+          connectNulls
+          type="monotone"
+          dataKey="Average Sale Price"
+          stroke="#f03e3e"
+          fill="#f03e3e"
           strokeWidth={3}
           dot={{ r: 3 }}
           activeDot={{ r: 6 }}
