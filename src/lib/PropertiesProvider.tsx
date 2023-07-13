@@ -21,7 +21,6 @@ function PropertiesProvider({ filters, search, children }: PropertiesProviderPro
     data: propData,
     isLoading,
     isError,
-    isSuccess,
     refetch,
   } = useProperties({
     session,
@@ -43,7 +42,7 @@ function PropertiesProvider({ filters, search, children }: PropertiesProviderPro
   }, [propData]);
 
   return (
-    <PropertiesContext.Provider value={{ properties, isLoading, isSuccess, isError, activePage, setPage, refetch }}>
+    <PropertiesContext.Provider value={{ properties, isLoading, isError, activePage, setPage, refetch }}>
       <PropertiesDispatchContext.Provider value={setProperties}>{children}</PropertiesDispatchContext.Provider>
     </PropertiesContext.Provider>
   );

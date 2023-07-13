@@ -111,8 +111,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
   const [offers, setOffers] = useState<Offer[]>([]);
   const [countAdmFetches, setCountAdmFetches] = useState(0);
 
-  const data = useContext(PropertiesContext);
-  const refetch = data.refetch;
+  const { refetch } = useContext(PropertiesContext);
 
   useEffect(() => {
     if (property.offers && mode === "edit") {

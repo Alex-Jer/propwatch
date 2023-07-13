@@ -7,14 +7,7 @@ import { PropertiesContext } from "~/lib/PropertiesProvider";
 import type { SearchPropertyProps } from "~/types";
 
 const Properties: NextPage<SearchPropertyProps> = () => {
-  const data = useContext(PropertiesContext);
-  const properties = data.properties;
-  const isLoading = data.isLoading;
-  const isSuccess = data.isSuccess;
-  const isError = data.isError;
-  const activePage = data.activePage;
-  const setPage = data.setPage;
-  const refetch = data.refetch;
+  const { properties, isLoading, isError, activePage, setPage, refetch } = useContext(PropertiesContext);
 
   if (isLoading) {
     return <div>Loading...</div>;
