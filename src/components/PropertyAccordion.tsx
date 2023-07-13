@@ -110,16 +110,16 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
     }
 
     const offers = [
-      ...property.offers.sale.map((offer) => ({
+      ...property.offers?.sale?.map((offer) => ({
         ...offer,
-        price_str: offer.price ? priceToString(offer.price) : "N/A",
-        description: offer.description ? offer.description : "N/A",
+        price_str: offer?.price ? priceToString(offer?.price) : "N/A",
+        description: offer?.description ? offer?.description : "N/A",
         listing_type: "sale",
       })),
-      ...property.offers.rent.map((offer) => ({
+      ...property.offers?.rent?.map((offer) => ({
         ...offer,
-        price_str: offer.price ? priceToString(offer.price) + "/month" : "N/A",
-        description: offer.description ? offer.description : "N/A",
+        price_str: offer?.price ? priceToString(offer?.price) + "/month" : "N/A",
+        description: offer?.description ? offer?.description : "N/A",
         listing_type: "rent",
       })),
     ];
@@ -220,11 +220,11 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
 
     switch (property?.listing_type) {
       case "sale":
-        return `View ${property.offers.sale.length} sale offers`;
+        return `View ${property.offers?.sale?.length} sale offers`;
       case "rent":
-        return `View ${property.offers.rent.length} rent offers`;
+        return `View ${property.offers?.rent?.length} rent offers`;
       case "both":
-        return `View ${property.offers.sale.length} sale offers and ${property.offers.rent.length} rent offers`;
+        return `View ${property.offers?.sale?.length} sale offers and ${property.offers?.rent?.length} rent offers`;
       case "none":
       default:
         return "This property has no offers";
@@ -307,7 +307,7 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
           )}
         </>
       ),
-      disabled: isLoading || (property && property?.offers.sale.length + property?.offers.rent.length === 0),
+      disabled: isLoading || (property && property?.offers?.sale?.length + property?.offers?.rent?.length === 0),
     },
     {
       id: "offers_history",
@@ -319,7 +319,7 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
           ? "Loading offers history..."
           : property?.offers?.sale?.length + property?.offers?.rent?.length === 0
           ? "This property has no offers"
-          : `View the price history of ${property?.offers.sale.length + property?.offers.rent.length} offers`,
+          : `View the price history of ${property?.offers?.sale?.length + property?.offers?.rent?.length} offers`,
 
       content: (
         <>
@@ -329,8 +329,8 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
                 <>
                   <Title order={4}>Sale offers:</Title>
                   <PropertyOfferHistoryChart
-                    offers={property.offers.sale}
-                    extra={(property.current_price_sale ?? 0) / 10}
+                    offers={property?.offers.sale}
+                    extra={(property?.current_price_sale ?? 0) / 10}
                   />
                 </>
               )}
@@ -340,8 +340,8 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
                     Rent offers:
                   </Title>
                   <PropertyOfferHistoryChart
-                    offers={property.offers.rent}
-                    extra={(property.current_price_rent ?? 0) / 10}
+                    offers={property?.offers.rent}
+                    extra={(property?.current_price_rent ?? 0) / 10}
                   />
                 </>
               )}
@@ -351,7 +351,7 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
           )}
         </>
       ),
-      disabled: isLoading || !property || property?.offers.sale.length + property?.offers.rent.length === 0,
+      disabled: isLoading || !property || property?.offers?.sale?.length + property?.offers?.rent?.length === 0,
     },
   ];
 
@@ -377,7 +377,7 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
           );
           successNotification("This offer has been removed", "Offer removed");
 
-          if (property.offers.sale.length + property.offers.rent.length === 0) {
+          if (property?.offers?.sale?.length + property?.offers?.rent?.length === 0) {
             setAccordionValue(accordionValue.filter((value) => value !== "offers"));
           }
         })

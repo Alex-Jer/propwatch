@@ -80,7 +80,7 @@ const Property: NextPage = () => {
 
   useEffect(() => {
     if (property?.rating && !hasSetRatingOnce.current) {
-      setRating(property.rating / 2);
+      setRating(property?.rating / 2);
       hasSetRatingOnce.current = true;
     }
   }, [hasSetRatingOnce, property?.rating]);
@@ -89,7 +89,7 @@ const Property: NextPage = () => {
     if (!isLoading && !isError && property) {
       if ((selectedUrl == "" || !selectedUrl) && photos && photos[0]) setSelectedUrl(photos[0].url);
       setIsCurrentCover(property?.cover_url != selectedUrl || !property?.cover_url);
-      setCoverUrl(property.cover_url);
+      setCoverUrl(property?.cover_url);
     }
   }, [isLoading, isError, property, selectedUrl, photos, isCurrentCover, setIsCurrentCover]);
 
@@ -116,13 +116,13 @@ const Property: NextPage = () => {
   const renderPrice = () => {
     if (!property || isLoading || (!property.current_price_sale && !property.current_price_rent)) return "";
 
-    switch (property.listing_type) {
+    switch (property?.listing_type) {
       case "sale":
         return (
           <>
             <IconHomeDollar size="1.5rem" stroke={1.5} className="-mr-3" />
             <Title order={3} style={{ fontWeight: "normal" }}>
-              {priceToString(property.current_price_sale)}
+              {priceToString(property?.current_price_sale)}
             </Title>
           </>
         );
@@ -131,7 +131,7 @@ const Property: NextPage = () => {
           <>
             <IconCalendarDollar size="1.5rem" stroke={1.5} className="-mr-3" />
             <Title order={3} style={{ fontWeight: "normal" }}>
-              {priceToString(property.current_price_rent)}
+              {priceToString(property?.current_price_rent)}
             </Title>
             <Text size="sm" className="-ml-4">
               /month
@@ -143,14 +143,14 @@ const Property: NextPage = () => {
           <>
             <IconCalendarDollar size="1.5rem" stroke={1.5} className="-mr-3" />
             <Title order={3} style={{ fontWeight: "normal" }}>
-              {priceToString(property.current_price_rent)}
+              {priceToString(property?.current_price_rent)}
             </Title>
             <Text size="sm" className="-ml-4">
               /month
             </Text>
             <IconHomeDollar size="1.5rem" stroke={1.5} className="-mr-3" />
             <Title order={3} style={{ fontWeight: "normal" }}>
-              {priceToString(property.current_price_sale)}
+              {priceToString(property?.current_price_sale)}
             </Title>
           </>
         );
@@ -359,7 +359,7 @@ const Property: NextPage = () => {
     if (!property?.id) return;
     if (selectedUrl == "" || !selectedUrl) return;
 
-    if (property?.cover_url != selectedUrl) {
+    if (property?.cover_url !== selectedUrl) {
       const formData = new FormData();
       const newCover = selectedUrl;
       formData.append("index", photoIndex.toString());
