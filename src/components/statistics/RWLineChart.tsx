@@ -11,6 +11,10 @@ export type LineChartPayload = {
   "Average Rating": number | null;
 };
 
+export const formatRatingTooltip = (value: number) => {
+  return (value / 2).toFixed(2).replaceAll(".", ",").replaceAll(",00", "");
+};
+
 const RWLineChart = ({
   data,
   firstPriceKey,
@@ -38,10 +42,6 @@ const RWLineChart = ({
 
   const formatValue = (value: number) => {
     return priceToStringShort(value);
-  };
-
-  const formatRatingTooltip = (value: number) => {
-    return (value / 2).toFixed(2).replaceAll(".", ",").replaceAll(",00", "");
   };
 
   const CustomTooltip = ({ active, payload, label }) => {

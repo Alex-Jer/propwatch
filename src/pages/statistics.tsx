@@ -1,4 +1,5 @@
-import { SegmentedControl, Text, Title } from "@mantine/core";
+import { SegmentedControl, Table, Text, Title } from "@mantine/core";
+import { IconStarFilled } from "@tabler/icons-react";
 import {
   IconAdjustmentsAlt,
   IconBooks,
@@ -11,13 +12,13 @@ import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import CardBackground from "~/components/CardBackground";
 import { ControlPanelCard } from "~/components/ControlPanelCard";
-import RWLineChart, { LineChartPayload } from "~/components/statistics/RWLineChart";
+import RWLineChart, { LineChartPayload, formatRatingTooltip } from "~/components/statistics/RWLineChart";
 import RWPieChart, { PieChartPayload } from "~/components/statistics/RWPieChart";
-import { useStatistics } from "~/hooks/useQueries";
-import { ucfirst } from "~/lib/propertyHelper";
+import { CapStatsName, useStatistics } from "~/hooks/useQueries";
+import { priceToStringShort, ucfirst } from "~/lib/propertyHelper";
 
 const colors = [
   "#f03e3e",
@@ -94,6 +95,41 @@ const Statistics: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statistics?.properties]);
 
+  const mapTableFunc = useCallback((item: CapStatsName, index: number) => {
+    return (
+      <tr key={index}>
+        <td>{ucfirst(item.name)}</td>
+        <td>{item.count}</td>
+        <td>{item.price.sale ? priceToStringShort(Number(item.price.sale)) : ""}</td>
+        <td>{item.price.rent ? priceToStringShort(Number(item.price.rent)) : ""}</td>
+        <td>
+          {item.avg ? (
+            <>
+              <div className="flex items-center">
+                <span className="">{formatRatingTooltip(Number(item.avg))}</span>
+                <IconStarFilled size="0.8rem" className="ml-0.5" />
+              </div>
+            </>
+          ) : (
+            ""
+          )}
+        </td>
+      </tr>
+    );
+  }, []);
+
+  const tags = useMemo(() => {
+    if (statistics && statistics.tags) return statistics.tags.map(mapTableFunc);
+    return <></>;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statistics?.tags]);
+
+  const lists = useMemo(() => {
+    if (statistics && statistics.lists) return statistics.lists.map(mapTableFunc);
+    return <></>;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statistics?.lists]);
+
   return (
     <>
       <Head>
@@ -123,8 +159,8 @@ const Statistics: NextPage = () => {
             <RWPieChart data={listings} />
           </CardBackground>
         )}
-        <div className="col-span-1 md:col-span-2">
-          {properties && properties[1] && (
+        {properties && properties[1] && (
+          <div className="col-span-1 md:col-span-2">
             <CardBackground>
               <Text size="xl" className="mt-1 text-center text-xl font-semibold">
                 Average prices and ratings by property type
@@ -144,8 +180,48 @@ const Statistics: NextPage = () => {
                 isFirstActive={listingType == "sale"}
               />
             </CardBackground>
-          )}
-        </div>
+          </div>
+        )}
+        <CardBackground>
+          <Text size="xl" className="mt-1 text-center text-xl font-semibold">
+            Favourite tags
+          </Text>
+          <Text size="sm" className="text-center">
+            Top 5 tags by property rating
+          </Text>
+          <Table verticalSpacing="xs">
+            <thead>
+              <tr>
+                <th>Tag Name</th>
+                <th>Property Count</th>
+                <th>Sale Price (AVG)</th>
+                <th>Sale Rent (AVG)</th>
+                <th>Rating (AVG)</th>
+              </tr>
+            </thead>
+            <tbody>{tags}</tbody>
+          </Table>
+        </CardBackground>
+        <CardBackground>
+          <Text size="xl" className="mt-1 text-center text-xl font-semibold">
+            Favourite collections
+          </Text>
+          <Text size="sm" className="text-center">
+            Top 5 collections by property rating
+          </Text>
+          <Table verticalSpacing="xs">
+            <thead>
+              <tr>
+                <th>Collection Name</th>
+                <th>Property Count</th>
+                <th>Sale Price (AVG)</th>
+                <th>Sale Rent (AVG)</th>
+                <th>Rating (AVG)</th>
+              </tr>
+            </thead>
+            <tbody>{lists}</tbody>
+          </Table>
+        </CardBackground>
       </div>
     </>
   );

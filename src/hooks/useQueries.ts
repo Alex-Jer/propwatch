@@ -128,7 +128,7 @@ type CapStats = {
   price: StatsPrice;
 };
 
-type CapStatsList = {
+export type CapStatsName = {
   name: string;
 } & CapStats;
 
@@ -145,12 +145,8 @@ type Statistics = {
   listings: {
     [listing_type: string]: number;
   };
-  tags: {
-    [name: string]: CapStats;
-  };
-  lists: {
-    [id: string]: CapStatsList;
-  };
+  tags: CapStatsName[];
+  lists: CapStatsName[];
 };
 
 const fetchStatistics = async (session: Session | null) => {
