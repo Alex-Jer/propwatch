@@ -1,24 +1,16 @@
-import { SegmentedControl, Table, Text, Title, Tooltip } from "@mantine/core";
+import { SegmentedControl, Table, Text } from "@mantine/core";
 import { IconStarFilled } from "@tabler/icons-react";
-import {
-  IconAdjustmentsAlt,
-  IconBooks,
-  IconClipboardList,
-  IconDeviceAnalytics,
-  IconGraph,
-  IconTags,
-} from "@tabler/icons-react";
+import { IconDeviceAnalytics } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import CardBackground from "~/components/CardBackground";
-import { ControlPanelCard } from "~/components/ControlPanelCard";
-import RWLineChart, { LineChartPayload, formatRatingTooltip } from "~/components/statistics/RWLineChart";
-import RWPieChart, { PieChartPayload } from "~/components/statistics/RWPieChart";
-import { CapStatsName, useStatistics } from "~/hooks/useQueries";
-import { priceToStringShort, ucfirst } from "~/lib/propertyHelper";
+import RWLineChart, { type LineChartPayload, formatRatingTooltip } from "~/components/statistics/RWLineChart";
+import RWPieChart, { type PieChartPayload } from "~/components/statistics/RWPieChart";
+import { type CapStatsName, useStatistics } from "~/hooks/useQueries";
+import { priceToStringShort } from "~/lib/propertyHelper";
 
 const colors = [
   "#f03e3e",
@@ -96,14 +88,7 @@ const Statistics: NextPage = () => {
   }, [statistics?.properties]);
 
   const mapTableFunc = useCallback((item: CapStatsName, index: number) => {
-    const label =
-      item.name.length >= 15 ? (
-        <Tooltip label={item.name} color="gray" position="bottom" withArrow>
-          <span>{item.name.substring(0, 14) + "..."}</span>
-        </Tooltip>
-      ) : (
-        item.name
-      );
+    const label: string = item.name;
     return (
       <tr key={index}>
         <td>
@@ -209,7 +194,7 @@ const Statistics: NextPage = () => {
             <thead>
               <tr>
                 <th>Tag Name</th>
-                <th>Property Count</th>
+                <th>Count</th>
                 <th>Sale Price (AVG)</th>
                 <th>Sale Rent (AVG)</th>
                 <th>Rating (AVG)</th>
@@ -229,7 +214,7 @@ const Statistics: NextPage = () => {
             <thead>
               <tr>
                 <th>Collection Name</th>
-                <th>Property Count</th>
+                <th>Count</th>
                 <th>Sale Price (AVG)</th>
                 <th>Sale Rent (AVG)</th>
                 <th>Rating (AVG)</th>
