@@ -106,7 +106,7 @@ const Statistics: NextPage = () => {
       </div>
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:mx-2">
+      <div className="grid grid-cols-1 gap-x-6 gap-y-1 md:grid-cols-2 xl:mx-2">
         {properties && properties[0] && (
           <CardBackground>
             <Text size="xl" className="-mb-2 mt-1 text-center text-xl font-semibold">

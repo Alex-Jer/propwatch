@@ -1,3 +1,4 @@
+import { IconStar } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { priceToString, priceToStringShort } from "~/lib/propertyHelper";
@@ -37,7 +38,7 @@ const RWLineChart = ({
   };
 
   const formatRatingTooltip = (value: number) => {
-    return value.toFixed(2).replaceAll(".", ",").replaceAll(",00", "");
+    return (value / 2).toFixed(2).replaceAll(".", ",").replaceAll(",00", "");
   };
 
   const CustomTooltip = ({ active, payload, label }) => {
@@ -47,14 +48,14 @@ const RWLineChart = ({
           <p className="capitalize" style={{ color: "#C1C2C5" }}>{`${label}`}</p>
           {payload[0].payload[priceKey] && (
             <p style={{ color: "#909296" }}>
-              <b>Average Price: </b>
+              <b>{priceKey}: </b>
               {`${priceToString(payload[0].payload[priceKey])}`}
             </p>
           )}
           {payload[0].payload["Average Rating"] && (
             <p style={{ color: "#909296" }}>
               <b>Average Rating: </b>
-              {`${formatRatingTooltip(payload[0].payload["Average Rating"])}`}
+              {`${formatRatingTooltip(payload[0].payload["Average Rating"])}`} <IconStar size="1rem" />
             </p>
           )}
         </div>
@@ -95,7 +96,7 @@ const RWLineChart = ({
           yAxisId="right"
           orientation="right"
           tick={{ fill: "#C1C2C5", style: { fontSize: "0.8rem" } }}
-          tickFormatter={(val) => Number(val).toFixed(2).replaceAll(".", ",").replaceAll(",00", "")}
+          tickFormatter={(val) => (Number(val) / 2).toFixed(2).replaceAll(".", ",").replaceAll(",00", "")}
           domain={[1, 10]}
           label={{
             value: "Rating",
