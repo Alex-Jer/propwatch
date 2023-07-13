@@ -79,14 +79,6 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
     });
   }, []);
 
-  if (isLoading) {
-    console.log("Loading...");
-  }
-
-  if (isError) {
-    console.log("Error!");
-  }
-
   const links = [
     { icon: IconBuildingEstate, label: "All properties", url: "/properties" },
     {

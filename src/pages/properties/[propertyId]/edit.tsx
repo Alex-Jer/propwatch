@@ -34,8 +34,6 @@ const EditProperty: NextPage = () => {
     return <div>Loading...</div>;
   }
 
-  console.log({ property });
-
   return (
     <>
       <div className="mx-2 mt-6 pt-4 sm:mx-4 md:mx-6 2xl:mx-36">
