@@ -38,7 +38,7 @@ const schema = z.object({
     .optional()
     .nullable(),
   type: z.enum(["house", "apartment", "office", "shop", "warehouse", "garage", "land", "other"]).optional().nullable(),
-  typology: z.string().max(12, { message: "Typology must be at most 12 characters long" }),
+  typology: z.string().max(12, { message: "Typology must be at most 12 characters long" }).optional().nullable(),
   status: z.enum(["available", "unavailable", "unknown"]).optional().nullable(),
   gross_area: z
     .union([z.number().int().nonnegative().optional().nullable(), z.string().max(16)])
@@ -234,8 +234,6 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     setStepperActive(nextStep);
 
     if (nextStep === 1) {
-      // focus on first field
-      console.log("focus");
       setFocus("full_address");
     }
   };

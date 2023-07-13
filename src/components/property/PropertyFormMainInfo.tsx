@@ -126,10 +126,11 @@ export function PropertyFormMainInfo({
           label="Property Type"
           placeholder="Property Type"
           control={control}
-          searchable
           nothingFound="No options"
           onChange={setSelectedPropertyType}
           disabled={disabled}
+          searchable
+          clearable
         />
         <Select
           data={currentStatuses}
@@ -138,6 +139,7 @@ export function PropertyFormMainInfo({
           label="Current Status"
           control={control}
           disabled={disabled}
+          searchable
         />
         <Select
           data={typologies}
@@ -146,7 +148,9 @@ export function PropertyFormMainInfo({
           placeholder="Typology"
           control={control}
           searchable
+          clearable
           creatable
+          disabled={selectedPropertyType === "land" || disabled}
           getCreateLabel={(query) => `+ Create ${query} `}
           onCreate={(query) => {
             const newTypology = { value: query, label: query };
@@ -154,7 +158,6 @@ export function PropertyFormMainInfo({
             typologies.sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
             return newTypology;
           }}
-          disabled={selectedPropertyType === "land" || disabled}
         />
       </Group>
 
