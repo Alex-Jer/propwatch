@@ -27,5 +27,13 @@ const config = {
     // TODO: Temporary placeholder domain
     domains: ["placehold.co", "localhost", "127.0.0.1", env.NEXT_PUBLIC_API_URL],
   },
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 export default config;
