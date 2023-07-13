@@ -164,7 +164,7 @@ const fetchCollection = async (session: Session | null, id: string, page: number
     "GET",
     session?.user.access_token
   )) as CollectionResponse;
-  return response;
+  return response.data;
 };
 
 /* Keep this one to paginate the collections page? */
