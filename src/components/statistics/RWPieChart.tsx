@@ -53,7 +53,7 @@ const renderActiveShape = ({
   const textAnchor = cos >= 0 ? "start" : "end";
   return (
     <g>
-      <Text x={cx} y={cy} dy={8} textAnchor="middle" fill={"#C1C2C5"}>
+      <Text x={cx} y={cy} dy={8} textAnchor="middle" className="capitalize" fill={"#C1C2C5"}>
         {payload.name}
       </Text>
       <Sector
@@ -83,7 +83,7 @@ const renderActiveShape = ({
         fill={"#C1C2C5"}
       >{`${value} properties`}</Text>
       <Text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill={"#909296"}>
-        {`(${(percent * 100).toFixed(0).replaceAll(".", ",")}%)`}
+        {`${payload.name} (${(percent * 100).toFixed(0).replaceAll(".", ",")}%)`}
       </Text>
     </g>
   );
@@ -96,8 +96,8 @@ const RWPieChart = ({ data }: { data: PieChartPayload[] }) => {
   };
 
   return (
-    <ResponsiveContainer width="100%" height={275}>
-      <PieChart width={450} height={250}>
+    <ResponsiveContainer width="100%" height={285}>
+      <PieChart width={450} height={285}>
         <Pie
           activeIndex={activeIndex}
           activeShape={renderActiveShape}

@@ -13,24 +13,23 @@ export const priceToString = (price: number) => {
 };
 
 export const priceToStringShort = (price: number) => {
-  // check if price is a decimal number
-  if (price % 1 == 0) price = Math.floor(price);
-  let short = "";
-  if (price >= 1000000) {
-    price = price / 1000000;
-    short = "M";
-  } else if (price > 9999) {
-    price = price / 1000;
-    short = "K";
+  const units = ["", " K", " M", " B"];
+
+  let unitIndex = 0;
+  let scaledValue = price;
+
+  while (scaledValue >= 1000 && unitIndex < units.length - 1) {
+    unitIndex += 1;
+    scaledValue /= 1000;
   }
-  if (short != "") price = Math.round(price);
-  return price
+
+  return `${scaledValue
     .toLocaleString("pt-PT", {
       style: "currency",
       currency: "EUR",
       minimumFractionDigits: 0,
     })
-    .replaceAll(/.€/g, short + " €");
+    .replaceAll(/.€/g, units[unitIndex] + " €")}`;
 };
 
 export const numberToString = (number: number) => {

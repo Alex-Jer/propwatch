@@ -7,7 +7,8 @@ import Link from "next/link";
 import { useMemo } from "react";
 import CardBackground from "~/components/CardBackground";
 import { ControlPanelCard } from "~/components/ControlPanelCard";
-import RWPieChart, { PieChartPayload } from "~/components/statistics/PieChart";
+import RWLineChart, { LineChartPayload } from "~/components/statistics/RWLineChart";
+import RWPieChart, { PieChartPayload } from "~/components/statistics/RWPieChart";
 import { useStatistics } from "~/hooks/useQueries";
 import { ucfirst } from "~/lib/propertyHelper";
 
@@ -40,7 +41,7 @@ const Statistics: NextPage = () => {
       let i = 0;
       Object.entries(statistics.listings).forEach(([listing_type, value]) => {
         listings.push({
-          name: ucfirst(listing_type),
+          name: listing_type,
           value,
           color: getColor(i),
         });
@@ -51,6 +52,35 @@ const Statistics: NextPage = () => {
     return undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statistics?.listings]);
+
+  const properties = useMemo<([PieChartPayload[], LineChartPayload[]] | undefined)[]>(() => {
+    if (statistics && statistics.properties) {
+      const pcounts: PieChartPayload[] = [];
+      const properties: LineChartPayload[] = [];
+      let i = 0;
+      Object.entries(statistics.properties)
+        .sort((a, b) => {
+          return b[1].count - a[1].count;
+        })
+        .forEach(([property_type, stats]) => {
+          pcounts.push({
+            name: property_type == "no_type" ? "no type" : property_type,
+            value: stats.count,
+            color: getColor(i),
+          });
+          properties.push({
+            name: property_type == "no_type" ? "no type" : property_type,
+            "Average Sale Price": stats.price.sale,
+            "Average Rent Price": stats.price.rent,
+            "Average Rating": stats.avg,
+          });
+          i++;
+        });
+      return [pcounts, properties];
+    }
+    return [undefined, undefined];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statistics?.properties]);
 
   return (
     <>
@@ -64,15 +94,33 @@ const Statistics: NextPage = () => {
       </div>
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
-      <div className="container grid grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:mx-2">
+        {properties && properties[0] && (
+          <CardBackground>
+            <Text size="xl" className="-mb-2 mt-1 text-center text-xl font-semibold">
+              Properties by type
+            </Text>
+            <RWPieChart data={properties[0] as unknown as PieChartPayload[]} />
+          </CardBackground>
+        )}
         {listings && (
-          <CardBackground className="mx-6">
-            <Text size="xl" className="mt-2 text-center text-xl font-semibold">
-              Listings by type
+          <CardBackground>
+            <Text size="xl" className="-mb-2 mt-1 text-center text-xl font-semibold">
+              Properties by listing type
             </Text>
             <RWPieChart data={listings} />
           </CardBackground>
         )}
+        <div className="col-span-1 md:col-span-2">
+          {properties && properties[1] && (
+            <CardBackground>
+              <Text size="xl" className="mt-1 text-center text-xl font-semibold">
+                Average prices and ratings by type
+              </Text>
+              <RWLineChart data={properties[1] as unknown as LineChartPayload[]} />
+            </CardBackground>
+          )}
+        </div>
       </div>
     </>
   );
