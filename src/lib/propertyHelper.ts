@@ -3,6 +3,7 @@ import seedrandom from "seedrandom";
 import { cloneElement, type ReactElement } from "react";
 
 export const priceToString = (price: number) => {
+  price = Number(price);
   // check if price is a decimal number
   if (price % 1 == 0) price = Math.floor(price);
   return price.toLocaleString("pt-PT", {
@@ -13,6 +14,7 @@ export const priceToString = (price: number) => {
 };
 
 export const priceToStringShort = (price: number) => {
+  price = Number(price);
   const units = ["", " K", " M", " B"];
 
   let unitIndex = 0;
