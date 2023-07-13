@@ -115,7 +115,7 @@ const Statistics: NextPage = () => {
           {properties && properties[1] && (
             <CardBackground>
               <Text size="xl" className="mt-1 text-center text-xl font-semibold">
-                Average prices and ratings by type
+                Average prices and ratings by property type
               </Text>
               <RWLineChart data={properties[1] as unknown as LineChartPayload[]} />
             </CardBackground>
