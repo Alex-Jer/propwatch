@@ -145,7 +145,7 @@ const Statistics: NextPage = () => {
       <div className="grid grid-cols-1 gap-x-6 gap-y-1 md:grid-cols-2 xl:mx-2">
         {properties && properties[0] && (
           <CardBackground>
-            <Text size="xl" className="-mb-2 mt-1 text-center text-xl font-semibold">
+            <Text size="xl" className="-mb-2 mt-1 text-center text-xl font-semibold capitalize">
               Properties by type
             </Text>
             <RWPieChart data={properties[0] as unknown as PieChartPayload[]} />
@@ -153,7 +153,7 @@ const Statistics: NextPage = () => {
         )}
         {listings && (
           <CardBackground>
-            <Text size="xl" className="-mb-2 mt-1 text-center text-xl font-semibold">
+            <Text size="xl" className="-mb-2 mt-1 text-center text-xl font-semibold capitalize">
               Properties by listing type
             </Text>
             <RWPieChart data={listings} />
@@ -162,7 +162,7 @@ const Statistics: NextPage = () => {
         {properties && properties[1] && (
           <div className="col-span-1 md:col-span-2">
             <CardBackground>
-              <Text size="xl" className="mt-1 text-center text-xl font-semibold">
+              <Text size="xl" className="mt-1 text-center text-xl font-semibold capitalize">
                 Average prices and ratings by property type
               </Text>
               <SegmentedControl
@@ -183,10 +183,10 @@ const Statistics: NextPage = () => {
           </div>
         )}
         <CardBackground>
-          <Text size="xl" className="mt-1 text-center text-xl font-semibold">
+          <Text size="xl" className="mt-1 text-center text-xl font-semibold capitalize">
             Favourite tags
           </Text>
-          <Text size="sm" className="text-center">
+          <Text size="sm" className="text-center capitalize">
             Top 5 tags by property rating
           </Text>
           <Table verticalSpacing="xs">
@@ -203,10 +203,10 @@ const Statistics: NextPage = () => {
           </Table>
         </CardBackground>
         <CardBackground>
-          <Text size="xl" className="mt-1 text-center text-xl font-semibold">
+          <Text size="xl" className="mt-1 text-center text-xl font-semibold capitalize">
             Favourite collections
           </Text>
-          <Text size="sm" className="text-center">
+          <Text size="sm" className="text-center capitalize">
             Top 5 collections by property rating
           </Text>
           <Table verticalSpacing="xs">
