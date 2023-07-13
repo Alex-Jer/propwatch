@@ -41,7 +41,7 @@ export function CollectionCard({ covers, description, title, date, isLoading = f
   const { classes } = useStyles();
 
   const ThumbnailCollage = ({ covers }: ThumbnailCollageProps) => {
-    return (
+    return covers.length >= 4 ? (
       <div
         style={{
           display: "grid",
@@ -68,11 +68,32 @@ export function CollectionCard({ covers, description, title, date, isLoading = f
               style={{
                 objectFit: "cover",
               }}
-              alt={"asd"}
+              alt={"cover-" + index.toString()}
               className="flex-shrink-0"
             />
           </div>
         ))}
+      </div>
+    ) : (
+      <div
+        style={{
+          gridGap: "1px",
+          width: "144px",
+          height: "144px",
+          overflow: "hidden",
+          borderRadius: "4px",
+        }}
+      >
+        <Image
+          src={covers[0]}
+          width={144}
+          height={144}
+          style={{
+            objectFit: "cover",
+          }}
+          alt={"cover"}
+          className="flex-shrink-0"
+        />
       </div>
     );
   };
