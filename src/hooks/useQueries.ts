@@ -116,6 +116,47 @@ type UseAdmsWithoutParent = {
   status: string;
 };
 
+type StatsPrice = {
+  sale: number | null;
+  rent: number | null;
+};
+
+type CapStats = {
+  count: number;
+  avg: number;
+  price: StatsPrice;
+};
+
+type CapStatsList = {
+  name: string;
+} & CapStats;
+
+type Statistics = {
+  total: {
+    properties: number;
+    tags: number;
+    lists: number;
+    offers: number;
+  };
+  properties: {
+    [type: string]: CapStats;
+  };
+  listings: {
+    [listing_type: string]: number;
+  };
+  tags: {
+    [name: string]: CapStats;
+  };
+  lists: {
+    [id: string]: CapStatsList;
+  };
+};
+
+const fetchStatistics = async (session: Session | null) => {
+  const response = (await makeRequest(`me/statistics`, "GET", session?.user.access_token)) as Statistics;
+  return response;
+};
+
 const fetchCollection = async (session: Session | null, id: string, page: number) => {
   const response = (await makeRequest(
     `me/lists/${id}?page=${page}`,
@@ -420,6 +461,14 @@ export const useAdms3 = ({ session, status, parentId }: UseAdms) => {
   return useQuery({
     queryKey: ["adms3_" + parentId],
     queryFn: () => fetchAdms(session, 3, parentId),
+    enabled: status === "authenticated",
+  });
+};
+
+export const useStatistics = ({ session, status }: UseElement) => {
+  return useQuery({
+    queryKey: ["statistics"],
+    queryFn: () => fetchStatistics(session),
     enabled: status === "authenticated",
   });
 };
