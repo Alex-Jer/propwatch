@@ -377,7 +377,7 @@ export const useProperty = ({ session, status, elementId: propertyId, enabled = 
 
 export const useProperties = ({ session, status, search, filters, page, enabled = true }: UseProperties) => {
   return useQuery({
-    queryKey: ["properties", search, filters, page] /* TODO: Is this worth it ? */,
+    queryKey: ["properties", search, filters, page],
     queryFn: () => fetchProperties(session, search, filters, page),
     enabled: status === "authenticated" && enabled,
   });
@@ -401,7 +401,7 @@ export const useTrashedProperties = ({ session, status, page }: UseElementWithPa
 
 export const usePolygonProperties = ({ session, status, search, filters, polygon, page }: UsePolygonProperties) => {
   return useQuery({
-    queryKey: ["properties", polygon, search, filters, page] /* TODO: Is this worth it ? */,
+    queryKey: ["properties", polygon, search, filters, page],
     queryFn: () => fetchPropertiesInPolygon(session, search, filters, polygon, page),
     enabled: status === "authenticated",
   });

@@ -249,7 +249,6 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
               {property.useful_area && (
                 <LabelAndValue label="Net Area" value={numberToString(parseInt(property.useful_area)) + " m²"} />
               )}
-              {/* TODO: should go to another category?? */}
               {renderCharacteristics()}
             </div>
           ) : (
@@ -269,7 +268,6 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
         <>
           {!isLoading && property ? (
             <div style={{ display: "flex", flexWrap: "wrap", gridGap: "2rem" }}>
-              {/* TODO: MANTER ESTA ORDEM?? */}
               <LabelAndValue label="District" value={property.address?.adm1?.toString()} />
               <LabelAndValue label="Municipality" value={property.address?.adm2?.toString()} />
               <LabelAndValue label="Parish" value={property.address?.adm3?.toString()} />

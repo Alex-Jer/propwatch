@@ -307,7 +307,6 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     });
 
     offers.forEach((offer, index) => {
-      // TODO: offer id
       appendIfNotNull(`offers[${index}][listing_type]`, offer.listing_type);
       appendIfNotNull(`offers[${index}][url]`, offer.url);
       appendIfNotNull(`offers[${index}][description]`, offer.description);
@@ -525,8 +524,6 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
               </Stepper.Step>
 
               <Stepper.Step label="Summary">
-                {/* TODO: Extract to a component */}
-                {/* <AddPropertySummary />  */}
                 <h1 className="mb-2 text-2xl font-semibold">Summary</h1>
                 <Paper className="mb-4" shadow="xs" p="md" withBorder>
                   <PropertyFormMainInfo

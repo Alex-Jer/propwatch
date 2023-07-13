@@ -348,7 +348,7 @@ const Property: NextPage = () => {
         const sendSuccess = () => {
           successNotification("This property has been sent to trash!", "Property deleted");
         };
-        router.push("/properties").then(sendSuccess).catch(sendSuccess); //TODO: Should we redirect to trash?
+        router.push("/properties").then(sendSuccess).catch(sendSuccess);
       })
       .catch(() => {
         errorNotification("An unknown error occurred while trying to delete this property.");
@@ -403,7 +403,6 @@ const Property: NextPage = () => {
         {renderImageDrawer()}
         {renderVideoDrawer()}
         {renderBlueprintDrawer()}
-        {/* TODO: Test Button */}
         <Group position="left" className="mt-4">
           <Button.Group>
             <Button

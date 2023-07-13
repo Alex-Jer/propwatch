@@ -41,8 +41,6 @@ export function NavbarDefault({ opened, setOpened }: Props) {
   const { data: colData, isLoading, isError, refetch } = useAllCollections({ session, status });
   const collections = colData?.data;
 
-  //TODO: Better organization; Better error/loading processing; Better planning
-
   const links = [
     { icon: IconBuildingEstate, label: "All properties", url: "/properties" },
     {

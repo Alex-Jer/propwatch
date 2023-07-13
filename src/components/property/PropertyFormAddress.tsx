@@ -53,7 +53,6 @@ export function PropertyFormAddress({
   if (adm2Data) adm2 = formatAdmData(adm2Data);
   if (adm3Data) adm3 = formatAdmData(adm3Data);
 
-  // TODO: withAsterisk doesn't match reality, required_without_all:Full Address,Adm 1 Id
   return (
     <div>
       <TextInput
@@ -137,7 +136,6 @@ export function PropertyFormAddress({
           disabled={disabled}
         />
       </Group>
-      {/* TODO: Map & get address from point */}
     </div>
   );
 }

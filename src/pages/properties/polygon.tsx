@@ -90,7 +90,6 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, filter
               onDelete={onDelete}
               setControlRef={setDrwCtrl}
             />
-            {/* TODO: Color here, should be the primary color */}
             {polygon && (
               <Source id="polygon" type="geojson" data={polygon}>
                 <Layer
