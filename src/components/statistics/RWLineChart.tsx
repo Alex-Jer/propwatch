@@ -1,4 +1,5 @@
-import { IconStar } from "@tabler/icons-react";
+import { createStyles } from "@mantine/core";
+import { IconStar, IconStarFilled } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { priceToString, priceToStringShort } from "~/lib/propertyHelper";
@@ -25,6 +26,8 @@ const RWLineChart = ({
   secondPriceColor: string;
   isFirstActive?: boolean;
 }) => {
+  const { classes } = useStyles();
+
   const [priceKey, setPriceKey] = useState(firstPriceKey);
   const [priceColor, setPriceColor] = useState(firstPriceColor);
 
@@ -44,7 +47,7 @@ const RWLineChart = ({
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="custom-tooltip">
+        <div className={`${classes.customTooltip}`}>
           <p className="capitalize" style={{ color: "#C1C2C5" }}>{`${label}`}</p>
           {payload[0].payload[priceKey] && (
             <p style={{ color: "#909296" }}>
@@ -53,10 +56,11 @@ const RWLineChart = ({
             </p>
           )}
           {payload[0].payload["Average Rating"] && (
-            <p style={{ color: "#909296" }}>
-              <b>Average Rating: </b>
-              {`${formatRatingTooltip(payload[0].payload["Average Rating"])}`} <IconStar size="1rem" />
-            </p>
+            <div style={{ color: "#909296" }} className="flex items-center">
+              <div className="mr-1 font-bold">Average Rating: </div>
+              {`${formatRatingTooltip(payload[0].payload["Average Rating"])}`}
+              <IconStarFilled size="1rem" className="-mt-px ml-1" />
+            </div>
           )}
         </div>
       );
@@ -140,3 +144,12 @@ const RWLineChart = ({
 };
 
 export default RWLineChart;
+
+const useStyles = createStyles((theme) => ({
+  customTooltip: {
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
+    padding: 10,
+    borderRadius: 5,
+    boxShadow: theme.shadows.sm,
+  },
+}));
