@@ -130,10 +130,9 @@ const Collection: NextPage = () => {
 
         <div className="-mx-4 my-2 border-b border-shark-700" />
 
-        <div className="mb-4 flex flex-row items-center align-middle">
+        <div className="mb-4 flex flex-row items-center space-x-2 align-middle">
           <MultiSelect
             data={props}
-            label="Add properties to this collection"
             placeholder="Select the properties you wish to add to this collection"
             clearButtonProps={{ "aria-label": "Clear selection" }}
             clearable
@@ -145,8 +144,8 @@ const Collection: NextPage = () => {
             onSearchChange={onSearchChange}
             nothingFound="No properties found"
           />
-          <ActionIcon disabled={propsToAdd.length == 0} onClick={apmOpen} variant="filled">
-            <IconCirclePlus size="1rem" />
+          <ActionIcon disabled={propsToAdd.length == 0} onClick={apmOpen} variant="filled" size="lg" color="blue">
+            <IconCirclePlus size="1.5rem" />
           </ActionIcon>
         </div>
 
