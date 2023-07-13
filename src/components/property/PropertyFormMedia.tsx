@@ -1,4 +1,4 @@
-import { ActionIcon, createStyles, Divider, Group, Modal, Text } from "@mantine/core";
+import { ActionIcon, Anchor, createStyles, Divider, Group, Modal, Text } from "@mantine/core";
 import { Controller, type Control } from "react-hook-form";
 import { type FormSchemaType } from "./PropertyForm";
 import { FilePond, registerPlugin } from "react-filepond";
@@ -112,6 +112,15 @@ export function PropertyFormMedia({
       title: "Order",
       width: 100,
       textAlignment: "center",
+    },
+    {
+      accessor: "url",
+      title: "URL",
+      render: (item: MediaItem) => (
+        <Anchor href={item.url} target="_blank" rel="noopener noreferrer">
+          {item.url}
+        </Anchor>
+      ),
     },
     {
       accessor: "actions",
