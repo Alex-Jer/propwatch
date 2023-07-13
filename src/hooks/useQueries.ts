@@ -129,6 +129,7 @@ type CapStats = {
 };
 
 export type CapStatsName = {
+  id?: number;
   name: string;
 } & CapStats;
 

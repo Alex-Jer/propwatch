@@ -1,4 +1,4 @@
-import { SegmentedControl, Table, Text, Title } from "@mantine/core";
+import { SegmentedControl, Table, Text, Title, Tooltip } from "@mantine/core";
 import { IconStarFilled } from "@tabler/icons-react";
 import {
   IconAdjustmentsAlt,
@@ -96,9 +96,25 @@ const Statistics: NextPage = () => {
   }, [statistics?.properties]);
 
   const mapTableFunc = useCallback((item: CapStatsName, index: number) => {
+    const label =
+      item.name.length >= 15 ? (
+        <Tooltip label={item.name} color="gray" position="bottom" withArrow>
+          <span>{item.name.substring(0, 14) + "..."}</span>
+        </Tooltip>
+      ) : (
+        item.name
+      );
     return (
       <tr key={index}>
-        <td>{ucfirst(item.name)}</td>
+        <td>
+          {item.id ? (
+            <Link href={`/collections/${item.id}`} key={"collection-stats-" + item.id.toString()}>
+              {label}
+            </Link>
+          ) : (
+            label
+          )}
+        </td>
         <td>{item.count}</td>
         <td>{item.price.sale ? priceToStringShort(Number(item.price.sale)) : ""}</td>
         <td>{item.price.rent ? priceToStringShort(Number(item.price.rent)) : ""}</td>
