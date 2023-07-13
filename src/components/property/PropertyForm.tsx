@@ -8,7 +8,7 @@ import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest, processAxiosError } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
-import { type Property, type Offer, type SelectOption, type Media } from "~/types";
+import { type Property, type Offer, type SelectOption, type Media, type AxiosErrorResponse } from "~/types";
 import {
   PropertyFormAddress,
   PropertyFormCharacteristics,
@@ -403,8 +403,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
 
   const { mutate, isLoading } = useMutation({
     mutationFn: mode === "add" ? addProperty : editProperty,
-    onSuccess: () => {
-      refetch();
+    onSuccess: async () => {
       close && close();
       notifications.show({
         title: "Property added",
@@ -413,12 +412,13 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
         icon: <IconCheck size="1.5rem" />,
         autoClose: 10000,
       });
+      await refetch();
 
       if (mode === "edit" && property.id) {
         void router.push(`/properties/${property.id}`);
       }
     },
-    onError: (error) => {
+    onError: (error: AxiosErrorResponse) => {
       console.error({ error });
 
       if (mode == "add") processAxiosError(error, "An error occurred while adding your property");

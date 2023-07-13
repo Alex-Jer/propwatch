@@ -36,7 +36,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
       <MantineProvider theme={{ colorScheme: "dark" }} emotionCache={cache} withGlobalStyles withNormalizeCSS>
         <Notifications />
         <QueryClientProvider client={queryClient}>
-          <PropertiesProvider filters={filters} search={search}>
+          <PropertiesProvider search={search} filters={filters}>
             <NextNProgress options={{ showSpinner: false }} />
             {isAppRoute ? (
               <Shell
