@@ -1,4 +1,4 @@
-import { Group, Pagination } from "@mantine/core";
+import { Group, Pagination, Skeleton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconTrash } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
@@ -55,39 +55,49 @@ export function DisplayProperties({
         noBtn={{ text: "Cancel", variant: "default" }}
       />
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-        {isLoading ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />) : null}
-        {properties?.map((property: CollectionProperty) => (
-          <div
-            className="z-10 cursor-pointer"
-            onClick={() => {
-              void router.push(`/properties/${property.id}`);
-            }}
-            key={property.id}
-          >
-            <PropertyCard
-              property={property}
-              xButton={IconTrash}
-              xButtonTooltip="Trash property"
-              executeXButton={() => {
-                setSelectedPropId(property.id);
-                openTrashModal();
-              }}
-            />
-          </div>
-        ))}
+        {isLoading
+          ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />)
+          : properties?.map((property: CollectionProperty) => (
+              <div
+                className="z-10 cursor-pointer"
+                onClick={() => {
+                  void router.push(`/properties/${property.id}`);
+                }}
+                key={property.id}
+              >
+                <PropertyCard
+                  property={property}
+                  xButton={IconTrash}
+                  xButtonTooltip="Trash property"
+                  executeXButton={() => {
+                    setSelectedPropId(property.id);
+                    openTrashModal();
+                  }}
+                />
+              </div>
+            ))}
       </div>
 
-      {propData?.meta.last_page && propData?.meta.last_page > 1 && (
+      {!isLoading ? (
+        propData?.meta.last_page &&
+        propData?.meta.last_page > 1 && (
+          <>
+            <Pagination.Root value={activePage} onChange={setPage} total={propData?.meta.last_page ?? 1}>
+              <Group spacing={5} position="center" className="mt-4">
+                <Pagination.First />
+                <Pagination.Previous />
+                <Pagination.Items />
+                <Pagination.Next />
+                <Pagination.Last />
+              </Group>
+            </Pagination.Root>
+          </>
+        )
+      ) : (
         <>
-          <Pagination.Root value={activePage} onChange={setPage} total={propData?.meta.last_page ?? 1}>
-            <Group spacing={5} position="center" className="mt-4">
-              <Pagination.First />
-              <Pagination.Previous />
-              <Pagination.Items />
-              <Pagination.Next />
-              <Pagination.Last />
-            </Group>
-          </Pagination.Root>
+          <Group spacing={5} position="center" className="mt-4">
+            <Skeleton width="40%" height={30} />
+          </Group>
         </>
       )}
     </>
