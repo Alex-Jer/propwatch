@@ -1,4 +1,4 @@
-import { ActionIcon,, createStyles, Divider, Group, Modal, Text } from "@mantine/core";
+import { ActionIcon, createStyles, Divider, Group, Modal, Text } from "@mantine/core";
 import { Controller, type Control } from "react-hook-form";
 import { type FormSchemaType } from "./PropertyForm";
 import { FilePond, registerPlugin } from "react-filepond";
