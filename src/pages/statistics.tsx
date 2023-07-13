@@ -1,5 +1,12 @@
 import { SegmentedControl, Text, Title } from "@mantine/core";
-import { IconAdjustmentsAlt, IconBooks, IconClipboardList, IconTags } from "@tabler/icons-react";
+import {
+  IconAdjustmentsAlt,
+  IconBooks,
+  IconClipboardList,
+  IconDeviceAnalytics,
+  IconGraph,
+  IconTags,
+} from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
@@ -94,7 +101,7 @@ const Statistics: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="mb-2 flex flex-row items-center">
-        <IconAdjustmentsAlt className="-mt-1 mr-2" strokeWidth={1.5} />
+        <IconDeviceAnalytics className="-mt-1 mr-2" strokeWidth={1.5} />
         <h1 className="pb-1 text-base font-semibold">Statistics</h1>
       </div>
       <div className="-mx-4 mb-4 border-b border-shark-700" />

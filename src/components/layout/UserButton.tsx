@@ -1,4 +1,5 @@
 import { UnstyledButton, Group, Avatar, Text, createStyles, Menu } from "@mantine/core";
+import { IconDeviceAnalytics } from "@tabler/icons-react";
 import { IconAdjustmentsAlt, IconChevronRight, IconLogout, IconUserCircle } from "@tabler/icons-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -53,6 +54,10 @@ export function UserButton({ image, name, icon, ...others }: UserButtonProps) {
           <Menu.Label>Settings</Menu.Label>
           <Link href="/manage">
             <Menu.Item icon={<IconAdjustmentsAlt size="1rem" stroke={1.5} />}>Control Panel</Menu.Item>
+          </Link>
+          <Menu.Label>Statistics</Menu.Label>
+          <Link href="/statistics">
+            <Menu.Item icon={<IconDeviceAnalytics size="1rem" stroke={1.5} />}>Statistics</Menu.Item>
           </Link>
           <Menu.Label>Account</Menu.Label>
           <Link href="/profile">
