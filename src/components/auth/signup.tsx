@@ -1,7 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Anchor, Button, Container, Paper, Text, Title } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-import { IconCheck, IconX } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -11,6 +9,7 @@ import { PasswordInput, TextInput } from "react-hook-form-mantine";
 import { z } from "zod";
 import { register } from "~/lib/requestHelper";
 import { type AxiosErrorResponse } from "~/types";
+import { errorNotification, successNotification } from "../PropertyCard";
 
 const schema = z
   .object({
@@ -65,12 +64,7 @@ export function SignUpForm() {
   const { mutate, isLoading } = useMutation({
     mutationFn: signup,
     onSuccess: () => {
-      notifications.show({
-        title: "Success",
-        message: "You have been successfully registered!",
-        color: "teal",
-        icon: <IconCheck size="1.5rem" />,
-      });
+      successNotification("You have been successfully registered!");
       void router.push("/properties");
     },
     onError: (error: AxiosErrorResponse) => {
@@ -78,12 +72,7 @@ export function SignUpForm() {
         setError("email", { message: error.response.data.message });
         return;
       }
-      notifications.show({
-        title: "Something went wrong",
-        message: "Check your internet connection and try again",
-        color: "red",
-        icon: <IconX size="1.5rem" />,
-      });
+      errorNotification("Check your internet connection and try again", "Something went wrong");
     },
   });
 

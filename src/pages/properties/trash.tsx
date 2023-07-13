@@ -4,7 +4,7 @@ import { IconArrowBackUpDouble, IconTrash, IconTrashX } from "@tabler/icons-reac
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ConfirmationModal } from "~/components/ConfirmationModal";
 import { PropertyCard, errorNotification, successNotification } from "~/components/PropertyCard";
 import { useTrashedProperties } from "~/hooks/useQueries";
@@ -32,9 +32,11 @@ const TrashedProperties: NextPage = () => {
 
   const properties: CollectionProperty[] | undefined = propData?.data;
 
-  if (isError) {
-    return <div>Error loading properties.</div>;
-  }
+  useEffect(() => {
+    if (isError) {
+      errorNotification("There was an error loading your properties.");
+    }
+  }, [isError]);
 
   const restoreAll = () => {
     makeRequest(`me/properties/trashed/restore`, "PATCH", session?.user.access_token)
@@ -96,7 +98,6 @@ const TrashedProperties: NextPage = () => {
         noBtn={{ text: "Cancel", variant: "default" }}
         text="Are you sure you want to restore all properties?"
       />
-
       <ConfirmationModal
         opened={emptyTrashOpened}
         close={closeEmptyTrash}
@@ -105,7 +106,6 @@ const TrashedProperties: NextPage = () => {
         noBtn={{ text: "Cancel", variant: "default" }}
         text="Are you sure you want to permanently delete all the properties in the trash?"
       />
-
       <div className="mb-2 flex flex-row items-center justify-between">
         <div className="flex items-center">
           <IconTrash className="-mt-1 mr-2" strokeWidth={1.5} />
@@ -128,17 +128,17 @@ const TrashedProperties: NextPage = () => {
           </Button>
         </div>
       </div>
-
       <div className="-mx-4 mb-4 border-b border-shark-700" />
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+        {isLoading
+          ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />)
+          : renderProperties(properties)}
+      </div>
+
       {properties?.length && properties?.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-            {isLoading
-              ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />)
-              : renderProperties(properties)}
-          </div>
-
-          {!isLoading && propData?.meta.last_page > 1 && (
+          {!isLoading && propData?.meta.last_page && propData?.meta.last_page > 1 && (
             <>
               <Pagination.Root value={activePage} onChange={setPage} total={propData?.meta.last_page ?? 1}>
                 <Group spacing={5} position="center" className="mt-4">

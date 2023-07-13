@@ -1,25 +1,20 @@
-import { notifications } from "@mantine/notifications";
-import { IconBuildingEstate, IconX } from "@tabler/icons-react";
+import { IconBuildingEstate } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { DisplayProperties } from "~/components/DisplayProperties";
+import { errorNotification } from "~/components/PropertyCard";
 import { PropertiesContext } from "~/lib/PropertiesProvider";
 import type { SearchPropertyProps } from "~/types";
 
 const Properties: NextPage<SearchPropertyProps> = () => {
   const { properties, isLoading, isError, activePage, setPage, refetch } = useContext(PropertiesContext);
 
-  if (isError) {
-    notifications.show({
-      title: "Error",
-      message: "There was an error loading your properties.",
-      color: "red",
-      icon: <IconX size="1.5rem" />,
-    });
-
-    return null;
-  }
+  useEffect(() => {
+    if (isError) {
+      errorNotification("There was an error loading your properties.");
+    }
+  }, [isError]);
 
   return (
     <>

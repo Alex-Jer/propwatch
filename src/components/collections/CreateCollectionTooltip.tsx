@@ -1,16 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ActionIcon, Box, Button, Group, Modal, Tooltip } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconCheck, IconPlus } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
-import { type AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Textarea, TextInput } from "react-hook-form-mantine";
 import { z } from "zod";
 import { makeRequest, processAxiosError } from "~/lib/requestHelper";
-import { type Collection } from "~/types";
+import { type AxiosErrorResponse, type Collection } from "~/types";
+import { successNotification } from "../PropertyCard";
 
 type CollectionResponse = {
   message: string;
@@ -73,15 +72,9 @@ export function CreateCollectionTooltip({ refetch }: CreateCollectionTooltipProp
       reset(defaultValues);
       closeNewCollectionModal();
       refetch().then().catch(null);
-      notifications.show({
-        title: "Collection created",
-        message: "Collection created successfully",
-        color: "teal",
-        icon: <IconCheck size="1.5rem" />,
-        autoClose: 10000,
-      });
+      successNotification("Collection created successfully", "Collection created");
     },
-    onError: (error: AxiosError) => {
+    onError: (error: AxiosErrorResponse) => {
       if (error.response?.status === 409) {
         setError("title", {
           type: "custom",
