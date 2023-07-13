@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pie, PieChart, ResponsiveContainer, Sector, Text } from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer, Sector, Text } from "recharts";
 
 /*const exampleData = [
   { name: "Group A", value: 400 },
@@ -51,10 +51,9 @@ const renderActiveShape = ({
   const ex = mx + (cos >= 0 ? 1 : -1) * 22;
   const ey = my;
   const textAnchor = cos >= 0 ? "start" : "end";
-
   return (
     <g>
-      <Text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
+      <Text x={cx} y={cy} dy={8} textAnchor="middle" fill={"#C1C2C5"}>
         {payload.name}
       </Text>
       <Sector
@@ -64,7 +63,7 @@ const renderActiveShape = ({
         outerRadius={outerRadius}
         startAngle={startAngle}
         endAngle={endAngle}
-        fill={fill}
+        fill={"#C1C2C5"}
       />
       <Sector
         cx={cx}
@@ -73,13 +72,18 @@ const renderActiveShape = ({
         endAngle={endAngle}
         innerRadius={outerRadius + 6}
         outerRadius={outerRadius + 10}
-        fill={fill}
+        fill={"#C1C2C5"}
       />
-      <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
-      <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-      <Text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`${value} properties`}</Text>
-      <Text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
-        {`(${(percent * 100).toFixed(2)}%)`}
+      <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={"#C1C2C5"} fill="none" />
+      <circle cx={ex} cy={ey} r={2} fill={"#C1C2C5"} stroke="none" />
+      <Text
+        x={ex + (cos >= 0 ? 1 : -1) * 12}
+        y={ey}
+        textAnchor={textAnchor}
+        fill={"#C1C2C5"}
+      >{`${value} properties`}</Text>
+      <Text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill={"#909296"}>
+        {`(${(percent * 100).toFixed(0).replaceAll(".", ",")}%)`}
       </Text>
     </g>
   );
@@ -92,20 +96,23 @@ const RWPieChart = ({ data }: { data: PieChartPayload[] }) => {
   };
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <PieChart width={400} height={400}>
+    <ResponsiveContainer width="100%" height={275}>
+      <PieChart width={450} height={250}>
         <Pie
           activeIndex={activeIndex}
           activeShape={renderActiveShape}
-          data={data}
           cx="50%"
           cy="50%"
           innerRadius={60}
-          outerRadius={80}
-          fill="#8884d8"
+          outerRadius={90}
+          data={data}
           dataKey="value"
           onMouseEnter={onPieEnter}
-        />
+        >
+          {data.map((entry) => (
+            <Cell key={`pc-cell-${entry.name}`} strokeOpacity={0} fill={entry.color} />
+          ))}
+        </Pie>
       </PieChart>
     </ResponsiveContainer>
   );

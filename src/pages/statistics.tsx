@@ -1,3 +1,4 @@
+import { Text, Title } from "@mantine/core";
 import { IconAdjustmentsAlt, IconBooks, IconClipboardList, IconTags } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
@@ -8,6 +9,7 @@ import CardBackground from "~/components/CardBackground";
 import { ControlPanelCard } from "~/components/ControlPanelCard";
 import RWPieChart, { PieChartPayload } from "~/components/statistics/PieChart";
 import { useStatistics } from "~/hooks/useQueries";
+import { ucfirst } from "~/lib/propertyHelper";
 
 const colors = [
   "#f03e3e",
@@ -38,7 +40,7 @@ const Statistics: NextPage = () => {
       let i = 0;
       Object.entries(statistics.listings).forEach(([listing_type, value]) => {
         listings.push({
-          name: listing_type,
+          name: ucfirst(listing_type),
           value,
           color: getColor(i),
         });
@@ -61,10 +63,16 @@ const Statistics: NextPage = () => {
         <h1 className="pb-1 text-base font-semibold">Statistics</h1>
       </div>
       <div className="-mx-4 mb-4 border-b border-shark-700" />
-      {listings && <RWPieChart data={listings} />}
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-        <CardBackground className="pt-4">aa</CardBackground>
+      <div className="container grid grid-cols-1 md:grid-cols-2">
+        {listings && (
+          <CardBackground className="mx-6">
+            <Text size="xl" className="mt-2 text-center text-xl font-semibold">
+              Listings by type
+            </Text>
+            <RWPieChart data={listings} />
+          </CardBackground>
+        )}
       </div>
     </>
   );
