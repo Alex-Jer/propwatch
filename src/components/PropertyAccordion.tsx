@@ -1,4 +1,4 @@
-import { Group, Text, Accordion, ActionIcon, Tooltip, Title } from "@mantine/core";
+import { Group, Text, Accordion, ActionIcon, Tooltip, Title, Skeleton } from "@mantine/core";
 import {
   IconChartInfographic,
   IconChartLine,
@@ -62,7 +62,12 @@ function LabelAndValue({ label, value }: { label: string; value: string | undefi
   );
 }
 
-export function PropertyAccordion({ property }: { property: Property }) {
+type PropertyAccordionProps = {
+  property: Property | undefined;
+  isLoading?: boolean;
+};
+
+export function PropertyAccordion({ property, isLoading = false }: PropertyAccordionProps) {
   const [offersSortStatus, setOffersSortStatus] = useState<DataTableSortStatus>({
     columnAccessor: "id",
     direction: "asc",
@@ -88,6 +93,10 @@ export function PropertyAccordion({ property }: { property: Property }) {
   }, [offersSortStatus]);
 
   useEffect(() => {
+    if (!property) {
+      return;
+    }
+
     const offers = [
       ...property.offers.sale.map((offer) => ({
         ...offer,
@@ -104,7 +113,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
     ];
 
     setOfferRecords(offers);
-  }, [property.offers.sale, property.offers.rent, setOfferRecords]);
+  }, [property]);
 
   const offerTableColumns = [
     {
@@ -177,11 +186,10 @@ export function PropertyAccordion({ property }: { property: Property }) {
       case "other":
       default:
         return value;
-        break;
     }
   };
   const renderCharacteristics = () => {
-    return property.characteristics?.map((characteristic) => {
+    return property?.characteristics?.map((characteristic) => {
       return (
         <LabelAndValue
           key={characteristic.id}
@@ -192,8 +200,11 @@ export function PropertyAccordion({ property }: { property: Property }) {
     });
   };
 
-  const generateOffersDescription = (property: Property) => {
-    switch (property.listing_type) {
+  const generateOffersDescription = (property: Property | undefined) => {
+    if (isLoading) return "Loading offers...";
+    if (!property) return "";
+
+    switch (property?.listing_type) {
       case "sale":
         return `View ${property.offers.sale.length} sale offers`;
       case "rent":
@@ -211,45 +222,54 @@ export function PropertyAccordion({ property }: { property: Property }) {
       id: "details",
       icon: IconListDetails,
       label: "Property Details",
-      description: propertyDetailsResume(property) || "No details available",
+      description: propertyDetailsResume(property, isLoading) || "No details available",
       content: (
         <>
-          <div style={{ display: "flex", flexWrap: "wrap", gridGap: "2rem" }}>
-            <LabelAndValue label="Type" value={ucfirst(property.type?.toString())} />
-            <LabelAndValue label="Typology" value={property.typology?.toString()} />
-            <LabelAndValue label="Bathrooms" value={property.wc?.toString()} />
-            {property.gross_area && (
-              <LabelAndValue label="Gross Area" value={numberToString(parseInt(property.gross_area)) + " m²"} />
-            )}
-            {property.useful_area && (
-              <LabelAndValue label="Net Area" value={numberToString(parseInt(property.useful_area)) + " m²"} />
-            )}
-            {/* TODO: should go to another category?? */}
-            {renderCharacteristics()}
-          </div>
+          {!isLoading && property ? (
+            <div style={{ display: "flex", flexWrap: "wrap", gridGap: "2rem" }}>
+              <LabelAndValue label="Type" value={ucfirst(property.type?.toString())} />
+              <LabelAndValue label="Typology" value={property.typology?.toString()} />
+              <LabelAndValue label="Bathrooms" value={property.wc?.toString()} />
+              {property.gross_area && (
+                <LabelAndValue label="Gross Area" value={numberToString(parseInt(property.gross_area)) + " m²"} />
+              )}
+              {property.useful_area && (
+                <LabelAndValue label="Net Area" value={numberToString(parseInt(property.useful_area)) + " m²"} />
+              )}
+              {/* TODO: should go to another category?? */}
+              {renderCharacteristics()}
+            </div>
+          ) : (
+            <Skeleton height="100%" />
+          )}
         </>
       ),
-      disabled: !propertyDetailsResume(property),
+      disabled: isLoading || (property && !propertyDetailsResume(property)),
     },
     {
       id: "address",
       icon: IconMapPin,
       label: "Address",
-      description: completeAddress(property.address),
+      description: isLoading ? "Loading address..." : completeAddress(property?.address),
       content: (
         <>
-          <div style={{ display: "flex", flexWrap: "wrap", gridGap: "2rem" }}>
-            {/* TODO: MANTER ESTA ORDEM?? */}
-            <LabelAndValue label="District" value={property.address.adm1?.toString()} />
-            <LabelAndValue label="Municipality" value={property.address.adm2?.toString()} />
-            <LabelAndValue label="Parish" value={property.address.adm3?.toString()} />
-            <LabelAndValue label="Postal Code" value={property.address.postal_code?.toString()} />
-            <LabelAndValue label="Street Address" value={property.address.full_address?.toString()} />
-            <LabelAndValue label="Latitude" value={property.address.coordinates?.latitude?.toString()} />
-            <LabelAndValue label="Longitude" value={property.address.coordinates?.longitude?.toString()} />
-          </div>
+          {!isLoading && property ? (
+            <div style={{ display: "flex", flexWrap: "wrap", gridGap: "2rem" }}>
+              {/* TODO: MANTER ESTA ORDEM?? */}
+              <LabelAndValue label="District" value={property.address?.adm1?.toString()} />
+              <LabelAndValue label="Municipality" value={property.address?.adm2?.toString()} />
+              <LabelAndValue label="Parish" value={property.address?.adm3?.toString()} />
+              <LabelAndValue label="Postal Code" value={property.address?.postal_code?.toString()} />
+              <LabelAndValue label="Street Address" value={property.address?.full_address?.toString()} />
+              <LabelAndValue label="Latitude" value={property.address?.coordinates?.latitude?.toString()} />
+              <LabelAndValue label="Longitude" value={property.address?.coordinates?.longitude?.toString()} />
+            </div>
+          ) : (
+            <Skeleton height="100%" />
+          )}
         </>
       ),
+      disabled: isLoading || !property?.address?.full_address,
     },
     {
       id: "offers",
@@ -270,42 +290,50 @@ export function PropertyAccordion({ property }: { property: Property }) {
           )}
         </>
       ),
-      disabled: property.offers.sale.length + property.offers.rent.length === 0,
+      disabled: isLoading || (property && property?.offers.sale.length + property?.offers.rent.length === 0),
     },
     {
       id: "offers_history",
       icon: IconChartInfographic,
       label: "Offers' Price History",
       description:
-        property.offers.sale.length + property.offers.rent.length === 0
+        isLoading || !property
+          ? "Loading offers history..."
+          : property?.offers?.sale?.length + property?.offers?.rent?.length === 0
           ? "This property has no offers"
-          : `View the price history of ${property.offers.sale.length + property.offers.rent.length} offers`,
+          : `View the price history of ${property?.offers.sale.length + property?.offers.rent.length} offers`,
 
       content: (
         <>
-          {property.offers.sale.length > 0 && (
+          {!isLoading && property ? (
             <>
-              <Title order={4}>Sale offers:</Title>
-              <PropertyOfferHistoryChart
-                offers={property.offers.sale}
-                extra={(property.current_price_sale ?? 0) / 10}
-              />
+              {property.offers.sale.length > 0 && (
+                <>
+                  <Title order={4}>Sale offers:</Title>
+                  <PropertyOfferHistoryChart
+                    offers={property.offers.sale}
+                    extra={(property.current_price_sale ?? 0) / 10}
+                  />
+                </>
+              )}
+              {property.offers.rent.length > 0 && (
+                <>
+                  <Title className="pt-1" order={4}>
+                    Rent offers:
+                  </Title>
+                  <PropertyOfferHistoryChart
+                    offers={property.offers.rent}
+                    extra={(property.current_price_rent ?? 0) / 10}
+                  />
+                </>
+              )}
             </>
-          )}
-          {property.offers.rent.length > 0 && (
-            <>
-              <Title className="pt-1" order={4}>
-                Rent offers:
-              </Title>
-              <PropertyOfferHistoryChart
-                offers={property.offers.rent}
-                extra={(property.current_price_rent ?? 0) / 10}
-              />
-            </>
+          ) : (
+            <Skeleton height="100%" />
           )}
         </>
       ),
-      disabled: property.offers.sale.length + property.offers.rent.length === 0,
+      disabled: isLoading || !property || property?.offers.sale.length + property?.offers.rent.length === 0,
     },
   ];
 
@@ -319,7 +347,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
   ));
 
   const deleteOffer = () => {
-    if (selectedOffer && selectedOffer.id) {
+    if (selectedOffer && selectedOffer.id && property && property.offers) {
       makeRequest(`me/offers/${selectedOffer.id.toString()}`, "DELETE", session?.user.access_token)
         .then(() => {
           setSelectedOffer(null);
@@ -346,7 +374,7 @@ export function PropertyAccordion({ property }: { property: Property }) {
         noBtn={{ text: "Cancel", variant: "default" }}
       />
       <Accordion
-        defaultValue={propertyDetailsResume(property) ? ["details"] : []}
+        defaultValue={property && propertyDetailsResume(property) ? ["details"] : []}
         chevronPosition="right"
         variant="contained"
         multiple

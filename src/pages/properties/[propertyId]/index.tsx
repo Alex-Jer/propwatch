@@ -11,7 +11,19 @@ import { type FunctionComponent, type SVGProps, useEffect, useState, useRef } fr
 import { Apartment, House, Office, Shop, Warehouse, Garage, Default } from "public/icons";
 import { MainCarousel } from "~/components/MainCarousel";
 import { useDisclosure } from "@mantine/hooks";
-import { Badge, Button, Card, createStyles, Drawer, Group, Rating, Text, Title, Tooltip } from "@mantine/core";
+import {
+  Badge,
+  Button,
+  Card,
+  createStyles,
+  Drawer,
+  Group,
+  Rating,
+  Skeleton,
+  Text,
+  Title,
+  Tooltip,
+} from "@mantine/core";
 import CardBackground from "~/components/CardBackground";
 import { env } from "~/env.mjs";
 import {
@@ -81,22 +93,29 @@ const Property: NextPage = () => {
     }
   }, [isLoading, isError, property, selectedUrl, photos, isCurrentCover, setIsCurrentCover]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    if (isError) {
+      errorNotification("Error", "There was an error loading the property...");
+    }
+  }, [isError]);
 
   if (isError) {
-    return <div>Error loading property.</div>;
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <Text size="lg" weight={500} className="mb-4">
+          There was an error loading the property...
+        </Text>
+      </div>
+    );
   }
-
-  if (!photos) return <div>Error loading property.</div>;
 
   const videos = property?.media?.videos;
   const blueprints = property?.media?.blueprints;
   const coordinates = property?.address?.coordinates;
 
   const renderPrice = () => {
-    if (!property || (!property.current_price_sale && !property.current_price_rent)) return "";
+    if (!property || isLoading || (!property.current_price_sale && !property.current_price_rent)) return "";
+
     switch (property.listing_type) {
       case "sale":
         return (
@@ -141,7 +160,15 @@ const Property: NextPage = () => {
   };
 
   const renderCover = () => {
-    if (photos?.length == 0)
+    if (isLoading) {
+      return (
+        <Card radius="md" withBorder p={0} className={classes.card}>
+          <Skeleton radius="md" height="440" />
+        </Card>
+      );
+    }
+
+    if (photos?.length == 0 || photos == undefined)
       return (
         <Card radius="md" withBorder p={0} className={classes.card}>
           <div className={`flex items-center justify-center ${classes.placeholder}`}>
@@ -157,6 +184,7 @@ const Property: NextPage = () => {
   };
 
   const renderImageDrawer = () => {
+    if (!photos) return null;
     return (
       <Drawer opened={imagesOpened} onClose={closeImages} position="bottom" size="100%">
         <div className="flex h-screen items-center">
@@ -167,6 +195,7 @@ const Property: NextPage = () => {
   };
 
   const renderVideoDrawer = () => {
+    if (!videos) return null;
     return (
       <Drawer opened={videosOpened} onClose={closeVideos} position="bottom" size="100%">
         <div className="flex h-screen items-center">
@@ -177,6 +206,7 @@ const Property: NextPage = () => {
   };
 
   const renderBlueprintDrawer = () => {
+    if (!blueprints) return null;
     return (
       <Drawer opened={blueprintsOpened} onClose={closeBlueprints} position="bottom" size="100%">
         <div className="flex h-screen items-center">
@@ -227,29 +257,49 @@ const Property: NextPage = () => {
     return (
       <div className="mt-4">
         <div className="flex flex-wrap items-center">
-          <Title className="mb-2" order={2}>
-            {property?.title}
-          </Title>
-          <Rating className="ml-3" value={rating} onChange={handleRatingChange} fractions={2} />
+          {!isLoading ? (
+            <>
+              <Title className="mb-2" order={2}>
+                {property?.title}
+              </Title>
+              <Rating className="ml-3 mt-1" value={rating} onChange={handleRatingChange} fractions={2} />
+            </>
+          ) : (
+            <Skeleton width="70%" height="2.1rem" className="mb-px" />
+          )}
         </div>
-        <div className="mt-1">{property.description}</div>
+
+        {!isLoading ? (
+          <div className="mt-1">{property?.description}</div>
+        ) : (
+          <Skeleton width="100%" height="2.5rem" className="mb-px mt-2" />
+        )}
+
         <Group noWrap spacing="xs" className="mt-2">
-          <Text size="xs" color="dimmed">
-            <Tooltip color="gray" label="Property Availability Status" position="bottom" withArrow>
-              {renderStatus(property.status)}
-            </Tooltip>
-            {property?.tags?.map((tag) => (
-              <Badge key={tag.id} color="blue" variant="light" className="mb-2 mr-2">
-                #{tag.name}
-              </Badge>
-            ))}
-          </Text>
+          {!isLoading ? (
+            <Text size="xs" color="dimmed">
+              <Tooltip color="gray" label="Property Availability Status" position="bottom" withArrow>
+                {renderStatus(property?.status)}
+              </Tooltip>
+              {property?.tags?.map((tag) => (
+                <Badge key={tag.id} color="blue" variant="light" className="mb-2 mr-2">
+                  #{tag.name}
+                </Badge>
+              ))}
+            </Text>
+          ) : (
+            <>
+              <Skeleton width="10%" height="1.3rem" className="mb-px" radius="xl" />
+              <Skeleton width="10%" height="1.3rem" className="mb-px" radius="xl" />
+              <Skeleton width="10%" height="1.3rem" className="mb-px" radius="xl" />
+            </>
+          )}
         </Group>
       </div>
     );
   };
 
-  const markerType = property?.type?.toLowerCase();
+  const markerType = property?.type?.toLowerCase() || "default";
   const MarkerIcon = (markerIcons[markerType] as MarkerIconComponent) || markerIcons.default;
 
   const onMarkerClick = () => {
@@ -268,20 +318,24 @@ const Property: NextPage = () => {
     return (
       <>
         <div className="mt-5 h-3/6 w-auto">
-          <Map
-            mapboxAccessToken={env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-            initialViewState={{
-              longitude,
-              latitude,
-              zoom: 15,
-            }}
-            style={{ width: "100%", height: "400px", borderRadius: "12px" }}
-            mapStyle="mapbox://styles/mapbox/streets-v11"
-          >
-            <Marker onClick={onMarkerClick} longitude={longitude} latitude={latitude}>
-              <MarkerIcon className="h-8" />
-            </Marker>
-          </Map>
+          {!isLoading ? (
+            <Map
+              mapboxAccessToken={env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
+              initialViewState={{
+                longitude,
+                latitude,
+                zoom: 15,
+              }}
+              style={{ width: "100%", height: "400px", borderRadius: "12px" }}
+              mapStyle="mapbox://styles/mapbox/streets-v11"
+            >
+              <Marker onClick={onMarkerClick} longitude={longitude} latitude={latitude}>
+                <MarkerIcon className="h-8" />
+              </Marker>
+            </Map>
+          ) : (
+            <Skeleton width="100%" height="400px" className="mb-px mt-2" />
+          )}
         </div>
       </>
     );
@@ -305,7 +359,7 @@ const Property: NextPage = () => {
     if (!property?.id) return;
     if (selectedUrl == "" || !selectedUrl) return;
 
-    if (property.cover_url != selectedUrl) {
+    if (property?.cover_url != selectedUrl) {
       const formData = new FormData();
       const newCover = selectedUrl;
       formData.append("index", photoIndex.toString());
@@ -353,7 +407,7 @@ const Property: NextPage = () => {
         <Group position="left" className="mt-4">
           <Button.Group>
             <Button
-              disabled={photos.length < 2} // If it only has a photo, it's the cover
+              disabled={isLoading || (photos && photos.length < 2)} // If it only has a photo, it's the cover
               onClick={openImages}
               variant="light"
               leftIcon={<IconPhoto size="1rem" className="-mr-1" />}
@@ -361,7 +415,7 @@ const Property: NextPage = () => {
               Images
             </Button>
             <Button
-              disabled={videos.length == 0}
+              disabled={isLoading || (videos && videos.length == 0)}
               onClick={openVideos}
               variant="light"
               leftIcon={<IconVideo size="1rem" className="-mr-1" />}
@@ -369,7 +423,7 @@ const Property: NextPage = () => {
               Videos
             </Button>
             <Button
-              disabled={blueprints.length == 0}
+              disabled={isLoading || (blueprints && blueprints.length == 0)}
               onClick={openBlueprints}
               variant="light"
               leftIcon={<IconWallpaper size="1rem" className="-mr-1" />}
@@ -378,7 +432,7 @@ const Property: NextPage = () => {
             </Button>
           </Button.Group>
           <Button
-            disabled={selectedUrl == "" || property?.media?.photos?.length == 0}
+            disabled={isLoading || selectedUrl == "" || property?.media?.photos?.length == 0}
             color="yellow"
             variant="default"
             onClick={coverButtonClick}
@@ -394,18 +448,23 @@ const Property: NextPage = () => {
           </Button>
           <Button.Group>
             <Button
-              onClick={() => void router.push(`/properties/${property?.id}/edit`)}
+              onClick={() => {
+                if (!property?.id) return;
+                void router.push(`/properties/${property.id}/edit`);
+              }}
               color="yellow"
               variant="light"
               leftIcon={<IconEdit size="1rem" className="-mr-1" />}
+              disabled={isLoading}
             >
-              <Link href={`/properties/${property?.id}/edit`}>Edit</Link>
+              {!property?.id ? "Edit" : <Link href={`/properties/${property?.id}/edit`}>Edit</Link>}
             </Button>
             <Button
               onClick={delConfirmOpen}
               color="red"
               variant="light"
               leftIcon={<IconTrash size="1rem" className="-mr-1" />}
+              disabled={isLoading}
             >
               Trash
             </Button>
@@ -413,9 +472,9 @@ const Property: NextPage = () => {
           <div style={{ flex: 1 }}></div>
           <Group>{renderPrice()}</Group>
         </Group>
-        {renderHeader(property)}
+        {property && renderHeader(property)}
         <div className="-ml-6 -mr-6 -mt-2 mb-4 border-b border-shark-700 pb-4" />
-        <PropertyAccordion property={property} />
+        <PropertyAccordion property={property} isLoading={isLoading} />
         {coordinates?.longitude && coordinates?.latitude && (
           <>
             <div className="-ml-6 -mr-6 border-b border-shark-700 pb-4" />
@@ -437,14 +496,14 @@ const useStyles = createStyles((theme) => ({
 
     [theme.fn.largerThan("md")]: {
       width: "calc(100% - 1px)",
-      height: "calc(100% - 20px)",
+      height: "440px",
     },
   },
 
   placeholder: {
     backgroundColor: theme.colors.dark[7],
     borderRadius: theme.radius.md,
-    height: 400,
+    height: "100%",
 
     "& span": {
       color: theme.colors.dark[3],

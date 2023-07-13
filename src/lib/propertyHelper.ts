@@ -1,6 +1,6 @@
 import type { Property, Address } from "~/types";
 import seedrandom from "seedrandom";
-import { cloneElement, ReactElement } from "react";
+import { cloneElement, type ReactElement } from "react";
 
 export const priceToString = (price: number) => {
   // check if price is a decimal number
@@ -43,7 +43,7 @@ const addressWithProps = (address: Address, addressProps: string[]) => {
   let lastProp = "";
 
   for (const prop of addressProps) {
-    if (!address.hasOwnProperty(prop)) continue;
+    if (!address?.hasOwnProperty(prop)) continue;
     const value = address[prop as keyof Address]?.toString();
     if (value?.trim()) {
       if (lastProp == value) continue;
@@ -55,7 +55,8 @@ const addressWithProps = (address: Address, addressProps: string[]) => {
 
   return addressStr;
 };
-export const completeAddress = (address: Address) => {
+export const completeAddress = (address: Address | undefined) => {
+  if (!address) return "";
   return addressWithProps(address, ["full_address", "postal_code", "adm3", "adm2", "adm1"]);
 };
 
@@ -68,17 +69,20 @@ export const ucfirst = (string: string) => {
   return string.length > 1 ? string.charAt(0).toUpperCase() + string.slice(1) : string.toUpperCase();
 };
 
-export const propertyDetailsResume = (property: Property) => {
+export const propertyDetailsResume = (property: Property | undefined, isLoading = false) => {
+  if (isLoading) return "Loading property details...";
+  if (!property) return "";
+
   const _sep = " | ";
 
   let detailsStr = "";
 
-  if (property.type) detailsStr += ucfirst(property.type) + _sep;
-  if (property.typology) detailsStr += property.typology + _sep; // The "T" comes from the database!!
-  if (property.wc) detailsStr += property.wc.toString() + " bathroom" + (property.wc > 1 ? "s" : "") + _sep;
+  if (property?.type) detailsStr += ucfirst(property.type) + _sep;
+  if (property?.typology) detailsStr += property.typology + _sep; // The "T" comes from the database!!
+  if (property?.wc) detailsStr += property.wc.toString() + " bathroom" + (property.wc > 1 ? "s" : "") + _sep;
   // Areas
-  if (property.gross_area) detailsStr += numberToString(parseInt(property.gross_area)) + " m²" + _sep;
-  else if (property.useful_area) detailsStr += numberToString(parseInt(property.useful_area)) + " m²" + _sep;
+  if (property?.gross_area) detailsStr += numberToString(parseInt(property.gross_area)) + " m²" + _sep;
+  else if (property?.useful_area) detailsStr += numberToString(parseInt(property.useful_area)) + " m²" + _sep;
 
   if (detailsStr.endsWith(_sep)) detailsStr = detailsStr.slice(0, -_sep.length);
 
