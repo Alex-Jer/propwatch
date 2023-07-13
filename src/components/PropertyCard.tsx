@@ -164,8 +164,16 @@ export function PropertyCard({
     >
       {!isLoading && (
         <>
-          <div className={classes.image} style={{ backgroundImage: `url(${property?.cover_url})` }} />
-          <div className={classes.overlay} />
+          {property?.cover_url && (
+            <div className={classes.image} style={{ backgroundImage: `url(${property.cover_url})` }} />
+          )}
+          <div className={classes.overlay}>
+            {!property?.cover_url && (
+              <div className={classes.placeholder}>
+                <span>No cover</span>
+              </div>
+            )}
+          </div>
         </>
       )}
 
@@ -263,11 +271,21 @@ const useStyles = createStyles((theme) => ({
 
   overlay: {
     position: "absolute",
-    top: "20%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    top: "-5%",
     left: 0,
     right: 0,
     bottom: 0,
     backgroundImage: "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .85) 90%)",
+  },
+
+  placeholder: {
+    "& span": {
+      color: theme.colors.dark[3],
+      fontWeight: 600,
+    },
   },
 
   topButtons: {
