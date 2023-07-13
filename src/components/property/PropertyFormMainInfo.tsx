@@ -1,8 +1,8 @@
-import { ActionIcon, Group, Loader, Text } from "@mantine/core";
+import { ActionIcon, Group, Loader, Text, Tooltip } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
 import { IconArrowBack, IconBathFilled } from "@tabler/icons-react";
-import { useState } from "react";
-import { type UseFormTrigger, type Control, type UseFormResetField } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { type UseFormTrigger, type Control, type UseFormResetField, type UseFormSetValue } from "react-hook-form";
 import { TextInput, Select, MultiSelect, NumberInput, Rating, Textarea } from "react-hook-form-mantine";
 import { type SelectOption } from "~/types";
 import { type FormSchemaType } from "./PropertyForm";
@@ -47,6 +47,8 @@ type PropertyFormMainInfoProps = {
   trigger?: UseFormTrigger<FormSchemaType>;
   disabled?: boolean;
   resetField?: UseFormResetField<FormSchemaType>;
+  setValue?: UseFormSetValue<FormSchemaType>;
+  defaultValues?: FormSchemaType;
 };
 
 export function PropertyFormMainInfo({
@@ -58,9 +60,43 @@ export function PropertyFormMainInfo({
   trigger,
   disabled,
   resetField,
+  setValue,
+  defaultValues,
 }: PropertyFormMainInfoProps) {
   const [selectedPropertyType, setSelectedPropertyType] = useInputState("");
   const [isUndoRatingVisible, setIsUndoRatingVisible] = useState(false);
+  const [previousRating, setPreviousRating] = useState(0);
+  const [currentRating, setCurrentRating] = useState(defaultValues?.rating || 0);
+
+  const handleRatingChange = (value: number) => {
+    if (value === currentRating) {
+      setValue && setValue("rating", 0);
+      setCurrentRating(0);
+    } else {
+      setValue && setValue("rating", value);
+      setCurrentRating(value);
+    }
+  };
+
+  useEffect(() => {
+    if (currentRating === defaultValues?.rating || defaultValues?.rating === null) {
+      setIsUndoRatingVisible(false);
+    } else {
+      setIsUndoRatingVisible(true);
+    }
+  }, [currentRating, defaultValues?.rating]);
+
+  useEffect(() => {
+    if (currentRating === previousRating) {
+      setValue && setValue("rating", 0);
+      setCurrentRating(0);
+    } else {
+      setValue && setValue("rating", currentRating);
+    }
+
+    setPreviousRating(currentRating);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [currentRating, setValue]);
 
   return (
     <div>
@@ -201,22 +237,19 @@ export function PropertyFormMainInfo({
             Rating
           </Text>
           <Group className="-ml-px -mt-1">
-            <Rating
-              name="rating"
-              fractions={2}
-              control={control}
-              readOnly={disabled}
-              onChange={() => setIsUndoRatingVisible(true)}
-            />
+            <Rating name="rating" fractions={2} control={control} readOnly={disabled} onChange={handleRatingChange} />
             <div className={`-ml-3 ${isUndoRatingVisible ? "" : "invisible"}`}>
-              <ActionIcon
-                onClick={() => {
-                  resetField && resetField("rating");
-                  setIsUndoRatingVisible(false);
-                }}
-              >
-                <IconArrowBack size="1rem" />
-              </ActionIcon>
+              <Tooltip label="Undo">
+                <ActionIcon
+                  onClick={() => {
+                    resetField && resetField("rating");
+                    setCurrentRating(defaultValues?.rating || 0);
+                    setIsUndoRatingVisible(false);
+                  }}
+                >
+                  <IconArrowBack size="1rem" />
+                </ActionIcon>
+              </Tooltip>
             </div>
           </Group>
         </div>

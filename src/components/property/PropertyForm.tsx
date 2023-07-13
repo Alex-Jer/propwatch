@@ -488,6 +488,8 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
                   collectionsLoading={collectionsLoading}
                   control={control}
                   resetField={resetField}
+                  setValue={setValue}
+                  defaultValues={defaultValues}
                 />
               </Stepper.Step>
 
