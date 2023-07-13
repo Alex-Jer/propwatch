@@ -184,7 +184,7 @@ const Collection: NextPage = () => {
           {isLoading
             ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />)
             : collection?.properties?.data.map((property: CollectionProperty) => (
-                <UnstyledButton
+                <div
                   className="z-10"
                   onClick={() => {
                     void router.push(`/properties/${property.id}`);
@@ -197,7 +197,7 @@ const Collection: NextPage = () => {
                     xButtonTooltip="Remove from collection"
                     executeXButton={() => removePropertyFromCollection(property.id)}
                   />
-                </UnstyledButton>
+                </div>
               ))}
         </div>
         {!isLoading && collection?.properties?.data.length === 0 && (
