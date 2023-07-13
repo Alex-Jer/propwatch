@@ -44,7 +44,7 @@ export function LoginForm() {
       return;
     }
 
-    void router.push("/collections");
+    void router.push("/properties");
     setIsLoading(false);
   };
 
