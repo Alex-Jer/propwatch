@@ -5,11 +5,11 @@ import Link from "next/link";
 import { CollectionCard } from "~/components/CollectionCard";
 import { useCollections } from "~/hooks/useQueries";
 import { type Collection } from "~/types";
-import { IconListNumbers, IconX } from "@tabler/icons-react";
-import { notifications } from "@mantine/notifications";
+import { IconListNumbers } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { generateLoadingElements } from "~/lib/propertyHelper";
 import { Group, Pagination } from "@mantine/core";
+import { errorNotification } from "~/components/PropertyCard";
 
 const Collections: NextPage = () => {
   const { data: session, status } = useSession();
@@ -23,12 +23,7 @@ const Collections: NextPage = () => {
 
   useEffect(() => {
     if (isError) {
-      notifications.show({
-        title: "Error",
-        message: "There was an error loading your collections.",
-        color: "red",
-        icon: <IconX size="1.5rem" />,
-      });
+      errorNotification("There was an error loading your collections.");
     }
   }, [isError]);
 

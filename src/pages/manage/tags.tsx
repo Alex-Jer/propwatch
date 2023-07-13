@@ -1,6 +1,5 @@
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconTrash, IconX } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
@@ -33,12 +32,7 @@ const ManageTags: NextPage = () => {
 
   useEffect(() => {
     if (isError) {
-      notifications.show({
-        title: "Error",
-        message: "There was an error loading your collections.",
-        color: "red",
-        icon: <IconX size="1.5rem" />,
-      });
+      errorNotification("There was an error loading your tags.");
     }
   }, [isError]);
 

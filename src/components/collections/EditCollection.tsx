@@ -1,16 +1,14 @@
 import { Group, Modal, Box, Button } from "@mantine/core";
-import { IconCheck } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
-import { type Collection } from "~/types";
+import { type AxiosErrorResponse, type Collection } from "~/types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { makeRequest, processAxiosError } from "~/lib/requestHelper";
 import { useMutation } from "@tanstack/react-query";
-import { notifications } from "@mantine/notifications";
-import { type AxiosError } from "axios";
 import { Textarea, TextInput as TextInputForm } from "react-hook-form-mantine";
 import { useEffect, useState } from "react";
+import { successNotification } from "../PropertyCard";
 
 type CollectionResponse = {
   message: string;
@@ -102,15 +100,9 @@ export function EditCollection({ collection: collectionInput, collections, modal
         }
       }
       close();
-      notifications.show({
-        title: "Collection edited",
-        message: "Collection edited successfully",
-        color: "teal",
-        icon: <IconCheck size="1.5rem" />,
-        autoClose: 10000,
-      });
+      successNotification("Collection edited successfully");
     },
-    onError: (error: AxiosError) => {
+    onError: (error: AxiosErrorResponse) => {
       if (error.response?.status === 409) {
         setError("title", {
           type: "custom",

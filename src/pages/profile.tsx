@@ -15,9 +15,8 @@ import FilePondPluginImageTransform from "filepond-plugin-image-transform";
 import { useState } from "react";
 import { makeRequest, processAxiosError } from "~/lib/requestHelper";
 import { useMutation } from "@tanstack/react-query";
-import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
 import { type AxiosErrorResponse, type User } from "~/types";
+import { successNotification } from "~/components/PropertyCard";
 
 registerPlugin(
   FilePondPluginFileValidateType,
@@ -116,14 +115,7 @@ const Profile = () => {
       }
 
       await update({ ...session });
-
-      notifications.show({
-        title: "Profile updated",
-        message: "Your profile has been updated",
-        color: "teal",
-        icon: <IconCheck size="1.5rem" />,
-        autoClose: 10000,
-      });
+      successNotification("Profile updated", "Your profile has been updated");
     },
     onError: (error: AxiosErrorResponse) => {
       if (error.response?.data?.message?.includes("email")) {
@@ -158,13 +150,7 @@ const Profile = () => {
       await update({ ...session });
       resetPasswordForm();
 
-      notifications.show({
-        title: "Password updated",
-        message: "Your password has been updated",
-        color: "teal",
-        icon: <IconCheck size="1.5rem" />,
-        autoClose: 10000,
-      });
+      successNotification("Password updated", "Your password has been updated");
     },
     onError: (error: AxiosErrorResponse) => {
       processAxiosError(error, "An error occurred while updating your password");

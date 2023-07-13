@@ -1,11 +1,10 @@
 import { Anchor, Button, Container, Paper, PasswordInput, Text, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { notifications } from "@mantine/notifications";
-import { IconX } from "@tabler/icons-react";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { errorNotification } from "../PropertyCard";
 
 type Inputs = {
   email: string;
@@ -35,23 +34,13 @@ export function LoginForm() {
     const res = await signIn("credentials", { redirect: false, ...values });
 
     if (res?.status === 401) {
-      notifications.show({
-        title: "Wrong email or password",
-        message: "Check your credentials and try again",
-        color: "red",
-        icon: <IconX size="1.5rem" />,
-      });
+      errorNotification("Wrong email or password", "Check your credentials and try again");
       setIsLoading(false);
       return;
     }
 
     if (res?.status !== 200) {
-      notifications.show({
-        title: "Something went wrong",
-        message: "Check your internet connection and try again",
-        color: "red",
-        icon: <IconX size="1.5rem" />,
-      });
+      errorNotification("Something went wrong", "Check your internet connection and try again");
       setIsLoading(false);
       return;
     }

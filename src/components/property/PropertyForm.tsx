@@ -1,10 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Stepper, Paper } from "@mantine/core";
-import { IconCheck, IconX } from "@tabler/icons-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
 import { makeRequest, processAxiosError } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
@@ -21,6 +19,7 @@ import { useAdms, useAdms2, useAdms3, useAllCollections, useAllTags } from "~/ho
 import { useInputState } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import { PropertiesContext } from "~/lib/PropertiesProvider";
+import { errorNotification, successNotification } from "../PropertyCard";
 
 type PropertyType = "house" | "apartment" | "office" | "shop" | "warehouse" | "garage" | "land" | "other";
 type PropertyStatus = "available" | "unavailable" | "unknown";
@@ -413,13 +412,10 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     mutationFn: mode === "add" ? addProperty : editProperty,
     onSuccess: async () => {
       close && close();
-      notifications.show({
-        title: "Property added",
-        message: mode === "add" ? "Your property was added successfully" : "Your property was edited successfully",
-        color: "teal",
-        icon: <IconCheck size="1.5rem" />,
-        autoClose: 10000,
-      });
+      successNotification(
+        mode === "add" ? "Your property was added successfully" : "Your property was edited successfully",
+        mode === "add" ? "Property added" : "Property edited"
+      );
       await refetch();
 
       if (mode === "edit" && property.id) {
@@ -431,13 +427,6 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
 
       if (mode == "add") processAxiosError(error, "An error occurred while adding your property");
       else processAxiosError(error, "An error occurred while editing your property");
-
-      /*notifications.show({
-        title: "Error",
-        message: "An error occurred while adding your property",
-        color: "red",
-        icon: <IconX size="1.5rem" />,
-      });*/
     },
   });
 
@@ -477,13 +466,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
                 }),
               (error) => {
                 console.log({ error });
-                notifications.show({
-                  title: "Error",
-                  message: "Please fill in the required fields or fix the errors.",
-                  icon: <IconX size="1.1rem" />,
-                  color: "red",
-                  autoClose: 5000,
-                });
+                errorNotification("Please fill in the required fields or fix the errors.");
               }
             )}
           >

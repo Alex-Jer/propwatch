@@ -1,12 +1,11 @@
 import { Center, Text } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-import { IconX } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import CardBackground from "~/components/CardBackground";
 import { PropertyForm } from "~/components/property";
+import { errorNotification } from "~/components/PropertyCard";
 import { useProperty } from "~/hooks/useQueries";
 
 const EditProperty: NextPage = () => {
@@ -27,12 +26,7 @@ const EditProperty: NextPage = () => {
 
   useEffect(() => {
     if (isError) {
-      notifications.show({
-        title: "Error",
-        message: "Could not load property",
-        color: "red",
-        icon: <IconX size="1.5rem" />,
-      });
+      errorNotification("There was an error loading your property.");
     }
   }, [isError]);
 

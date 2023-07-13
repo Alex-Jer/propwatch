@@ -1,7 +1,6 @@
 import { Group, Pagination } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconTrash, IconX } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -25,12 +24,7 @@ export function DisplayProperties({
 
   useEffect(() => {
     if (isError) {
-      notifications.show({
-        title: "Error",
-        message: "There was an error loading your properties.",
-        color: "red",
-        icon: <IconX size="1.5rem" />,
-      });
+      errorNotification("There was an error loading your properties.");
     }
   }, [isError]);
 
