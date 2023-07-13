@@ -1,10 +1,10 @@
-import { Text, Title } from "@mantine/core";
+import { SegmentedControl, Text, Title } from "@mantine/core";
 import { IconAdjustmentsAlt, IconBooks, IconClipboardList, IconTags } from "@tabler/icons-react";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import CardBackground from "~/components/CardBackground";
 import { ControlPanelCard } from "~/components/ControlPanelCard";
 import RWLineChart, { LineChartPayload } from "~/components/statistics/RWLineChart";
@@ -31,10 +31,15 @@ const getColor = (index: number) => {
   return colors[index % colors.length] as string;
 };
 
+const listingTypes = [
+  { label: "Sale", value: "sale" },
+  { label: "Rent", value: "rent" },
+];
+
 const Statistics: NextPage = () => {
   const { data: session, status } = useSession();
   const { data: statistics, isLoading, isError } = useStatistics({ session, status });
-
+  const [listingType, setListingType] = useState("sale");
   const listings = useMemo<PieChartPayload[] | undefined>(() => {
     if (statistics && statistics.listings) {
       const listings: PieChartPayload[] = [];
@@ -117,7 +122,20 @@ const Statistics: NextPage = () => {
               <Text size="xl" className="mt-1 text-center text-xl font-semibold">
                 Average prices and ratings by property type
               </Text>
-              <RWLineChart data={properties[1] as unknown as LineChartPayload[]} />
+              <SegmentedControl
+                styles={() => ({ root: { width: "100%" } })}
+                data={listingTypes}
+                value={listingType}
+                onChange={setListingType}
+              />
+              <RWLineChart
+                data={properties[1] as unknown as LineChartPayload[]}
+                firstPriceKey="Average Sale Price"
+                firstPriceColor="#f03e3e"
+                secondPriceKey="Average Rent Price"
+                secondPriceColor="#0ca678"
+                isFirstActive={listingType == "sale"}
+              />
             </CardBackground>
           )}
         </div>

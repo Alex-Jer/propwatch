@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { priceToString, priceToStringShort } from "~/lib/propertyHelper";
 
@@ -8,15 +9,57 @@ export type LineChartPayload = {
   "Average Rating": number | null;
 };
 
-const RWLineChart = ({ data }: { data: LineChartPayload[] }) => {
+const RWLineChart = ({
+  data,
+  firstPriceKey,
+  firstPriceColor,
+  secondPriceKey,
+  secondPriceColor,
+  isFirstActive = true,
+}: {
+  data: LineChartPayload[];
+  firstPriceKey: string;
+  firstPriceColor: string;
+  secondPriceKey: string;
+  secondPriceColor: string;
+  isFirstActive?: boolean;
+}) => {
+  const [priceKey, setPriceKey] = useState(firstPriceKey);
+  const [priceColor, setPriceColor] = useState(firstPriceColor);
+
+  useEffect(() => {
+    setPriceKey(isFirstActive ? firstPriceKey : secondPriceKey);
+    setPriceColor(isFirstActive ? firstPriceColor : secondPriceColor);
+  }, [isFirstActive, firstPriceKey, firstPriceColor, secondPriceKey, secondPriceColor]);
+
   const formatValue = (value: number) => {
     return priceToStringShort(value);
   };
 
-  console.log(data);
+  const formatRatingTooltip = (value: number) => {
+    return value.toFixed(2).replaceAll(".", ",").replaceAll(",00", "");
+  };
 
-  const formatValueTooltip = (value: number) => {
-    return priceToString(value);
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="custom-tooltip">
+          <p className="capitalize" style={{ color: "#C1C2C5" }}>{`${label}`}</p>
+          {payload[0].payload[priceKey] && (
+            <p style={{ color: "#909296" }}>
+              <b>Average Price: </b>
+              {`${priceToString(payload[0].payload[priceKey])}`}
+            </p>
+          )}
+          {payload[0].payload["Average Rating"] && (
+            <p style={{ color: "#909296" }}>
+              <b>Average Rating: </b>
+              {`${formatRatingTooltip(payload[0].payload["Average Rating"])}`}
+            </p>
+          )}
+        </div>
+      );
+    }
   };
 
   return (
@@ -64,7 +107,7 @@ const RWLineChart = ({ data }: { data: LineChartPayload[] }) => {
           }}
         />
 
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />} />
         <Legend />
         <Line
           yAxisId="right"
@@ -72,8 +115,8 @@ const RWLineChart = ({ data }: { data: LineChartPayload[] }) => {
           connectNulls
           type="monotone"
           dataKey="Average Rating"
-          stroke="#0ca678"
-          fill="#0ca678"
+          stroke="#f59f00"
+          fill="#f59f00"
           strokeWidth={3}
           dot={{ r: 3 }}
           activeDot={{ r: 6 }}
@@ -83,9 +126,9 @@ const RWLineChart = ({ data }: { data: LineChartPayload[] }) => {
           orientation="left"
           connectNulls
           type="monotone"
-          dataKey="Average Sale Price"
-          stroke="#f03e3e"
-          fill="#f03e3e"
+          dataKey={priceKey}
+          stroke={priceColor}
+          fill={priceColor}
           strokeWidth={3}
           dot={{ r: 3 }}
           activeDot={{ r: 6 }}
