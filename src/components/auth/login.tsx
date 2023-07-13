@@ -1,5 +1,7 @@
 import { Anchor, Button, Container, Paper, PasswordInput, Text, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { IconX } from "@tabler/icons-react";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -24,7 +26,7 @@ export function LoginForm() {
     initialValues: { email: "test123@example.com", password: "123456" },
     validate: {
       email: (value: string) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      password: (value: string) => (value.length > 5 ? null : "Password must be at least 6 characters long"),
+      password: (value: string) => (value.length > 0 ? null : "Password is required"),
     },
   });
 
@@ -33,7 +35,23 @@ export function LoginForm() {
     const res = await signIn("credentials", { redirect: false, ...values });
 
     if (res?.status === 401) {
-      console.log("Wrong email or password");
+      notifications.show({
+        title: "Wrong email or password",
+        message: "Check your credentials and try again",
+        color: "red",
+        icon: <IconX size="1.5rem" />,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (res?.status !== 200) {
+      notifications.show({
+        title: "Something went wrong",
+        message: "Check your internet connection and try again",
+        color: "red",
+        icon: <IconX size="1.5rem" />,
+      });
       setIsLoading(false);
       return;
     }
@@ -58,14 +76,8 @@ export function LoginForm() {
       </Text>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <form onSubmit={form.onSubmit((values) => void (async () => await handleSubmit(values))())}>
-          <TextInput label="Email" placeholder="you@mantine.dev" required {...form.getInputProps("email")} />
-          <PasswordInput
-            label="Password"
-            placeholder="Your password"
-            required
-            mt="md"
-            {...form.getInputProps("password")}
-          />
+          <TextInput label="Email" placeholder="you@mantine.dev" {...form.getInputProps("email")} />
+          <PasswordInput label="Password" placeholder="Your password" mt="md" {...form.getInputProps("password")} />
           <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
             Sign in
           </Button>

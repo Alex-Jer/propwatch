@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Anchor, Button, Container, Paper, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -50,20 +50,6 @@ export function SignUpForm() {
     defaultValues,
   });
 
-  /* const handleSubmit = async (values: FormSchemaType) => { */
-  /*   setIsLoading(true); */
-  /*   const res = await signIn("credentials", { redirect: false, ...values }); */
-  /**/
-  /*   if (res?.status === 401) { */
-  /*     console.log("Wrong email or password"); */
-  /*     setIsLoading(false); */
-  /*     return; */
-  /*   } */
-  /**/
-  /*   void router.push("/collections"); */
-  /*   setIsLoading(false); */
-  /* }; */
-
   const signup = async (values: FormSchemaType) => {
     await register(
       values.name,
@@ -88,7 +74,16 @@ export function SignUpForm() {
       void router.push("/properties");
     },
     onError: (error: AxiosErrorResponse) => {
-      setError("email", { message: error.response.data.message });
+      if (error.response?.data?.message?.toLowerCase().includes("email")) {
+        setError("email", { message: error.response.data.message });
+        return;
+      }
+      notifications.show({
+        title: "Something went wrong",
+        message: "Check your internet connection and try again",
+        color: "red",
+        icon: <IconX size="1.5rem" />,
+      });
     },
   });
 
