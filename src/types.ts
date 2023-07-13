@@ -2,7 +2,7 @@ import { type UnstyledButtonProps } from "@mantine/core";
 import { type AxiosError } from "axios";
 import { type ReactNode } from "react";
 import { type PropertiesResponse } from "./hooks/useQueries";
-import { type QueryObserverResult } from "@tanstack/react-query";
+import { UseQueryResult, type QueryObserverResult } from "@tanstack/react-query";
 
 export type User = {
   id: string;
@@ -195,7 +195,7 @@ export type UserButtonProps = UnstyledButtonProps & {
 export type ShellProps = {
   children: ReactNode;
   useNavbarSearch?: boolean;
-  search?: string;
+  search: string;
   filters: FiltersOptions;
   setSearch?: (search: string) => void;
   setFilters: (filters: FiltersOptions) => void;
@@ -229,7 +229,7 @@ export type DisplayPropertiesProps = {
   isError: boolean;
   activePage: number;
   setPage: (page: number) => void;
-  refetch: () => Promise<QueryObserverResult<PropertiesResponse, unknown>>;
+  refetch: () => Promise<UseQueryResult>;
 };
 
 export type AxiosErrorResponse = AxiosError & {

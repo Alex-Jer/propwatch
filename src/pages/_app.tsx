@@ -7,12 +7,12 @@ import { emCache } from "~/lib/emotionCache";
 import "~/styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Shell from "~/components/layout/Shell";
-import { useState } from "react";
 import { useRouter } from "next/router";
 import NextNProgress from "nextjs-progressbar";
 import Properties from "./properties";
 import SearchPolygonProperties from "./properties/polygon";
 import { useDebouncedState } from "@mantine/hooks";
+import { PropertiesProvider } from "~/lib/PropertiesProvider";
 
 const queryClient = new QueryClient();
 
@@ -36,30 +36,32 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
       <MantineProvider theme={{ colorScheme: "dark" }} emotionCache={cache} withGlobalStyles withNormalizeCSS>
         <Notifications />
         <QueryClientProvider client={queryClient}>
-          <NextNProgress options={{ showSpinner: false }} />
-          {isAppRoute ? (
-            <Shell
-              useNavbarSearch={isPropertySearch}
-              search={search}
-              setSearch={setSearch}
-              filters={filters}
-              setFilters={setFilters}
-            >
-              {isPropertySearch ? (
-                <Component
-                  {...pageProps}
-                  search={search}
-                  setSearch={setSearch}
-                  filters={filters}
-                  setFilters={setFilters}
-                />
-              ) : (
-                <Component {...pageProps} />
-              )}
-            </Shell>
-          ) : (
-            <Component {...pageProps} />
-          )}
+          <PropertiesProvider search={search} filters={filters}>
+            <NextNProgress options={{ showSpinner: false }} />
+            {isAppRoute ? (
+              <Shell
+                useNavbarSearch={isPropertySearch}
+                search={search}
+                setSearch={setSearch}
+                filters={filters}
+                setFilters={setFilters}
+              >
+                {isPropertySearch ? (
+                  <Component
+                    {...pageProps}
+                    search={search}
+                    setSearch={setSearch}
+                    filters={filters}
+                    setFilters={setFilters}
+                  />
+                ) : (
+                  <Component {...pageProps} />
+                )}
+              </Shell>
+            ) : (
+              <Component {...pageProps} />
+            )}
+          </PropertiesProvider>
         </QueryClientProvider>
       </MantineProvider>
     </SessionProvider>

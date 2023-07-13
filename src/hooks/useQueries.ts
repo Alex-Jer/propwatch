@@ -93,6 +93,7 @@ type UseProperties = {
   search: string;
   filters: FiltersOptions;
   page: number;
+  enabled?: boolean;
 };
 
 type UsePropertyTitles = {
@@ -377,11 +378,11 @@ export const useProperty = ({ session, status, elementId: propertyId, enabled = 
   });
 };
 
-export const useProperties = ({ session, status, search, filters, page }: UseProperties) => {
+export const useProperties = ({ session, status, search, filters, page, enabled = true }: UseProperties) => {
   return useQuery({
     queryKey: ["properties", search, filters, page] /* TODO: Is this worth it ? */,
     queryFn: () => fetchProperties(session, search, filters, page),
-    enabled: status === "authenticated",
+    enabled: status === "authenticated" && enabled,
   });
 };
 

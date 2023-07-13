@@ -304,14 +304,6 @@ export function PropertyFormOffers({
           onSortStatusChange={setSortStatus}
         />
       )}
-      <Button
-        onClick={() => {
-          console.log({ offers });
-          console.log({ offersToDelete });
-        }}
-      >
-        Test
-      </Button>
     </>
   );
 }

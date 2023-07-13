@@ -1,4 +1,4 @@
-import { ActionIcon, Button, createStyles, Divider, Group, Modal, Text } from "@mantine/core";
+import { ActionIcon, Anchor, createStyles, Divider, Group, Modal, Text } from "@mantine/core";
 import { Controller, type Control } from "react-hook-form";
 import { type FormSchemaType } from "./PropertyForm";
 import { FilePond, registerPlugin } from "react-filepond";
@@ -13,6 +13,7 @@ import { type Media } from "~/types";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { ConfirmationModal } from "../ConfirmationModal";
+import Image from "next/image";
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview, FilePondPluginFileValidateType);
 
@@ -113,6 +114,15 @@ export function PropertyFormMedia({
       textAlignment: "center",
     },
     {
+      accessor: "url",
+      title: "URL",
+      render: (item: MediaItem) => (
+        <Anchor href={item.url} target="_blank" rel="noopener noreferrer">
+          {item.url}
+        </Anchor>
+      ),
+    },
+    {
       accessor: "actions",
       title: <Text mr="xs">Actions</Text>,
       textAlignment: "right",
@@ -142,9 +152,16 @@ export function PropertyFormMedia({
 
   return (
     <>
-      <Modal opened={previewModalOpened} onClose={closePreviewModal} title="Preview">
+      <Modal opened={previewModalOpened} onClose={closePreviewModal} title="Preview" size="xl">
         <div className="flex justify-center">
-          <div>{selectedMediaItem?.url}</div>
+          {selectedMediaItem?.type !== "video" && selectedMediaItem?.url ? (
+            <Image src={selectedMediaItem?.url} width={500} height={500} alt="" />
+          ) : (
+            <video controls width="1000" height="1000">
+              <source src={selectedMediaItem?.url} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          )}
         </div>
       </Modal>
 

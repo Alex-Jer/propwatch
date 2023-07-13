@@ -1,32 +1,25 @@
-import { IconBuildingEstate } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { IconBuildingEstate, IconX } from "@tabler/icons-react";
 import { type NextPage } from "next";
-import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import { DisplayProperties } from "~/components/DisplayProperties";
-import { useProperties } from "~/hooks/useQueries";
+import { PropertiesContext } from "~/lib/PropertiesProvider";
 import type { SearchPropertyProps } from "~/types";
 
-const Properties: NextPage<SearchPropertyProps> = ({ search, filters }) => {
-  const { data: session, status } = useSession();
-  const [activePage, setPage] = useState(1);
+const Properties: NextPage<SearchPropertyProps> = () => {
+  const { properties, isLoading, isError, activePage, setPage, refetch } = useContext(PropertiesContext);
 
-  useEffect(() => {
-    setPage(1);
-  }, [filters]);
+  if (isError) {
+    notifications.show({
+      title: "Error",
+      message: "There was an error loading your properties.",
+      color: "red",
+      icon: <IconX size="1.5rem" />,
+    });
 
-  const {
-    data: propData,
-    isLoading,
-    isError,
-    refetch,
-  } = useProperties({
-    session,
-    status,
-    search,
-    filters,
-    page: activePage,
-  });
+    return null;
+  }
 
   return (
     <>
@@ -43,7 +36,7 @@ const Properties: NextPage<SearchPropertyProps> = ({ search, filters }) => {
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
       <DisplayProperties
-        propData={propData}
+        propData={properties}
         isLoading={isLoading}
         isError={isError}
         activePage={activePage}
