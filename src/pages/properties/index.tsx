@@ -31,16 +31,14 @@ const Properties: NextPage<SearchPropertyProps> = () => {
 
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
-      {Object.keys(properties).length > 0 && (
-        <DisplayProperties
-          propData={properties}
-          isLoading={isLoading}
-          isError={isError}
-          activePage={activePage}
-          setPage={setPage}
-          refetch={refetch}
-        />
-      )}
+      <DisplayProperties
+        propData={properties}
+        isLoading={isLoading}
+        isError={isError}
+        activePage={activePage}
+        setPage={setPage}
+        refetch={refetch}
+      />
     </>
   );
 };
