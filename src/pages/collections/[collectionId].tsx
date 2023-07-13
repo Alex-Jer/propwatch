@@ -67,6 +67,22 @@ const Collection: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propData, collectionId]);
 
+  useEffect(() => {
+    if (isError) {
+      errorNotification("Error", "There was an error loading the collection...");
+    }
+  }, [isError]);
+
+  if (isError) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <Text size="lg" weight={500} className="mb-4">
+          There was an error loading the collection...
+        </Text>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
