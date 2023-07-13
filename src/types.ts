@@ -2,7 +2,7 @@ import { type UnstyledButtonProps } from "@mantine/core";
 import { type AxiosError } from "axios";
 import { type ReactNode } from "react";
 import { type PropertiesResponse } from "./hooks/useQueries";
-import { UseQueryResult, type QueryObserverResult } from "@tanstack/react-query";
+import { type UseQueryResult } from "@tanstack/react-query";
 
 export type User = {
   id: string;

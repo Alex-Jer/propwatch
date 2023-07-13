@@ -36,7 +36,6 @@ const renderActiveShape = ({
   outerRadius,
   startAngle,
   endAngle,
-  fill,
   payload,
   percent,
   value,

@@ -38,7 +38,7 @@ const listingTypes = [
 
 const Statistics: NextPage = () => {
   const { data: session, status } = useSession();
-  const { data: statistics, isLoading, isError } = useStatistics({ session, status });
+  const { data: statistics } = useStatistics({ session, status });
   const [listingType, setListingType] = useState("sale");
   const listings = useMemo<PieChartPayload[] | undefined>(() => {
     if (statistics && statistics.listings) {

@@ -1,5 +1,5 @@
 import { createStyles } from "@mantine/core";
-import { IconStar, IconStarFilled } from "@tabler/icons-react";
+import { IconStarFilled } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { priceToString, priceToStringShort } from "~/lib/propertyHelper";
