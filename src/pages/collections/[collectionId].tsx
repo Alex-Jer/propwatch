@@ -185,7 +185,7 @@ const Collection: NextPage = () => {
             ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />)
             : collection?.properties?.data.map((property: CollectionProperty) => (
                 <div
-                  className="z-10"
+                  className="z-10 cursor-pointer"
                   onClick={() => {
                     void router.push(`/properties/${property.id}`);
                   }}
