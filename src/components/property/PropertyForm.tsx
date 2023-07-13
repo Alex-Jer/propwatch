@@ -32,7 +32,11 @@ const schema = z.object({
     .string()
     .nonempty({ message: "A title is required" })
     .min(5, { message: "Title must be at least 5 characters long" }),
-  description: z.string().max(5000, { message: "Description must be at most 5000 characters long" }),
+  description: z
+    .string()
+    .max(5000, { message: "Description must be at most 5000 characters long" })
+    .optional()
+    .nullable(),
   type: z.enum(["house", "apartment", "office", "shop", "warehouse", "garage", "land", "other"]).optional().nullable(),
   typology: z.string().max(12, { message: "Typology must be at most 12 characters long" }),
   status: z.enum(["available", "unavailable", "unknown"]).optional().nullable(),
@@ -262,7 +266,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     appendIfNotNull("gross_area", data.gross_area);
     appendIfNotNull("useful_area", data.useful_area);
     appendIfNotNull("wc", data.wc);
-    appendIfNotNull("rating", data.rating ? data.rating * 2 : null);
+    appendIfNotNull("rating", data.rating ? data.rating * 2 : 0);
     appendIfNotNull("address[full_address]", data.full_address);
     appendIfNotNull("address[adm1_id]", data.adm1_id);
     appendIfNotNull("address[adm2_id]", data.adm2_id);
@@ -321,51 +325,57 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
 
     const formData = new FormData();
 
-    function appendIfNotNull(key: string, value: unknown) {
-      if (value !== null && value !== undefined && value !== "") {
+    function append(key: string, value: unknown) {
+      if (value === null || value === undefined || value === "") {
+        formData.append(key, "");
+      } else if (Array.isArray(value)) {
+        value.forEach((element) => {
+          formData.append(key, element as string);
+        });
+      } else {
         formData.append(key, value as string);
       }
     }
 
-    appendIfNotNull("title", data.title);
-    appendIfNotNull("description", data.description);
-    appendIfNotNull("type", data.type);
-    appendIfNotNull("typology", data.typology);
-    appendIfNotNull("status", data.status);
-    appendIfNotNull("gross_area", data.gross_area);
-    appendIfNotNull("useful_area", data.useful_area);
-    appendIfNotNull("wc", data.wc);
-    appendIfNotNull("rating", data.rating ? data.rating * 2 : null);
-    appendIfNotNull("address[full_address]", data.full_address);
-    appendIfNotNull("address[adm1_id]", data.adm1_id);
-    appendIfNotNull("address[adm2_id]", data.adm2_id);
-    appendIfNotNull("address[adm3_id]", data.adm3_id);
-    appendIfNotNull("address[postal_code]", data.postal_code);
+    append("title", data.title);
+    append("description", data?.description);
+    append("type", data?.type);
+    append("typology", data?.typology);
+    append("status", data?.status);
+    append("gross_area", data?.gross_area);
+    append("useful_area", data?.useful_area);
+    append("wc", data?.wc);
+    append("rating", data.rating ? data.rating * 2 : 0);
+    append("address[full_address]", data.full_address);
+    append("address[adm1_id]", data.adm1_id);
+    append("address[adm2_id]", data.adm2_id);
+    append("address[adm3_id]", data.adm3_id);
+    append("address[postal_code]", data.postal_code);
 
     if (data.coordinates) {
       const [latitude, longitude] = data.coordinates.split(",");
-      appendIfNotNull("address[latitude]", latitude);
-      appendIfNotNull("address[longitude]", longitude);
+      append("address[latitude]", latitude);
+      append("address[longitude]", longitude);
     }
 
     data.tags.forEach((tag, index) => {
-      appendIfNotNull(`tags[${index}]`, tag);
+      append(`tags[${index}]`, tag);
     });
 
     data.lists.forEach((list, index) => {
-      appendIfNotNull(`lists[${index}]`, list);
+      append(`lists[${index}]`, list);
     });
 
     data.images.forEach((image, index) => {
-      appendIfNotNull(`media[images][${index}]`, image);
+      append(`media[images][${index}]`, image);
     });
 
     data.blueprints.forEach((blueprint, index) => {
-      appendIfNotNull(`media[blueprints][${index}]`, blueprint);
+      append(`media[blueprints][${index}]`, blueprint);
     });
 
     data.videos.forEach((video, index) => {
-      appendIfNotNull(`media[videos][${index}]`, video);
+      append(`media[videos][${index}]`, video);
     });
 
     data.characteristics.forEach((characteristic, index) => {
@@ -373,29 +383,29 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
         return;
       }
 
-      appendIfNotNull(`characteristics[${index}][name]`, characteristic?.name);
-      appendIfNotNull(`characteristics[${index}][type]`, characteristic?.type);
-      appendIfNotNull(`characteristics[${index}][value]`, characteristic?.value);
+      append(`characteristics[${index}][name]`, characteristic?.name);
+      append(`characteristics[${index}][type]`, characteristic?.type);
+      append(`characteristics[${index}][value]`, characteristic?.value);
     });
 
     offers.forEach((offer, index) => {
       if (typeof offer.id !== "string") {
-        appendIfNotNull(`offers[${index}][id]`, offer.id);
+        append(`offers[${index}][id]`, offer.id);
       }
-      appendIfNotNull(`offers[${index}][listing_type]`, offer.listing_type);
-      appendIfNotNull(`offers[${index}][url]`, offer.url);
-      appendIfNotNull(`offers[${index}][description]`, offer.description);
-      appendIfNotNull(`offers[${index}][price]`, offer.price);
+      append(`offers[${index}][listing_type]`, offer.listing_type);
+      append(`offers[${index}][url]`, offer.url);
+      append(`offers[${index}][description]`, offer.description);
+      append(`offers[${index}][price]`, offer.price);
     });
 
     offersToDelete.forEach((offer, index) => {
       if (typeof offer.id !== "string") {
-        appendIfNotNull(`offers_remove[${index}]`, offer.id);
+        append(`offers_remove[${index}]`, offer.id);
       }
     });
 
     mediaToDelete.forEach((media, index) => {
-      appendIfNotNull(`media[remove][${index}]`, media.id);
+      append(`media[remove][${index}]`, media.id);
     });
 
     return makeRequest(`me/properties/${property.id}`, "PUT", session?.user.access_token, formData, true, false);
