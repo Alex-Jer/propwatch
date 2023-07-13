@@ -121,7 +121,6 @@ export function PropertyFormOffers({
     deleteOffer(offer);
 
     if (mode === "edit") {
-      console.log("offersToDelete", offersToDelete);
       setOffersToDelete((state) => state.concat(offer));
     }
   };
@@ -130,7 +129,6 @@ export function PropertyFormOffers({
     removeOffers(selectedOffers);
     setSelectedOffers([]);
     setOffersToDelete((state) => state.concat(selectedOffers));
-    console.log("offersToDelete", offersToDelete);
     close();
   };
 

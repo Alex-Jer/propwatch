@@ -119,7 +119,6 @@ const Profile = () => {
     },
     onError: (error: AxiosErrorResponse) => {
       if (error.response?.data?.message?.includes("email")) {
-        console.log({ error });
         setEditError("email", {
           type: "custom",
           message: error.response.data.message,
@@ -165,12 +164,7 @@ const Profile = () => {
             <div className="col-span-1">
               <form
                 /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-                onSubmit={handleEditSubmit(
-                  (data) => mutateEdit(data),
-                  (error) => {
-                    console.log({ error });
-                  }
-                )}
+                onSubmit={handleEditSubmit((data) => mutateEdit(data))}
               >
                 <div className="space-y-2">
                   <Text size="xl" weight={500}>
@@ -213,12 +207,7 @@ const Profile = () => {
           <Paper shadow="xs" p="md" withBorder>
             <form
               /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-              onSubmit={handlePasswordSubmit(
-                (data) => mutatePassword(data),
-                (error) => {
-                  console.log({ error });
-                }
-              )}
+              onSubmit={handlePasswordSubmit((data) => mutatePassword(data))}
             >
               <div className="space-y-2">
                 <Text size="xl" weight={500} pb={6}>

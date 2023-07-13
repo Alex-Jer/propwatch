@@ -119,12 +119,7 @@ export function EditCollection({ collection: collectionInput, collections, modal
       <Modal opened={modalOpened} onClose={close} title="Edit Collection">
         <form
           /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-          onSubmit={handleSubmit(
-            (data) => mutate(data),
-            (error) => {
-              console.log({ error });
-            }
-          )}
+          onSubmit={handleSubmit((data) => mutate(data))}
         >
           <Box maw={320} mx="auto">
             <TextInputForm

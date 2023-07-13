@@ -43,14 +43,6 @@ export function NavbarDefault({ opened, setOpened }: Props) {
 
   //TODO: Better organization; Better error/loading processing; Better planning
 
-  if (isLoading) {
-    console.log("Loading...");
-  }
-
-  if (isError) {
-    console.log("Error!");
-  }
-
   const links = [
     { icon: IconBuildingEstate, label: "All properties", url: "/properties" },
     {

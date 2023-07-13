@@ -124,8 +124,6 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
       })),
     ];
 
-    console.log(offers);
-
     setOfferRecords(offers);
   }, [property]);
 

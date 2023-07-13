@@ -91,12 +91,7 @@ export function CreateCollectionTooltip({ refetch }: CreateCollectionTooltipProp
       <Modal opened={newCollectionModalOpened} onClose={closeNewCollectionModal} title="New Collection">
         <form
           /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-          onSubmit={handleSubmit(
-            (data) => mutate(data),
-            (error) => {
-              console.log({ error });
-            }
-          )}
+          onSubmit={handleSubmit((data) => mutate(data))}
         >
           <Box maw={320} mx="auto">
             <TextInput label="Title" name="title" control={control} mb="xs" withAsterisk />

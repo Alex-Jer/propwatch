@@ -423,8 +423,6 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       }
     },
     onError: (error: AxiosErrorResponse) => {
-      console.error({ error });
-
       if (mode == "add") processAxiosError(error, "An error occurred while adding your property");
       else processAxiosError(error, "An error occurred while editing your property");
     },
@@ -459,15 +457,10 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
         <div className="grid grid-cols-1 gap-6">
           <form
             /* eslint-disable-next-line @typescript-eslint/no-misused-promises */
-            onSubmit={handleSubmit(
-              (data) =>
-                mutate(data, {
-                  onSuccess: () => resetForm(),
-                }),
-              (error) => {
-                console.log({ error });
-                errorNotification("Please fill in the required fields or fix the errors.");
-              }
+            onSubmit={handleSubmit((data) =>
+              mutate(data, {
+                onSuccess: () => resetForm(),
+              })
             )}
           >
             <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">

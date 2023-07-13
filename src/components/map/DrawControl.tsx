@@ -16,8 +16,6 @@ const DrawControl: React.FC<DrawControlProps> = (props: DrawControlProps) => {
     () => {
       const controlInstance = new MapboxDraw(props);
       if (props.setControlRef) props.setControlRef(controlInstance);
-      console.log("aa");
-      console.log(controlInstance);
       return controlInstance;
     },
     ({ map }: { map: MapRef }) => {

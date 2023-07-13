@@ -55,11 +55,10 @@ export function UserButton({ image, name, icon, ...others }: UserButtonProps) {
           <Link href="/manage">
             <Menu.Item icon={<IconAdjustmentsAlt size="1rem" stroke={1.5} />}>Control Panel</Menu.Item>
           </Link>
-          <Menu.Label>Statistics</Menu.Label>
+          <Menu.Label>Account</Menu.Label>
           <Link href="/statistics">
             <Menu.Item icon={<IconDeviceAnalytics size="1rem" stroke={1.5} />}>Statistics</Menu.Item>
           </Link>
-          <Menu.Label>Account</Menu.Label>
           <Link href="/profile">
             <Menu.Item icon={<IconUserCircle size="1rem" stroke={1.5} />}>Profile</Menu.Item>
           </Link>
