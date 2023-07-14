@@ -17,12 +17,7 @@ const ManageTags: NextPage = () => {
   const queryClient = useQueryClient();
   const { data: session, status } = useSession();
   const [activePage, setPage] = useState(1);
-  const {
-    data: tagData,
-    isLoading,
-    isError,
-    refetch: refreshTags,
-  } = useTagsManage({ session, status, page: activePage });
+  const { data: tagData, isLoading, isError } = useTagsManage({ session, status, page: activePage });
   const [tags, setTags] = useState<TagManage[]>([]);
   const [selectedTag, setSelectedTags] = useState<TagManage | null>(null);
   const [delModOpened, { open: delOpen, close: delClose }] = useDisclosure(false);
@@ -72,7 +67,9 @@ const ManageTags: NextPage = () => {
       try {
         await makeRequest(`me/tags/`, "DELETE", session?.user.access_token, formData);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        await refreshTags();
+        void queryClient.invalidateQueries({ queryKey: ["tags"] });
+        void queryClient.invalidateQueries({ queryKey: ["tagsManage"] });
+        void queryClient.invalidateQueries({ queryKey: ["tagsSidebar"] });
         successNotification("The selected tags have been deleted.", "Selected tags were deleted");
         return;
       } catch (e) {
