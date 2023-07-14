@@ -1,4 +1,4 @@
-import { Group, Pagination, Skeleton } from "@mantine/core";
+import { createStyles, Group, Pagination, Skeleton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconTrash } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
@@ -18,6 +18,7 @@ export function DisplayProperties({
   setPage,
   refetch,
 }: DisplayPropertiesProps) {
+  const { classes } = useStyles();
   const properties = propData?.data;
   const router = useRouter();
   const { data: session } = useSession();
@@ -54,29 +55,36 @@ export function DisplayProperties({
         yesBtn={{ text: "Delete", color: "red", variant: "filled", icon: <IconTrash size="1rem" className="-mr-1" /> }}
         noBtn={{ text: "Cancel", variant: "default" }}
       />
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-        {isLoading
-          ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />)
-          : properties?.map((property: CollectionProperty) => (
-              <div
-                className="z-10 cursor-pointer"
-                onClick={() => {
-                  void router.push(`/properties/${property.id}`);
-                }}
-                key={property.id}
-              >
-                <PropertyCard
-                  property={property}
-                  xButton={IconTrash}
-                  xButtonTooltip="Trash property"
-                  executeXButton={() => {
-                    setSelectedPropId(property.id);
-                    openTrashModal();
+
+      {isLoading || (properties && properties.length > 0) ? (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+          {isLoading
+            ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />)
+            : properties?.map((property: CollectionProperty) => (
+                <div
+                  className="z-10 cursor-pointer"
+                  onClick={() => {
+                    void router.push(`/properties/${property.id}`);
                   }}
-                />
-              </div>
-            ))}
-      </div>
+                  key={property.id}
+                >
+                  <PropertyCard
+                    property={property}
+                    xButton={IconTrash}
+                    xButtonTooltip="Trash property"
+                    executeXButton={() => {
+                      setSelectedPropId(property.id);
+                      openTrashModal();
+                    }}
+                  />
+                </div>
+              ))}
+        </div>
+      ) : (
+        <div className={classes.placeholder}>
+          <span>No properties added yet.</span>
+        </div>
+      )}
 
       {!isLoading ? (
         propData?.meta.last_page &&
@@ -103,3 +111,15 @@ export function DisplayProperties({
     </>
   );
 }
+
+const useStyles = createStyles((theme) => ({
+  placeholder: {
+    height: "100%",
+    width: "100%",
+
+    "& span": {
+      color: theme.colors.dark[3],
+      fontWeight: 600,
+    },
+  },
+}));

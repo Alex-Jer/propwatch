@@ -108,6 +108,13 @@ export function NavbarDefault({ opened, setOpened }: Props) {
             </Text>
             <CreateCollectionTooltip />
           </Group>
+          {collections?.length === 0 && (
+            <Group className={`${classes.sectionHeader} mt-4`} position="apart">
+              <Text size="xs" weight={400} color="dimmed">
+                (No collections yet, click the + to create one)
+              </Text>
+            </Group>
+          )}
           <div className={classes.sectionContent}>{collectionLinks}</div>
         </Navbar.Section>
       </Navbar>

@@ -85,7 +85,7 @@ export function SignUpForm() {
         {"Already have an account? "}
         <Link href="/auth/login">
           <Anchor size="sm" component="button">
-            Sign up
+            Sign in
           </Anchor>
         </Link>
       </Text>

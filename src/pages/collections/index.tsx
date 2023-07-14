@@ -8,10 +8,11 @@ import { type Collection } from "~/types";
 import { IconListNumbers } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { generateLoadingElements } from "~/lib/propertyHelper";
-import { Group, Pagination } from "@mantine/core";
+import { createStyles, Group, Pagination } from "@mantine/core";
 import { errorNotification } from "~/components/PropertyCard";
 
 const Collections: NextPage = () => {
+  const { classes } = useStyles();
   const { data: session, status } = useSession();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [activePage, setPage] = useState(1);
@@ -41,39 +42,62 @@ const Collections: NextPage = () => {
 
       <div className="-mx-4 mb-4 border-b border-shark-700" />
 
-      <span className="grid grid-cols-1 gap-4">
-        {isLoading
-          ? generateLoadingElements(10, <CollectionCard covers={[]} title={""} description={""} date={""} isLoading />)
-          : null}
-
-        {collections?.map((collection: Collection) => (
-          <Link href={`/collections/${collection.id}`} key={collection.id}>
-            <CollectionCard
-              key={collection.id}
-              covers={collection.covers}
-              title={collection.name}
-              description={collection.description}
-              date={collection.num_properties.toString() + " properties"}
-            />
-            <div className="border-b border-shark-700 pb-4" />
-          </Link>
-        ))}
-      </span>
-      {colData?.meta.last_page && colData?.meta.last_page > 1 && (
+      {isLoading || (collections && collections.length > 0) ? (
         <>
-          <Pagination.Root value={activePage} onChange={setPage} total={colData?.meta.last_page ?? 1}>
-            <Group spacing={5} position="center" className="mt-4">
-              <Pagination.First />
-              <Pagination.Previous />
-              <Pagination.Items />
-              <Pagination.Next />
-              <Pagination.Last />
-            </Group>
-          </Pagination.Root>
+          <span className="grid grid-cols-1 gap-4">
+            {isLoading
+              ? generateLoadingElements(
+                  10,
+                  <CollectionCard covers={[]} title={""} description={""} date={""} isLoading />
+                )
+              : null}
+
+            {collections?.map((collection: Collection) => (
+              <Link href={`/collections/${collection.id}`} key={collection.id}>
+                <CollectionCard
+                  key={collection.id}
+                  covers={collection.covers}
+                  title={collection.name}
+                  description={collection.description}
+                  date={collection.num_properties.toString() + " properties"}
+                />
+                <div className="border-b border-shark-700 pb-4" />
+              </Link>
+            ))}
+          </span>
+          {colData?.meta.last_page && colData?.meta.last_page > 1 && (
+            <>
+              <Pagination.Root value={activePage} onChange={setPage} total={colData?.meta.last_page ?? 1}>
+                <Group spacing={5} position="center" className="mt-4">
+                  <Pagination.First />
+                  <Pagination.Previous />
+                  <Pagination.Items />
+                  <Pagination.Next />
+                  <Pagination.Last />
+                </Group>
+              </Pagination.Root>
+            </>
+          )}
         </>
+      ) : (
+        <div className={classes.placeholder}>
+          <span>No collections added yet.</span>
+        </div>
       )}
     </>
   );
 };
 
 export default Collections;
+
+const useStyles = createStyles((theme) => ({
+  placeholder: {
+    height: "100%",
+    width: "100%",
+
+    "& span": {
+      color: theme.colors.dark[3],
+      fontWeight: 600,
+    },
+  },
+}));
