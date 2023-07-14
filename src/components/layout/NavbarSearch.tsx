@@ -279,7 +279,7 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
             My Tags
           </Text>
         </Group>
-        {collections?.length === 0 && (
+        {tagLinks?.length === 0 && (
           <Group className={`${classes.sectionHeader} mt-4`} position="apart">
             <Text size="xs" weight={400} color="dimmed">
               (No tags available)
