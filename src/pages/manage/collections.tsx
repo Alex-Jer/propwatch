@@ -23,11 +23,10 @@ const ManageCollections: NextPage = () => {
     isError,
     refetch: refreshCollections,
   } = useCollections({ session, status, page: activePage });
+
   const [collections, setCollections] = useState<Collection[]>([]);
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
-
   const [editModalOpened, { open: editOpen, close: editClose }] = useDisclosure(false);
-
   const [delModOpened, { open: delOpen, close: delClose }] = useDisclosure(false);
 
   const router = useRouter();

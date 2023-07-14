@@ -38,7 +38,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const { data: colData, isLoading, isError, refetch } = useAllCollections({ session, status });
+  const { data: colData } = useAllCollections({ session, status });
   const collections = colData?.data;
 
   const links = [
@@ -106,7 +106,7 @@ export function NavbarDefault({ opened, setOpened }: Props) {
             <Text size="xs" weight={500} color="dimmed">
               My Collections
             </Text>
-            <CreateCollectionTooltip refetch={refetch} />
+            <CreateCollectionTooltip />
           </Group>
           <div className={classes.sectionContent}>{collectionLinks}</div>
         </Navbar.Section>

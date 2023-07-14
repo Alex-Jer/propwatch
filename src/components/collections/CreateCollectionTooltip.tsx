@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ActionIcon, Box, Button, Group, Modal, Tooltip } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Textarea, TextInput } from "react-hook-form-mantine";
@@ -32,12 +32,9 @@ const defaultValues: FormSchemaType = {
 
 type FormSchemaType = z.infer<typeof schema>;
 
-type CreateCollectionTooltipProps = {
-  refetch: () => Promise<unknown>;
-};
-
-export function CreateCollectionTooltip({ refetch }: CreateCollectionTooltipProps) {
+export function CreateCollectionTooltip() {
   const { data: session } = useSession();
+  const queryClient = useQueryClient();
 
   const [newCollectionModalOpened, { open: openNewCollectionModal, close: closeNewCollectionModal }] =
     useDisclosure(false);
@@ -71,7 +68,7 @@ export function CreateCollectionTooltip({ refetch }: CreateCollectionTooltipProp
     onSuccess: () => {
       reset(defaultValues);
       closeNewCollectionModal();
-      refetch().then().catch(null);
+      void queryClient.invalidateQueries({ queryKey: ["collections"] });
       successNotification("Collection created successfully", "Collection created");
     },
     onError: (error: AxiosErrorResponse) => {

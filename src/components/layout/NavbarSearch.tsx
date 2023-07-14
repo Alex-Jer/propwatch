@@ -46,25 +46,14 @@ type Props = {
 export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters }: Props) {
   const { classes } = useStyles();
   const theme = useMantineTheme();
-
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { query } = useRouter();
 
-  const {
-    data: colData,
-    isLoading: isLoadingCollections,
-    isError: isErrorCollection,
-    refetch,
-  } = useSidebarCollections({ session, status });
+  const { data: colData } = useSidebarCollections({ session, status });
+  const { data: tags } = useTagsSidebar({ session, status });
 
   const collections = colData?.data;
-
-  const { data: tags, isLoading: isLoadingTags, isError: isErrorTags } = useTagsSidebar({ session, status });
-
-  const isLoading = isLoadingCollections || isLoadingTags;
-  const isError = isErrorCollection || isErrorTags;
-
-  const { query } = useRouter();
 
   const searchInputRef = useRef(null);
   const [clearFilters, setClearFilters] = useDebouncedState(false, 100);
@@ -276,7 +265,7 @@ export function NavbarSearch({ opened, setOpened, setSearch, filters, setFilters
           <Text size="xs" weight={500} color="dimmed">
             My Collections
           </Text>
-          <CreateCollectionTooltip refetch={refetch} />
+          <CreateCollectionTooltip />
         </Group>
         <div className={classes.sectionContent}>
           {noCollectionLink()}

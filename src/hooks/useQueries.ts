@@ -444,6 +444,7 @@ export const useAdms = ({ session, status }: UseAdmsWithoutParent) => {
     queryKey: ["adms1"],
     queryFn: () => fetchAdms(session, 1, null),
     enabled: status === "authenticated",
+    staleTime: Infinity,
   });
 };
 
@@ -452,6 +453,7 @@ export const useAdms2 = ({ session, status, parentId }: UseAdms) => {
     queryKey: ["adms2_" + parentId],
     queryFn: () => fetchAdms(session, 2, parentId),
     enabled: status === "authenticated",
+    staleTime: Infinity,
   });
 };
 
@@ -460,6 +462,7 @@ export const useAdms3 = ({ session, status, parentId }: UseAdms) => {
     queryKey: ["adms3_" + parentId],
     queryFn: () => fetchAdms(session, 3, parentId),
     enabled: status === "authenticated",
+    staleTime: Infinity,
   });
 };
 
