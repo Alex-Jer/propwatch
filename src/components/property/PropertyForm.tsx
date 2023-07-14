@@ -573,9 +573,11 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
             </Stepper>
 
             <div className="flex justify-end space-x-2">
-              <Button variant="default" onClick={() => resetForm()}>
-                Reset
-              </Button>
+              {mode !== "edit" && (
+                <Button variant="default" onClick={() => resetForm()}>
+                  Reset
+                </Button>
+              )}
 
               <Button
                 variant="default"
