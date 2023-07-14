@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Stepper, Paper } from "@mantine/core";
 import { z } from "zod";
@@ -18,7 +18,6 @@ import {
 import { useAdms, useAdms2, useAdms3, useAllCollections, useAllTags } from "~/hooks/useQueries";
 import { useInputState } from "@mantine/hooks";
 import { useRouter } from "next/router";
-import { PropertiesContext } from "~/lib/PropertiesProvider";
 import { successNotification } from "../PropertyCard";
 
 type PropertyType = "house" | "apartment" | "office" | "shop" | "warehouse" | "garage" | "land" | "other";
@@ -112,6 +111,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
   const [mediaToDelete, setMediaToDelete] = useState<MediaItem[]>([]);
   const [offersToDelete, setOffersToDelete] = useState<Offer[]>([]);
 
+  const [tags, setTags] = useState<SelectOption[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
   const [countAdmFetches, setCountAdmFetches] = useState(0);
 
@@ -132,7 +132,6 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     isSuccess: isCollectionsSuccess,
   } = useAllCollections({ session, status });
 
-  let tags = [] as SelectOption[];
   let collections = [] as SelectOption[];
 
   const { data: adm1Data, isLoading: adm1IsLoading, isSuccess: isAdm1Success } = useAdms({ session, status });
@@ -175,12 +174,11 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     parentId: selectedAdm2 ? selectedAdm2 : "2",
   });
 
-  if (tagsData) {
-    tags = tagsData.map((tag) => ({
-      value: tag.name,
-      label: tag.name,
-    }));
-  }
+  useEffect(() => {
+    if (tagsData) {
+      setTags(tagsData.map((tag) => ({ value: tag.name, label: tag.name })));
+    }
+  }, [tagsData]);
 
   if (collectionsData) {
     collections = collectionsData.data.map((collection) => ({
@@ -469,6 +467,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
               <Stepper.Step label="Main Info">
                 <PropertyFormMainInfo
                   tags={tags}
+                  setTags={setTags}
                   collections={collections}
                   tagsLoading={tagsLoading}
                   collectionsLoading={collectionsLoading}
@@ -531,6 +530,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
                 <Paper className="mb-4" shadow="xs" p="md" withBorder>
                   <PropertyFormMainInfo
                     tags={tags}
+                    setTags={setTags}
                     collections={collections}
                     tagsLoading={tagsLoading}
                     collectionsLoading={collectionsLoading}

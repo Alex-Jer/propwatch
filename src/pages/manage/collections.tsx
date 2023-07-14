@@ -18,12 +18,7 @@ import { useQueryClient } from "@tanstack/react-query";
 const ManageCollections: NextPage = () => {
   const { data: session, status } = useSession();
   const [activePage, setPage] = useState(1);
-  const {
-    data: colData,
-    isLoading,
-    isError,
-    refetch: refreshCollections,
-  } = useCollections({ session, status, page: activePage });
+  const { data: colData, isLoading, isError } = useCollections({ session, status, page: activePage });
   const queryClient = useQueryClient();
 
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -57,9 +52,8 @@ const ManageCollections: NextPage = () => {
         .then(() => {
           setSelectedCollection(null);
           delClose();
-          successNotification("This collection has been deleted.", "Collection deleted");
           void queryClient.invalidateQueries({ queryKey: ["collections"] });
-          void refreshCollections;
+          successNotification("This collection has been deleted.", "Collection deleted");
         })
         .catch(() => errorNotification("An unknown error occurred while deleting this collection."));
     }
@@ -77,7 +71,7 @@ const ManageCollections: NextPage = () => {
       try {
         await makeRequest(`me/lists/`, "DELETE", session?.user.access_token, formData);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        await refreshCollections();
+        void queryClient.invalidateQueries({ queryKey: ["collections"] });
         successNotification("The selected collections have been deleted.", "Selected collections were deleted");
         return;
       } catch (e) {

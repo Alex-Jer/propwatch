@@ -40,6 +40,7 @@ const currentStatuses = [
 
 type PropertyFormMainInfoProps = {
   tags: SelectOption[];
+  setTags: (tags: SelectOption[]) => void;
   collections: SelectOption[];
   tagsLoading: boolean;
   collectionsLoading: boolean;
@@ -53,6 +54,7 @@ type PropertyFormMainInfoProps = {
 
 export function PropertyFormMainInfo({
   tags,
+  setTags,
   collections,
   tagsLoading,
   collectionsLoading,
@@ -216,8 +218,7 @@ export function PropertyFormMainInfo({
           getCreateLabel={(query) => `+ Create ${query} `}
           onCreate={(query) => {
             const newTag = { value: query, label: query };
-            tags.push(newTag);
-            tags.sort((a, b) => a.label.localeCompare(b.label));
+            setTags([...tags, newTag]);
             return newTag;
           }}
           disabled={disabled}
