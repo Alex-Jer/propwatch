@@ -417,6 +417,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
 
       void queryClient.invalidateQueries({ queryKey: ["properties"] });
       void queryClient.invalidateQueries({ queryKey: ["tagsSidebar"] });
+      void queryClient.invalidateQueries({ queryKey: ["tagsManage"] });
       void queryClient.invalidateQueries({ queryKey: ["collectionsSidebar"] });
 
       if (mode === "edit" && property.id) {

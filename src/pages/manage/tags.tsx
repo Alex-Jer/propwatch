@@ -1,5 +1,6 @@
 import { useDisclosure } from "@mantine/hooks";
 import { IconTrash } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
@@ -13,6 +14,7 @@ import { makeRequest } from "~/lib/requestHelper";
 import { type TagManage } from "~/types";
 
 const ManageTags: NextPage = () => {
+  const queryClient = useQueryClient();
   const { data: session, status } = useSession();
   const [activePage, setPage] = useState(1);
   const {
@@ -23,7 +25,6 @@ const ManageTags: NextPage = () => {
   } = useTagsManage({ session, status, page: activePage });
   const [tags, setTags] = useState<TagManage[]>([]);
   const [selectedTag, setSelectedTags] = useState<TagManage | null>(null);
-
   const [delModOpened, { open: delOpen, close: delClose }] = useDisclosure(false);
 
   useEffect(() => {
@@ -51,7 +52,9 @@ const ManageTags: NextPage = () => {
           setSelectedTags(null);
           delClose();
           successNotification("This tag has been deleted.", "Tag deleted");
-          refreshTags().then().catch(null);
+          void queryClient.invalidateQueries({ queryKey: ["tags"] });
+          void queryClient.invalidateQueries({ queryKey: ["tagsManage"] });
+          void queryClient.invalidateQueries({ queryKey: ["tagsSidebar"] });
         })
         .catch(() => errorNotification("An unknown error occurred while deleting this tag."));
     }
