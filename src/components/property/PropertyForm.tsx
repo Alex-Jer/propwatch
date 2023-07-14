@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Stepper, Paper } from "@mantine/core";
 import { z } from "zod";
@@ -110,10 +110,10 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
   const [media, setMedia] = useState<Media>(property.media || { photos: [], blueprints: [], videos: [] });
   const [mediaToDelete, setMediaToDelete] = useState<MediaItem[]>([]);
   const [offersToDelete, setOffersToDelete] = useState<Offer[]>([]);
-
   const [tags, setTags] = useState<SelectOption[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
   const [countAdmFetches, setCountAdmFetches] = useState(0);
+  const offerPriceRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (property.offers && mode === "edit") {
@@ -223,6 +223,26 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     resolver: zodResolver(schema),
     defaultValues,
   });
+
+  useEffect(() => {
+    switch (stepperActive) {
+      case 0:
+        setFocus("title");
+        break;
+      case 1:
+        setFocus("full_address");
+        break;
+      case 2:
+        /* @ts-expect-error works fine */
+        setFocus("characteristics[0].name");
+        break;
+      case 4:
+        offerPriceRef.current?.focus();
+        break;
+      default:
+        break;
+    }
+  }, [stepperActive, setFocus]);
 
   const handleStepChange = (nextStep: number) => {
     const isOutOfBounds = nextStep < 0 || nextStep > TOTAL_STEPS;
@@ -519,9 +539,9 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
                 <PropertyFormOffers
                   offers={offers}
                   setOffers={setOffers}
-                  offersToDelete={offersToDelete}
                   setOffersToDelete={setOffersToDelete}
                   mode={mode}
+                  offerPriceRef={offerPriceRef}
                 />
               </Stepper.Step>
 

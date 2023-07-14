@@ -16,17 +16,17 @@ const listingTypes = [
 type PropertyFormOffersProps = {
   offers: Offer[];
   setOffers: (offers: Offer[]) => void;
-  offersToDelete: Offer[];
   setOffersToDelete: (offers: Offer[]) => void;
   mode?: "add" | "edit";
+  offerPriceRef?: { current: HTMLInputElement | null };
 };
 
 export function PropertyFormOffers({
   offers,
   setOffers,
-  offersToDelete,
   setOffersToDelete,
   mode = "add",
+  offerPriceRef,
 }: PropertyFormOffersProps) {
   const [listingType, setListingType] = useState("sale");
   const [price, setPrice] = useInputState<number | "">("");
@@ -265,6 +265,7 @@ export function PropertyFormOffers({
           />
         </div>
         <NumberInput
+          ref={offerPriceRef}
           className="col-span-2"
           placeholder="Price"
           value={price}
