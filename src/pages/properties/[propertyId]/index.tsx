@@ -97,7 +97,7 @@ const Property: NextPage = () => {
 
   useEffect(() => {
     if (isError) {
-      errorNotification("Error", "There was an error loading the property...");
+      errorNotification("There was an error loading the property...");
     }
   }, [isError]);
 

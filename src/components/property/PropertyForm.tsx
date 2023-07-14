@@ -463,7 +463,7 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
               })
             )}
           >
-            <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="sm">
+            <Stepper active={stepperActive} onStepClick={setStepperActive} breakpoint="lg">
               <Stepper.Step label="Main Info">
                 <PropertyFormMainInfo
                   tags={tags}

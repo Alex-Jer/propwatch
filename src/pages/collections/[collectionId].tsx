@@ -74,7 +74,7 @@ const Collection: NextPage = () => {
 
   useEffect(() => {
     if (isError) {
-      errorNotification("Error", "There was an error loading the collection...");
+      errorNotification("There was an error loading the collection...");
     }
   }, [isError]);
 

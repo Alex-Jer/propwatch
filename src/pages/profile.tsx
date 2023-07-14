@@ -115,7 +115,7 @@ const Profile = () => {
       }
 
       await update({ ...session });
-      successNotification("Profile updated", "Your profile has been updated");
+      successNotification("Your profile has been updated");
     },
     onError: (error: AxiosErrorResponse) => {
       if (error.response?.data?.message?.includes("email")) {
@@ -149,7 +149,7 @@ const Profile = () => {
       await update({ ...session });
       resetPasswordForm();
 
-      successNotification("Password updated", "Your password has been updated");
+      successNotification("Your password has been updated");
     },
     onError: (error: AxiosErrorResponse) => {
       processAxiosError(error, "An error occurred while updating your password");

@@ -33,13 +33,13 @@ export function LoginForm() {
     const res = await signIn("credentials", { redirect: false, ...values });
 
     if (res?.status === 401) {
-      errorNotification("Wrong email or password", "Check your credentials and try again");
+      errorNotification("Check your credentials and try again.", "Wrong email or password");
       setIsLoading(false);
       return;
     }
 
     if (res?.status !== 200) {
-      errorNotification("Something went wrong", "Check your internet connection and try again");
+      errorNotification("Check your internet connection and try again", "Something went wrong.");
       setIsLoading(false);
       return;
     }

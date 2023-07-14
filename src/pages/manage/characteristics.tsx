@@ -70,7 +70,7 @@ const ManageCharacteristics: NextPage = () => {
         await makeRequest(`me/characteristics/`, "DELETE", session?.user.access_token, formData);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         await refreshCharacteristics();
-        successNotification("The selected characteristics have been deleted.", "Selected characteristics were deleted");
+        successNotification("The selected characteristics have been deleted.", "Characteristics deleted");
         return;
       } catch (e) {
         errorNotification("An unknown error occurred while deleting the selected characteristics.");
