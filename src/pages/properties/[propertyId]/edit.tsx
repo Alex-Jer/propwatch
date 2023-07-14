@@ -36,7 +36,7 @@ const EditProperty: NextPage = () => {
 
   return (
     <>
-      <div className="mx-2 mt-6 pt-4 sm:mx-4 md:mx-6 2xl:mx-36">
+      <div className="mx-2 sm:mx-4 md:mx-6 2xl:mx-36">
         <CardBackground>
           <Center>
             <Text size="xl" weight={700} pt="sm" pb="lg">
