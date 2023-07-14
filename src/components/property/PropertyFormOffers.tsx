@@ -7,6 +7,7 @@ import { IconCurrencyEuro, IconTrash } from "@tabler/icons-react";
 import { ConfirmationModal } from "~/components/ConfirmationModal";
 import { sortBy } from "remeda";
 import { nanoid } from "nanoid";
+import { priceToString } from "~/lib/propertyHelper";
 
 const listingTypes = [
   { label: "Sale", value: "sale" },
@@ -53,6 +54,7 @@ export function PropertyFormOffers({
       title: "Price (€)",
       width: 100,
       sortable: true,
+      render: (offer: Offer) => priceToString(offer.price),
     },
     {
       accessor: "url",
@@ -275,6 +277,11 @@ export function PropertyFormOffers({
           min={0}
           stepHoldDelay={500}
           stepHoldInterval={(t) => Math.max(1000 / t ** 2, 50)}
+          formatter={(value) =>
+            !Number.isNaN(parseFloat(value)) && parseInt(value) != 0
+              ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".")
+              : ""
+          }
         />
         <TextInput className="col-span-4" placeholder="URL" value={url} onChange={handleUrlChange} error={urlError} />
         <TextInput
