@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Group, Pagination, Tooltip } from "@mantine/core";
+import { ActionIcon, Button, Group, Pagination, Text, Tooltip } from "@mantine/core";
 import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react";
 import { DataTable, type DataTableSortStatus } from "mantine-datatable";
 import { useEffect, useState } from "react";
@@ -42,11 +42,8 @@ export function ManagingTable<T extends { id: any }>({
   );
 
   const [tableRecords, setTableRecords] = useState<T[]>([]);
-
   const [dataTableColumns, setDataTableColumns] = useState<any[]>([]);
-
   const [selectedRecords, setSelectedRecords] = useState<T[]>([]);
-
   const [modalOpened, { open, close }] = useDisclosure(false);
 
   const sortRecords = (records: T[], sortStatus: DataTableSortStatus) => {
@@ -107,13 +104,6 @@ export function ManagingTable<T extends { id: any }>({
     else setDataTableColumns(newCols);
   }, [deleteFunction, editFunction, tableColumns, viewFunction]);
 
-  /*const removeRecords = (recordsToRemove: T[]) => {
-    sortRecords(
-      tableRecords.filter((o) => !recordsToRemove.some((s) => s.id === o.id)),
-      sortStatus
-    );
-  };*/
-
   const deleteSelectedRecords = () => {
     if (!deleteMultipleFunction) return;
     deleteMultipleFunction(selectedRecords)
@@ -156,29 +146,37 @@ export function ManagingTable<T extends { id: any }>({
         <div className="mt-2">{deleteMultipleFunction && renderDeleteMultipleRecordsBtn()}</div>
       </div>
 
-      <DataTable
-        withBorder={false}
-        borderRadius="md"
-        columns={dataTableColumns}
-        records={tableRecords}
-        {...(deleteMultipleFunction && {
-          selectedRecords,
-          onSelectedRecordsChange: setSelectedRecords,
-        })}
-        sortStatus={sortStatus}
-        onSortStatusChange={setSortStatus}
-      />
-      {pagination && pagination.total > 1 && (
+      {tableRecords.length === 0 ? (
+        <Text className="text-center" color="dimmed">
+          No records found.
+        </Text>
+      ) : (
         <>
-          <Pagination.Root value={pagination.activePage} onChange={pagination.setPage} total={pagination.total}>
-            <Group spacing={5} position="center" className="mt-4">
-              <Pagination.First />
-              <Pagination.Previous />
-              <Pagination.Items />
-              <Pagination.Next />
-              <Pagination.Last />
-            </Group>
-          </Pagination.Root>
+          <DataTable
+            withBorder={false}
+            borderRadius="md"
+            columns={dataTableColumns}
+            records={tableRecords}
+            {...(deleteMultipleFunction && {
+              selectedRecords,
+              onSelectedRecordsChange: setSelectedRecords,
+            })}
+            sortStatus={sortStatus}
+            onSortStatusChange={setSortStatus}
+          />
+          {pagination && pagination.total > 1 && (
+            <>
+              <Pagination.Root value={pagination.activePage} onChange={pagination.setPage} total={pagination.total}>
+                <Group spacing={5} position="center" className="mt-4">
+                  <Pagination.First />
+                  <Pagination.Previous />
+                  <Pagination.Items />
+                  <Pagination.Next />
+                  <Pagination.Last />
+                </Group>
+              </Pagination.Root>
+            </>
+          )}
         </>
       )}
     </>
