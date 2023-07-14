@@ -82,7 +82,7 @@ export function DisplayProperties({
         </div>
       ) : (
         <div className={classes.placeholder}>
-          <span>No properties added yet.</span>
+          <span>{router.pathname.includes("polygon") ? "No properties found." : "No properties added yet."}</span>
         </div>
       )}
 
