@@ -248,10 +248,6 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
     const isOutOfBounds = nextStep < 0 || nextStep > TOTAL_STEPS;
     if (isOutOfBounds) return;
     setStepperActive(nextStep);
-
-    if (nextStep === 1) {
-      setFocus("full_address");
-    }
   };
 
   const resetForm = () => {
