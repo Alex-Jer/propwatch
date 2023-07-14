@@ -41,6 +41,8 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, filter
     page: activePage,
   });
 
+  const hasFilters = Boolean(filters || search);
+
   const onUpdate = useCallback(
     (e: DrawCreateEvent | DrawUpdateEvent) => {
       if (e.features.length > 0) {
@@ -125,11 +127,6 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, filter
         <Grid.Col span={12}>{renderMap()}</Grid.Col>
       </Grid>
 
-      {/* <div className="mb-2 mt-6 flex flex-row items-center">
-        <IconBuildingEstate className="-mt-1 mr-2" strokeWidth={1.5} />
-        <h1 className="pb-1 text-base font-semibold">Properties</h1>
-      </div> */}
-
       <div className="-mx-4 mb-4 mt-4 border-b border-shark-700" />
 
       <DisplayProperties
@@ -139,6 +136,7 @@ const SearchPolygonProperties: NextPage<SearchPropertyProps> = ({ search, filter
         activePage={activePage}
         setPage={setPage}
         refetch={refetch}
+        hasFilters={hasFilters}
       />
     </>
   );

@@ -17,6 +17,7 @@ export function DisplayProperties({
   activePage,
   setPage,
   refetch,
+  hasFilters,
 }: DisplayPropertiesProps) {
   const { classes } = useStyles();
   const properties = propData?.data;
@@ -56,7 +57,7 @@ export function DisplayProperties({
         noBtn={{ text: "Cancel", variant: "default" }}
       />
 
-      {isLoading || (properties && properties.length > 0) ? (
+      {isLoading || (!isLoading && properties?.length !== 0) ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
           {isLoading
             ? generateLoadingElements(12, <PropertyCard property={{} as CollectionProperty} isLoading />)
@@ -82,7 +83,9 @@ export function DisplayProperties({
         </div>
       ) : (
         <div className={classes.placeholder}>
-          <span>{router.pathname.includes("polygon") ? "No properties found." : "No properties added yet."}</span>
+          <span>
+            {router.pathname.includes("polygon") || hasFilters ? "No properties found." : "No properties added yet."}
+          </span>
         </div>
       )}
 
