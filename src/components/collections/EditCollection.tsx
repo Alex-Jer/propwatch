@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { makeRequest, processAxiosError } from "~/lib/requestHelper";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Textarea, TextInput as TextInputForm } from "react-hook-form-mantine";
 import { useEffect, useState } from "react";
 import { successNotification } from "../PropertyCard";
@@ -40,6 +40,7 @@ type EditCollectionProps = {
 
 export function EditCollection({ collection: collectionInput, collections, modalOpened, close }: EditCollectionProps) {
   const { data: session } = useSession();
+  const queryClient = useQueryClient();
 
   const [defaultValues, setDefaultValues] = useState<FormSchemaType>(defaultDefaultValues);
 
@@ -100,6 +101,8 @@ export function EditCollection({ collection: collectionInput, collections, modal
         }
       }
       close();
+      void queryClient.invalidateQueries({ queryKey: ["collections"] });
+      void queryClient.invalidateQueries({ queryKey: ["collectionsSidebar"] });
       successNotification("Collection edited successfully");
     },
     onError: (error: AxiosErrorResponse) => {
