@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Button, Stepper, Paper } from "@mantine/core";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest, processAxiosError } from "~/lib/requestHelper";
 import { useSession } from "next-auth/react";
 import { type Property, type Offer, type SelectOption, type Media, type AxiosErrorResponse } from "~/types";
@@ -19,7 +19,7 @@ import { useAdms, useAdms2, useAdms3, useAllCollections, useAllTags } from "~/ho
 import { useInputState } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import { PropertiesContext } from "~/lib/PropertiesProvider";
-import { errorNotification, successNotification } from "../PropertyCard";
+import { successNotification } from "../PropertyCard";
 
 type PropertyType = "house" | "apartment" | "office" | "shop" | "warehouse" | "garage" | "land" | "other";
 type PropertyStatus = "available" | "unavailable" | "unknown";
@@ -99,6 +99,7 @@ interface PropertyFormProps {
 export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFormProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [stepperActive, setStepperActive] = useState(0);
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -113,8 +114,6 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
 
   const [offers, setOffers] = useState<Offer[]>([]);
   const [countAdmFetches, setCountAdmFetches] = useState(0);
-
-  const { refetch } = useContext(PropertiesContext);
 
   useEffect(() => {
     if (property.offers && mode === "edit") {
@@ -409,13 +408,16 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
 
   const { mutate, isLoading } = useMutation({
     mutationFn: mode === "add" ? addProperty : editProperty,
-    onSuccess: async () => {
+    onSuccess: () => {
       close && close();
       successNotification(
         mode === "add" ? "Your property was added successfully" : "Your property was edited successfully",
         mode === "add" ? "Property added" : "Property edited"
       );
-      await refetch();
+
+      void queryClient.invalidateQueries({ queryKey: ["properties"] });
+      void queryClient.invalidateQueries({ queryKey: ["tagsSidebar"] });
+      void queryClient.invalidateQueries({ queryKey: ["collectionsSidebar"] });
 
       if (mode === "edit" && property.id) {
         void router.push(`/properties/${property.id}`);

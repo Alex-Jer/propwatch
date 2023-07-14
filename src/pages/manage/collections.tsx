@@ -13,6 +13,7 @@ import { EditCollection } from "~/components/collections/EditCollection";
 import { useCollections } from "~/hooks/useQueries";
 import { makeRequest } from "~/lib/requestHelper";
 import { type Collection } from "~/types";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ManageCollections: NextPage = () => {
   const { data: session, status } = useSession();
@@ -23,6 +24,7 @@ const ManageCollections: NextPage = () => {
     isError,
     refetch: refreshCollections,
   } = useCollections({ session, status, page: activePage });
+  const queryClient = useQueryClient();
 
   const [collections, setCollections] = useState<Collection[]>([]);
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
@@ -56,7 +58,8 @@ const ManageCollections: NextPage = () => {
           setSelectedCollection(null);
           delClose();
           successNotification("This collection has been deleted.", "Collection deleted");
-          refreshCollections().then().catch(null);
+          void queryClient.invalidateQueries({ queryKey: ["collections"] });
+          void refreshCollections;
         })
         .catch(() => errorNotification("An unknown error occurred while deleting this collection."));
     }

@@ -20,9 +20,9 @@ import {
   IconTrash,
   IconX,
 } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { useContext, useMemo, useState } from "react";
-import { PropertiesContext } from "~/lib/PropertiesProvider";
+import { useMemo, useState } from "react";
 import { priceToString } from "~/lib/propertyHelper";
 import { makeRequest } from "~/lib/requestHelper";
 import { type CollectionProperty } from "~/types";
@@ -67,9 +67,9 @@ export function PropertyCard({
   executeXButton,
 }: PropertyCardProps) {
   const { classes } = useStyles();
+  const queryClient = useQueryClient();
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const { refetch } = useContext(PropertiesContext);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -90,7 +90,8 @@ export function PropertyCard({
     makeRequest(`me/properties/${id}/restore`, "PATCH", session?.user.access_token)
       .then(() => {
         successNotification("The selected property has been restored!", "Property restored");
-        void refetch();
+        void queryClient.invalidateQueries({ queryKey: ["properties"] });
+        void queryClient.invalidateQueries({ queryKey: ["collectionsSidebar"] });
       })
       .catch(() => {
         errorNotification("An unknown error occurred while restoring this property.");

@@ -356,6 +356,7 @@ export const useSidebarCollections = ({ session, status }: UseElement) => {
     queryKey: ["collectionsSidebar"],
     queryFn: () => fetchSidebarCollections(session),
     enabled: status === "authenticated",
+    staleTime: Infinity,
   });
 };
 
@@ -436,6 +437,7 @@ export const useTagsSidebar = ({ session, status }: UseElement) => {
     queryKey: ["tagsSidebar"],
     queryFn: () => fetchTagsSidebar(session),
     enabled: status === "authenticated",
+    staleTime: Infinity,
   });
 };
 

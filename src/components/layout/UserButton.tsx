@@ -1,6 +1,7 @@
 import { UnstyledButton, Group, Avatar, Text, createStyles, Menu } from "@mantine/core";
 import { IconDeviceAnalytics } from "@tabler/icons-react";
 import { IconAdjustmentsAlt, IconChevronRight, IconLogout, IconUserCircle } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -24,12 +25,15 @@ export function UserButton({ image, name, icon, ...others }: UserButtonProps) {
   const { classes } = useStyles();
   const { data: session } = useSession();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleLogout = async () => {
     if (!session) return;
     await signOut({ redirect: false });
     await logout(session.user.access_token);
     await router.push("/auth/login");
+    await queryClient.invalidateQueries();
+    queryClient.clear();
   };
 
   return (

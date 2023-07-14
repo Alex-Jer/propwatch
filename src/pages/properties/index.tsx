@@ -8,7 +8,7 @@ import { PropertiesContext } from "~/lib/PropertiesProvider";
 import type { SearchPropertyProps } from "~/types";
 
 const Properties: NextPage<SearchPropertyProps> = () => {
-  const { properties, isLoading, isError, activePage, setPage, refetch } = useContext(PropertiesContext);
+  const { properties, isLoading, isError, activePage, setPage } = useContext(PropertiesContext);
 
   useEffect(() => {
     if (isError) {
@@ -36,7 +36,6 @@ const Properties: NextPage<SearchPropertyProps> = () => {
         isError={isError}
         activePage={activePage}
         setPage={setPage}
-        refetch={refetch}
       />
     </>
   );

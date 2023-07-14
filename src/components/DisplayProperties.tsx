@@ -1,6 +1,7 @@
 import { createStyles, Group, Pagination, Skeleton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconTrash } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -16,10 +17,10 @@ export function DisplayProperties({
   isError,
   activePage,
   setPage,
-  refetch,
   hasFilters = false,
 }: DisplayPropertiesProps) {
   const { classes } = useStyles();
+  const queryClient = useQueryClient();
   const properties = propData?.data;
   const router = useRouter();
   const { data: session } = useSession();
@@ -38,7 +39,8 @@ export function DisplayProperties({
     makeRequest(`me/properties/${selectedPropId}`, "DELETE", session?.user.access_token)
       .then(() => {
         successNotification("This property has been sent to trash!", "Property deleted");
-        void refetch();
+        void queryClient.invalidateQueries({ queryKey: ["properties"] });
+        void queryClient.invalidateQueries({ queryKey: ["collectionsSidebar"] });
       })
       .catch(() => {
         errorNotification("An unknown error occurred while trying to delete this property.");

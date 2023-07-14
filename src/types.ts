@@ -229,7 +229,6 @@ export type DisplayPropertiesProps = {
   isError: boolean;
   activePage: number;
   setPage: (page: number) => void;
-  refetch: () => Promise<UseQueryResult>;
   hasFilters?: boolean;
 };
 
