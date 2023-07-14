@@ -1,4 +1,4 @@
-import { Button, Group, Pagination } from "@mantine/core";
+import { Button, createStyles, Group, Pagination } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowBackUpDouble, IconTrash, IconTrashX } from "@tabler/icons-react";
 import { type NextPage } from "next";
@@ -14,6 +14,7 @@ import { makeRequest } from "~/lib/requestHelper";
 import { type CollectionProperty } from "~/types";
 
 const TrashedProperties: NextPage = () => {
+  const { classes } = useStyles();
   const { data: session, status } = useSession();
   const [activePage, setPage] = useState(1);
 
@@ -110,24 +111,30 @@ const TrashedProperties: NextPage = () => {
         noBtn={{ text: "Cancel", variant: "default" }}
         text="Are you sure you want to permanently delete all the properties in the trash?"
       />
-      <div className="mb-2 flex flex-row items-center justify-between">
+      <div className="mb-2 flex flex-row items-center justify-between space-x-2">
         <div className="flex items-center">
           <IconTrash className="-mt-1 mr-2" strokeWidth={1.5} />
           <h1 className="pb-1 text-base font-semibold">Trashed Properties</h1>
           <h3 className="ml-2 text-xs font-semibold text-gray-400">Hover over a property to delete or restore it.</h3>
         </div>
 
-        <div>
+        <div className="-mt-1 space-x-2">
           <Button
-            className="mr-2"
             variant="default"
+            size="xs"
             onClick={openRestore}
             leftIcon={<IconArrowBackUpDouble size="1rem" />}
-            disabled={isLoading}
+            disabled={isLoading || !properties?.length}
           >
             Restore all
           </Button>
-          <Button variant="default" onClick={openEmptyTrash} leftIcon={<IconTrashX size="1rem" />} disabled={isLoading}>
+          <Button
+            variant="default"
+            size="xs"
+            onClick={openEmptyTrash}
+            leftIcon={<IconTrashX size="1rem" />}
+            disabled={isLoading || !properties?.length}
+          >
             Empty trash
           </Button>
         </div>
@@ -157,8 +164,8 @@ const TrashedProperties: NextPage = () => {
           )}
         </>
       ) : (
-        <div className="flex h-5/6 flex-col items-center justify-center">
-          <h1 className="text-xl text-gray-500">Trash is empty.</h1>
+        <div className={classes.placeholder}>
+          <span>Trash is empty.</span>
         </div>
       )}
     </>
@@ -166,3 +173,12 @@ const TrashedProperties: NextPage = () => {
 };
 
 export default TrashedProperties;
+
+const useStyles = createStyles((theme) => ({
+  placeholder: {
+    "& span": {
+      color: theme.colors.dark[3],
+      fontWeight: 600,
+    },
+  },
+}));

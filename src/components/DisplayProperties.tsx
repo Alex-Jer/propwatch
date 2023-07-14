@@ -17,7 +17,7 @@ export function DisplayProperties({
   activePage,
   setPage,
   refetch,
-  hasFilters,
+  hasFilters = false,
 }: DisplayPropertiesProps) {
   const { classes } = useStyles();
   const properties = propData?.data;
@@ -117,9 +117,6 @@ export function DisplayProperties({
 
 const useStyles = createStyles((theme) => ({
   placeholder: {
-    height: "100%",
-    width: "100%",
-
     "& span": {
       color: theme.colors.dark[3],
       fontWeight: 600,

@@ -230,7 +230,7 @@ export type DisplayPropertiesProps = {
   activePage: number;
   setPage: (page: number) => void;
   refetch: () => Promise<UseQueryResult>;
-  hasFilters: boolean;
+  hasFilters?: boolean;
 };
 
 export type AxiosErrorResponse = AxiosError & {
