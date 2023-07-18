@@ -96,7 +96,7 @@ export function SignUpForm() {
       >
         <Paper withBorder shadow="md" p={30} mt={30} radius="md">
           <TextInput name="name" label="Name" control={control} placeholder="Your name" />
-          <TextInput name="email" label="Email" control={control} placeholder="you@mantine.dev" mt="md" />
+          <TextInput name="email" label="Email" control={control} placeholder="Your email" mt="md" />
           <PasswordInput name="password" label="Password" control={control} placeholder="Your password" mt="md" />
           <PasswordInput
             name="password_confirmation"

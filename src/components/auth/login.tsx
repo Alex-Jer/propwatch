@@ -64,7 +64,7 @@ export function LoginForm() {
       </Text>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <form onSubmit={form.onSubmit((values) => void (async () => await handleSubmit(values))())}>
-          <TextInput label="Email" placeholder="you@mantine.dev" {...form.getInputProps("email")} />
+          <TextInput label="Email" placeholder="Your email" {...form.getInputProps("email")} />
           <PasswordInput label="Password" placeholder="Your password" mt="md" {...form.getInputProps("password")} />
           <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
             Sign in
