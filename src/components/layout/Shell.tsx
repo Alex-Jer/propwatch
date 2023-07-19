@@ -15,7 +15,10 @@ const Shell = ({ children, useNavbarSearch, setSearch, filters, setFilters }: Sh
   const [opened, setOpened] = useState(false);
 
   if (status === "loading") return null;
-  if (status === "unauthenticated") void router.push("/403");
+  if (status === "unauthenticated") {
+    void router.push("/403");
+    return null;
+  }
 
   return (
     <AppShell
