@@ -58,7 +58,7 @@ const Statistics: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statistics?.listings]);
 
-  const properties = useMemo<([PieChartPayload[], LineChartPayload[]] | undefined)[]>(() => {
+  const properties = useMemo<[PieChartPayload[], LineChartPayload[]] | undefined>(() => {
     if (statistics && statistics.properties) {
       const pcounts: PieChartPayload[] = [];
       const properties: LineChartPayload[] = [];
@@ -83,7 +83,7 @@ const Statistics: NextPage = () => {
         });
       return [pcounts, properties];
     }
-    return [undefined, undefined];
+    return undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statistics?.properties]);
 
@@ -161,24 +161,24 @@ const Statistics: NextPage = () => {
           </CardBackground>
         )}
         {properties && properties[1] && (
-          <div className="col-span-1 md:col-span-2">
+          <div className="col-span-1 flex flex-col gap-4 md:col-span-2">
             <CardBackground>
-              <Text size="xl" className="mt-1 text-center text-xl font-semibold capitalize">
-                Average prices and ratings by property type
-              </Text>
-              <SegmentedControl
-                styles={() => ({ root: { width: "100%" } })}
-                data={listingTypes}
-                value={listingType}
-                onChange={setListingType}
-              />
+              <div className="mb-6 mt-3 items-center md:flex">
+                <SegmentedControl size="sm" data={listingTypes} value={listingType} onChange={setListingType} />
+                {/* <div className="-ml-32 flex flex-grow justify-center"> */}
+                <div className="justify-center text-center md:-ml-24 md:flex md:flex-grow">
+                  <Text size="xl" className="text-xl font-semibold capitalize">
+                    Average prices and ratings by property type
+                  </Text>
+                </div>
+              </div>
               <RWLineChart
                 data={properties[1] as unknown as LineChartPayload[]}
                 firstPriceKey="Average Sale Price"
                 firstPriceColor="#f03e3e"
                 secondPriceKey="Average Rent Price"
                 secondPriceColor="#0ca678"
-                isFirstActive={listingType == "sale"}
+                isFirstActive={listingType === "sale"}
               />
             </CardBackground>
           </div>

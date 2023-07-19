@@ -1,14 +1,19 @@
-import { type JSX, useEffect, useState } from "react";
+import { type JSX, useEffect, useState, use } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { getRandomHexColor, priceToString, priceToStringShort } from "~/lib/propertyHelper";
 import type { Offer } from "~/types";
 
+type OfferData = {
+  date: string;
+  [offerId: number]: number;
+};
+
 export function PropertyOfferHistoryChart({ offers, extra }: { offers: Offer[]; extra: number }) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<OfferData[]>([]);
   const [lines, setLines] = useState<string[]>([]);
 
   const discretizeDate = (date: string) => {
-    const options = { month: "long", year: "numeric" };
+    const options: Intl.DateTimeFormatOptions = { month: "long", year: "numeric" };
     const dateObj = new Date(date);
     const formattedDate = dateObj.toLocaleDateString("en-US", options);
     return formattedDate;
@@ -29,9 +34,8 @@ export function PropertyOfferHistoryChart({ offers, extra }: { offers: Offer[]; 
       });
     });
 
-    const offerData: any[] = [];
-    offerMap.forEach((value, key) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const offerData: OfferData[] = [];
+    offerMap.forEach((value: Record<string, number>, key: string) => {
       offerData.push({ date: key, ...value });
     });
 

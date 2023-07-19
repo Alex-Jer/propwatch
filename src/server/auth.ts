@@ -65,7 +65,6 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
-        userAgent: { label: "User Agent", type: "text" },
       },
 
       async authorize(credentials) {
@@ -73,7 +72,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const res = await login(credentials.email, credentials.password, credentials.userAgent);
+        const res = await login(credentials.email, credentials.password, "web");
 
         const user = res && {
           ...res.user,

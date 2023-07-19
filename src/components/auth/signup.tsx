@@ -107,7 +107,7 @@ export function SignUpForm() {
             placeholder="Your password"
             mt="md"
           />
-          <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
+          <Button fullWidth mt="xl" type="submit" loading={isLoading}>
             Create account
           </Button>
         </Paper>

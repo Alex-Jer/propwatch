@@ -74,7 +74,7 @@ export function LoginForm() {
         <form onSubmit={form.onSubmit((values) => void (async () => await handleSubmit(values))())}>
           <TextInput label="Email" placeholder="Your email" {...form.getInputProps("email")} />
           <PasswordInput label="Password" placeholder="Your password" mt="md" {...form.getInputProps("password")} />
-          <Button fullWidth mt="xl" type="submit" loading={isLoading} disabled={status === "authenticated"}>
+          <Button fullWidth mt="xl" type="submit" loading={isLoading}>
             Sign in
           </Button>
         </form>

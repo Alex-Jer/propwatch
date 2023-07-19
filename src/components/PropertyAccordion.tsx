@@ -367,10 +367,13 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
           setSelectedOffer(null);
           setOfferRecords(offerRecords.filter((offer) => offer.id !== selectedOffer.id));
           close();
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          property.offers[selectedOffer.listing_type] = property.offers[selectedOffer.listing_type].filter(
-            (offer) => offer.id !== selectedOffer.id
-          );
+
+          if (selectedOffer.listing_type === "sale") {
+            property.offers.sale = property.offers.sale.filter((offer) => offer.id !== selectedOffer.id);
+          } else if (selectedOffer.listing_type === "rent") {
+            property.offers.rent = property.offers.rent.filter((offer) => offer.id !== selectedOffer.id);
+          }
+
           successNotification("This offer has been removed", "Offer removed");
 
           if (property?.offers?.sale?.length + property?.offers?.rent?.length === 0) {
