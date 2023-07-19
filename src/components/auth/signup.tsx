@@ -39,10 +39,6 @@ export function SignUpForm() {
   const router = useRouter();
   const { status } = useSession();
 
-  if (status === "authenticated") {
-    void router.push("/properties");
-  }
-
   const { control, handleSubmit, setError } = useForm<FormSchemaType>({
     resolver: zodResolver(schema),
     defaultValues,
@@ -74,6 +70,12 @@ export function SignUpForm() {
       errorNotification("Check your internet connection and try again", "Something went wrong");
     },
   });
+
+  if (status === "loading") return null;
+  if (status === "authenticated") {
+    void router.push("/properties");
+    return null;
+  }
 
   return (
     <Container size={420} my={40}>

@@ -8,8 +8,10 @@ export function HeroTitle() {
   const router = useRouter();
   const { status } = useSession();
 
+  if (status === "loading") return null;
   if (status === "authenticated") {
     void router.push("/properties");
+    return null;
   }
 
   return (

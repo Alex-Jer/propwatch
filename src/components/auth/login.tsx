@@ -16,10 +16,6 @@ export function LoginForm() {
   const { status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
 
-  if (status === "authenticated") {
-    void router.push("/properties");
-  }
-
   const form = useForm<Inputs>({
     initialValues: { email: "", password: "" },
     validate: {
@@ -27,6 +23,12 @@ export function LoginForm() {
       password: (value: string) => (value.length > 0 ? null : "Password is required"),
     },
   });
+
+  if (status === "loading") return null;
+  if (status === "authenticated") {
+    void router.push("/properties");
+    return null;
+  }
 
   const handleSubmit = async (values: Inputs) => {
     setIsLoading(true);
