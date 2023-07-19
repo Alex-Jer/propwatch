@@ -32,7 +32,13 @@ export function LoginForm() {
 
   const handleSubmit = async (values: Inputs) => {
     setIsLoading(true);
-    const res = await signIn("credentials", { redirect: false, ...values });
+
+    const res = await signIn("credentials", {
+      redirect: false,
+      email: values.email,
+      password: values.password,
+      userAgent: window.navigator.userAgent,
+    });
 
     if (res?.status === 401) {
       errorNotification("Check your credentials and try again.", "Wrong email or password");
