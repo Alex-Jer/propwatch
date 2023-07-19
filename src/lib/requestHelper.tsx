@@ -42,54 +42,62 @@ export const makeRequest = async (
 
   let res = null;
 
-  switch (method) {
-    case "POST":
-      res = await axios.post(url, formData, { headers, withCredentials: true }).catch((error: AxiosError) => {
-        return error.response;
-      });
-      break;
-    case "PUT":
-      if (!formData) {
-        res = await axios.put(url, formData, { headers }).catch((error: AxiosError) => {
+  try {
+    switch (method) {
+      case "POST":
+        res = await axios.post(url, formData, { headers, withCredentials: true }).catch((error: AxiosError) => {
           return error.response;
         });
         break;
-      }
-      formData.append("_method", method.toUpperCase());
-      res = await axios.post(url, formData, { headers }).catch((error: AxiosError) => {
-        return error.response;
-      });
-      break;
-    case "PATCH":
-      if (!formData) {
-        res = await axios.patch(url, formData, { headers }).catch((error: AxiosError) => {
+      case "PUT":
+        if (!formData) {
+          res = await axios.put(url, formData, { headers }).catch((error: AxiosError) => {
+            return error.response;
+          });
+          break;
+        }
+        formData.append("_method", method.toUpperCase());
+        res = await axios.post(url, formData, { headers }).catch((error: AxiosError) => {
           return error.response;
         });
         break;
-      }
-      formData.append("_method", method.toUpperCase());
-      res = await axios.post(url, formData, { headers }).catch((error: AxiosError) => {
-        return error.response;
-      });
-      break;
-    case "DELETE":
-      if (!formData) {
-        res = await axios.delete(url, { headers }).catch((error: AxiosError) => {
+      case "PATCH":
+        if (!formData) {
+          res = await axios.patch(url, formData, { headers }).catch((error: AxiosError) => {
+            return error.response;
+          });
+          break;
+        }
+        formData.append("_method", method.toUpperCase());
+        res = await axios.post(url, formData, { headers }).catch((error: AxiosError) => {
           return error.response;
         });
         break;
+      case "DELETE":
+        if (!formData) {
+          res = await axios.delete(url, { headers }).catch((error: AxiosError) => {
+            return error.response;
+          });
+          break;
+        }
+        formData.append("_method", method.toUpperCase());
+        res = await axios.post(url, formData, { headers }).catch((error: AxiosError) => {
+          return error.response;
+        });
+        break;
+      case "GET":
+      default:
+        res = await axios.get(url, { headers }).catch((error: AxiosError) => {
+          return error.response;
+        });
+        break;
+    }
+  } catch (error) {
+    if (error instanceof AxiosError)
+      if (error.response?.status == 401 || error.response?.status == 444) {
+        errorNotification("Your session has expired. Please sign in again.");
+        void signOut();
       }
-      formData.append("_method", method.toUpperCase());
-      res = await axios.post(url, formData, { headers }).catch((error: AxiosError) => {
-        return error.response;
-      });
-      break;
-    case "GET":
-    default:
-      res = await axios.get(url, { headers }).catch((error: AxiosError) => {
-        return error.response;
-      });
-      break;
   }
 
   if (res) {
