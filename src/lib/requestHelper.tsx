@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { signOut } from "next-auth/react";
 import { errorNotification } from "~/components/PropertyCard";
 import { env } from "~/env.mjs";
@@ -44,36 +44,51 @@ export const makeRequest = async (
 
   switch (method) {
     case "POST":
-      res = await axios.post(url, formData, { headers, withCredentials: true });
+      res = await axios.post(url, formData, { headers, withCredentials: true }).catch((error: AxiosError) => {
+        return error.response;
+      });
       break;
     case "PUT":
       if (!formData) {
-        res = await axios.put(url, formData, { headers });
+        res = await axios.put(url, formData, { headers }).catch((error: AxiosError) => {
+          return error.response;
+        });
         break;
       }
       formData.append("_method", method.toUpperCase());
-      res = await axios.post(url, formData, { headers });
+      res = await axios.post(url, formData, { headers }).catch((error: AxiosError) => {
+        return error.response;
+      });
       break;
     case "PATCH":
       if (!formData) {
-        res = await axios.patch(url, formData, { headers });
+        res = await axios.patch(url, formData, { headers }).catch((error: AxiosError) => {
+          return error.response;
+        });
         break;
       }
       formData.append("_method", method.toUpperCase());
-      res = await axios.post(url, formData, { headers });
+      res = await axios.post(url, formData, { headers }).catch((error: AxiosError) => {
+        return error.response;
+      });
       break;
     case "DELETE":
       if (!formData) {
-        res = await axios.delete(url, { headers });
+        res = await axios.delete(url, { headers }).catch((error: AxiosError) => {
+          return error.response;
+        });
         break;
       }
-
       formData.append("_method", method.toUpperCase());
-      res = await axios.post(url, formData, { headers });
+      res = await axios.post(url, formData, { headers }).catch((error: AxiosError) => {
+        return error.response;
+      });
       break;
     case "GET":
     default:
-      res = await axios.get(url, { headers });
+      res = await axios.get(url, { headers }).catch((error: AxiosError) => {
+        return error.response;
+      });
       break;
   }
 
@@ -85,7 +100,7 @@ export const makeRequest = async (
       case 444: // 444 - our own unauthenticated error code
         // User is no longer authenticated, maybe the token expired or was revoked
         errorNotification("Your session has expired. Please sign in again.");
-        return void signOut();
+        await signOut({ redirect: false });
       case 403:
         // User is authenticated, but does not have the required permissions
         throw new Error("You are not authorized to perform this action.");
