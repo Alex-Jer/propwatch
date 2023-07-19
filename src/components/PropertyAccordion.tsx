@@ -110,13 +110,13 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
     }
 
     const offers = [
-      ...property.offers?.sale?.map((offer) => ({
+      ...property?.offers?.sale?.map((offer) => ({
         ...offer,
         price_str: offer?.price ? priceToString(offer?.price) : "N/A",
         description: offer?.description ? offer?.description : "N/A",
         listing_type: "sale",
       })),
-      ...property.offers?.rent?.map((offer) => ({
+      ...property?.offers?.rent?.map((offer) => ({
         ...offer,
         price_str: offer?.price ? priceToString(offer?.price) + "/month" : "N/A",
         description: offer?.description ? offer?.description : "N/A",
@@ -321,7 +321,7 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
         <>
           {!isLoading && property ? (
             <>
-              {property.offers.sale.length > 0 && (
+              {property?.offers?.sale?.length > 0 && (
                 <>
                   <Title order={4}>Sale offers:</Title>
                   <PropertyOfferHistoryChart
@@ -330,7 +330,7 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
                   />
                 </>
               )}
-              {property.offers.rent.length > 0 && (
+              {property?.offers?.rent?.length > 0 && (
                 <>
                   <Title className="pt-1" order={4}>
                     Rent offers:

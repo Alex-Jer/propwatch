@@ -84,18 +84,33 @@ export function PropertyFormMedia({
       openConfirmModal();
       return;
     }
+
     deleteMediaItem(mediaItem);
-    setMedia((state) => ({
-      ...state,
-      photos: state.photos.filter((p) => p.id !== mediaItem.id),
-      blueprints: state.blueprints.filter((b) => b.id !== mediaItem.id),
-      videos: state.videos.filter((v) => v.id !== mediaItem.id),
-    }));
+    if (!media) return;
+    const newMedia = { ...media };
+
+    switch (mediaItem.type) {
+      case "image":
+        newMedia.photos = media.photos?.filter((p) => p.id !== mediaItem.id) || [];
+        break;
+      case "blueprint":
+        newMedia.blueprints = media.blueprints?.filter((b) => b.id !== mediaItem.id) || [];
+        break;
+      case "video":
+        newMedia.videos = media.videos?.filter((v) => v.id !== mediaItem.id) || [];
+        break;
+      default:
+        break;
+    }
+
+    setMedia(newMedia);
   };
 
   const deleteSelectedMedia = () => {
     setMediaArray((state) => state.filter((o) => !selectedMediaToDelete.some((s) => s.id === o.id)));
     setSelectedMediaToDelete([]);
+    // @ts-expect-error works
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment
     setMediaToDelete((state) => [...state, ...selectedMediaToDelete]);
     closeConfirmModal();
   };
