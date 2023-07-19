@@ -439,8 +439,13 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       }
     },
     onError: (error: AxiosErrorResponse) => {
-      if (mode == "add") processAxiosError(error, "An error occurred while adding your property");
-      else processAxiosError(error, "An error occurred while editing your property");
+      const errorMessage =
+        mode === "add"
+          ? "An error occurred while adding your property"
+          : error.response.status === 409
+          ? error.response.data.message
+          : "An error occurred while editing your property";
+      processAxiosError(error, errorMessage);
     },
   });
 
