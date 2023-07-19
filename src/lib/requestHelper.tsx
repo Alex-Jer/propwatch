@@ -97,7 +97,10 @@ export const makeRequest = async (
       if (error.response?.status == 401 || error.response?.status == 444) {
         errorNotification("Your session has expired. Please sign in again.");
         void signOut();
+        return;
       }
+
+    throw error;
   }
 
   if (res) {
