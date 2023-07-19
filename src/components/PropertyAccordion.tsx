@@ -105,7 +105,7 @@ export function PropertyAccordion({ property, isLoading = false }: PropertyAccor
   }, [property, isLoading]);
 
   useEffect(() => {
-    if (!property) {
+    if (!property?.offers) {
       return;
     }
 
