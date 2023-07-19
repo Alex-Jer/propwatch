@@ -442,9 +442,10 @@ export function PropertyForm({ property = {}, close, mode = "add" }: PropertyFor
       const errorMessage =
         mode === "add"
           ? "An error occurred while adding your property"
-          : error.response.status === 409
+          : mode === "edit" && error.response?.status === 409
           ? error.response.data.message
           : "An error occurred while editing your property";
+
       processAxiosError(error, errorMessage);
     },
   });
