@@ -1,6 +1,4 @@
 import { AppShell, useMantineTheme } from "@mantine/core";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { type ShellProps } from "~/types";
 import { NavbarDefault } from "./Navbar";
@@ -8,17 +6,8 @@ import { NavbarSearch } from "./NavbarSearch";
 import { NavHeader } from "./NavHeader";
 
 const Shell = ({ children, useNavbarSearch, setSearch, filters, setFilters }: ShellProps) => {
-  const { status } = useSession();
-  const router = useRouter();
   const theme = useMantineTheme();
-
   const [opened, setOpened] = useState(false);
-
-  if (status === "loading") return null;
-  if (status === "unauthenticated") {
-    void router.push("/403");
-    return null;
-  }
 
   return (
     <AppShell
