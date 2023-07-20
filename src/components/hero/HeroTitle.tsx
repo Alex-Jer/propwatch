@@ -31,7 +31,7 @@ export function HeroTitle() {
 
         <Group className={classes.controls}>
           <Button size="xl" className={classes.control} variant="gradient" gradient={{ from: "blue", to: "cyan" }}>
-            <Link href="/auth/signup">Get started</Link>
+            <Link href="/auth/login">Get started</Link>
           </Button>
 
           <Button

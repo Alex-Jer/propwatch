@@ -48,13 +48,12 @@ const AccessDenied = () => {
       <div className={classes.label}>403</div>
       <Title className={classes.title}>You are not allowed to access this page.</Title>
       <Text color="dimmed" size="lg" align="center" className={classes.description}>
-        You are not allowed to access this page. <br />
-        Please login to continue.
+        Unfortunately, this is only a 403 page. You may have mistyped the address or the page may have moved.
       </Text>
       <Group position="center">
-        <Link href="/auth/login">
+        <Link href="/">
           <Button variant="subtle" size="md">
-            Take me to the login page
+            Take me back to the home page
           </Button>
         </Link>
       </Group>

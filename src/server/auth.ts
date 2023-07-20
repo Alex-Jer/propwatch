@@ -52,16 +52,11 @@ export const authOptions: NextAuthOptions = {
 
       return token;
     },
+
     session({ session, token }) {
       session.user.access_token = token.id as string;
       session.user.photo_url = token.photo_url as string;
       return session;
-    },
-    redirect({ url }) {
-      if (!url.includes("/auth")) {
-        return "/403";
-      }
-      return url;
     },
   },
   providers: [
@@ -91,10 +86,6 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
-  },
-  pages: {
-    signIn: "/auth/login",
-    error: "/403",
   },
 };
 

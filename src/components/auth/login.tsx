@@ -15,7 +15,6 @@ export function LoginForm() {
   const router = useRouter();
   const { status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const callbackUrl = router.query.callbackUrl as string | undefined;
 
   const form = useForm<Inputs>({
     initialValues: { email: "", password: "" },
@@ -25,15 +24,7 @@ export function LoginForm() {
     },
   });
 
-  if (callbackUrl) {
-    void router.push(callbackUrl);
-    return null;
-  }
-
-  if (status === "loading") {
-    return null;
-  }
-
+  if (status === "loading") return null;
   if (status === "authenticated") {
     void router.push("/properties");
     return null;
